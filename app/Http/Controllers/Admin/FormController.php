@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Template;
 use App\Models\SubmissionPost;
+use App\Models\Student;
+use App\Models\Form_submission;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -302,6 +304,7 @@ class FormController extends Controller
             'description' => 'required',
             'submission_deadline' => 'required|date',
             'files.*' => 'mimes:pdf,doc,docx|max:2048',
+            'visibility_status' => 'required|in:0,1',
         ]);
 
         // $filePaths = [];
@@ -331,6 +334,7 @@ class FormController extends Controller
             'description' => $request->input('description'),
             'submission_deadline'=> $request->input('submission_deadline'),
             'files' => json_encode($filePaths),
+            'visibility_status' => $request->input('visibility_status'),
             'lecturer_id' => Auth::id(),
             'section' => "form",
         ]);
@@ -461,6 +465,8 @@ class FormController extends Controller
     // }
     public function updatePost(Request $request, $id)
     {
+        try{
+
         $request->validate([
             'title' => 'required',
             'description' => 'required',
@@ -469,7 +475,6 @@ class FormController extends Controller
                 'file',
                 'mimes:pdf,doc,docx',
                 'max:2048',
-                // Rule::unique('submission_posts', 'files')->ignore($id)
             ],
         ], [
             'files.*.file' => 'Invalid file format.',
@@ -539,7 +544,10 @@ class FormController extends Controller
 
         // Redirect or return a response
         return redirect()->route('formpost.index')->with('success','Template updated successfully');
-
+    } catch (\Exception $e) {
+                // Handle exceptions, such as ModelNotFoundException or file storage errors
+                return redirect()->route('formpost.index')->with('error', 'An error occurred while updating the template');
+        }
     }
     protected function validateFiles(array $files)
 {
@@ -675,35 +683,132 @@ public function removeFile(Request $request, $id)
     // return redirect()->back();
 }
 
+// // view the submision post from certain students only
+//     public function getSubmissionPostsForLecturer()
+//     {
+//         // Get the currently logged-in lecturer's user ID
+//         $lecturerId = auth()->user()->id;
 
-    // public function removeFile($id)
-    // {
-    //     $file = $request->input('files');
-    //     // Log::info('removeFile method called'); // Add this line to log the entry
-    //     // dd($request->input('files'));
+//         // Retrieve students supervised by the lecturer
+//         $students = Student::where('supervisor_id', $lecturerId)->get();
 
-    //     try {
+//         // Get the submission posts associated with the students
+//         $submissionPosts = SubmissionPost::whereIn('stu_id', $students->pluck('stu_id'))->get();
 
-    //     // Delete the file from storage
-    //     Storage::delete('public/upload/templates/' . $file);
+//         return view('admin.submission_posts.viewAll', compact('submissionPosts'));
+//     }
 
-    //     // Remove the file from the list of existing files
-    //     $getRecord = SubmissionPost::find($id);
-    //     $existingFiles = json_decode($getRecord->files, true) ?? [];
-    //     $existingFiles = array_diff($existingFiles, [$file]);
-    //     $getRecord->files = json_encode(array_values($existingFiles));
-    //     $getRecord->save();
+// }
 
-    //     // return redirect()->back()->with('success', 'File removed successfully.');
-    //     // return redirect()->route('template.index')->with('error', 'An error occurred while updating the template');
+// version 1 that is weird?
+    // public function getSubmissionFormForLecturer($submissionPostId){
+    //    $submissionPost = SubmissionPost::find($submissionPostId); // Fetch the desired submission post
 
-    //     } catch (\Exception $e) {
-    //         // Handle any exceptions that may occur during file deletion or database update
-    //         // return redirect()->back()->with('error', 'An error occurred while removing the file.');
-    //         return redirect()->route('template.index')->with('error', 'An error occurred while updating the template');
+    //     $lecturer = Auth::user(); // Assuming you're using Laravel's built-in authentication
 
-    //     }
+    //     // Fetch the form submissions for the submission post and supervised students
+    //     $formsubmissions = $submissionPost->forms()->whereHas('student', function ($query) use ($lecturer) {
+    //         $query->where('supervisor_id', $lecturer->id);
+    //     })->get();
+
+    //     return view('admin.submission_post.viewAll', compact('submissionPost', 'formsubmissions'));
+
     // }
 
+    // version 2 to fetch FORM SUBMISSION data from forms table for lectuere
+    // public function getSubmissionFormForLecturer()
+    // {
+    //     $lecturer = Auth::user(); // Assuming you're using Laravel's built-in authentication
 
-}
+    //     // Retrieve the students supervised by the lecturer
+    //     $supervisedStudents = $lecturer->supervisedStudents;
+
+    //     // Retrieve the forms submitted by these supervised students
+    //     $forms = Form::whereIn('student_id', $supervisedStudents->pluck('id'))->get();
+
+    //     return view('lecturer.view', compact('forms'));
+    // }
+
+    // version 3
+    public function getForsdmSubmissionForLecturer($submissionPostId)
+    {
+        // Retrieve the specific submission post
+        $submissionPost = SubmissionPost::find($submissionPostId);
+        $lecturer = auth()->user();
+        // dd($lecturer);
+        // $lecturer = Auth::user();
+
+        // Check if the logged-in user is authorized to view submissions for this post
+        // if (auth()->user()->id === $submissionPost->lecturer_id) {
+            // Retrieve the lecturer's supervised students
+            // $supervisedStudents = auth()->user()->student();
+
+            // // dd($supervisedStudents);
+            // // Retrieve the forms submitted for this submission post by supervised students
+            // $forms = Form_submission::with('supervisor')->where('submission_post_id', $submissionPostId)
+            //     ->whereIn('student_id', $supervisedStudents->pluck('stu_id'))
+            //     ->get();
+
+
+            // if ($submissionPost->lecturer->id === $lecturer->id) {
+            //     // $formSubmissions = Form_submission::where('submission_post_id', $submissionPost->id)
+            //     //     ->get();
+
+            //     $formSubmissions = $submissionPost->formSubmissions()
+            //         ->whereIn('stu_id', $lecturer->supervisedStudents->pluck('id'))
+            //         ->get();
+            // } else {
+            //     $formSubmissions = collect(); // Return an empty collection if the lecturer is not authorized
+            // }
+
+            // if ($submissionPost->lecturer->id === $lecturer->id) {
+            //     $formSubmissions = $lecturer->formSubmissions()->get();
+            // }
+            if ($submissionPost->lecturer_id ===  auth()->user()->id ) {
+                $formSubmissions = $lecturer ->formSubmissions
+                    ->where('submission_post_id', $submissionPost->id);
+            } else {
+                $formSubmissions = collect(); // Return an empty collection if the lecturer is not authorized
+            }
+
+            return view('admin.submission_post.viewAll', compact('formSubmissions','submissionPost'));
+        // } else {
+        //     abort(403, 'Unauthorized');
+        // }
+    }
+
+    public function getFormSubmissionForLecturer($submissionPostId){
+        $lecturer = auth()->user(); // Get the currently logged-in lecturer
+        // $lecturer->load('formSubmissions'); // Eager load the formSubmissions relationship
+        $submissionPost = SubmissionPost::find($submissionPostId);
+
+        if ($submissionPost->lecturer->id === $lecturer->id) {
+            $formSubmissions = $lecturer->formSubmissions()
+                ->where('submission_post_id', $submissionPost->id)
+                ->get();
+        }
+        // dd($formSubmissions);
+        return view('admin.submission_post.viewAll', compact('formSubmissions','submissionPost'));
+    }
+
+    public function showFormSubmissions($submissionPostId,$formSubmissionId)
+    {
+        $submissionPost = SubmissionPost::find($submissionPostId);
+        // // Retrieve the form submissions related to the selected submission post
+        // $formSubmissions = $submissionPost->formSubmissions;
+        DB::enableQueryLog();
+
+        $formSubmission = Form_submission::find($formSubmissionId);
+
+        \Log::info(DB::getQueryLog());
+
+        // dd($formSubmission);
+        // return view('admin.submission_post.viewOne', compact('formSubmission'));
+
+        return view('admin.submission_post.viewOne', compact('formSubmission', 'submissionPost'));
+    }
+
+    }
+
+
+

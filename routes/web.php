@@ -22,9 +22,9 @@ Auth::routes();
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 
 // testing de page
-Route::get('adminpage/admintemplateupload', function(){
+Route::get('/testing', function(){
     // return view ('admin.adminpage.create');
-    return view ('admin.adminpage.admintemplateupload');
+    return view ('test');
 
 });
 
@@ -60,6 +60,14 @@ Route::group(['middleware' => 'auth','isAdmin', 'prefix' => 'admin'], function()
     Route::get('formsubmissionpage/edit/{id}',[App\Http\Controllers\Admin\FormController::class, 'editPost']) -> name('formpost.edit');
     Route::put('formsubmissionpage/update/{id}',[App\Http\Controllers\Admin\FormController::class, 'updatePost']) -> name('formpost.update');
     Route::delete('formsubmissionpage/remove/{id}',[App\Http\Controllers\Admin\FormController::class, 'removeFile']) -> name('formpost.deletefile');
+
+    //view form submission post for each student
+    Route::get('formsubmissionpage/viewAll/{submissionPostId}', [App\Http\Controllers\Admin\FormController::class, 'getFormSubmissionForLecturer'])->name('formpost.showAll');
+    Route::get('formsubmissionpage/viewOne/{submissionPostId}/{formSubmissionId}', [App\Http\Controllers\Admin\FormController::class, 'showFormSubmissions'])->name('formpost.show');
+
+    Route::get('advisor-assignment/create', [App\Http\Controllers\Admin\SupervisorStudentAssignmentController::class, 'create'])->name('advisor-assignment.create');
+    Route::post('advisor-assignment/store', [App\Http\Controllers\Admin\SupervisorStudentAssignmentController::class, 'store'])->name('advisor-assignment.store');
+
 
 
 // routes/web.php

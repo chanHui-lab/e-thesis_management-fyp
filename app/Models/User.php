@@ -43,4 +43,23 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
     ];
+
+    public function student()
+    {
+        return $this->hasOne(Student::class);
+    }
+
+    public function supervisor()
+    {
+        return $this->hasOne(Supervisor::class);
+    }
+
+    public function formSubmissions()
+    {
+        return $this->hasManyThrough(Form_submission::class, Student::class, 'supervisor_id', 'student_id');    }
+
+    // public function advisor()
+    // {
+    //     return $this->hasOne(Advisor::class);
+    // }
 }

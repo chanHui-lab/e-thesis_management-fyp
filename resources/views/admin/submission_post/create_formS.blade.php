@@ -40,6 +40,24 @@
                 <input type="datetime-local" id="submission_deadline" name="submission_deadline" class="form-control datetimepicker" placeholder="Submission Deadline" ><br><br>
             </div>
 
+              {{-- <div class="form-group"> --}}
+                  <label for="visibility_status">Status:</label>
+                  <select class="custom-select" id="visibility_status" name="visibility_status" style= "display: block;
+                  width: 100%;
+                  padding: 0.375rem 0.75rem;
+                  font-size: 1rem;
+                  line-height: 1.5;
+                  background-color: #fff;
+                  background-clip: padding-box;
+                  border: 1px solid #ced4da;
+                  border-radius: 0.25rem;
+                  transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;" id="status" name="status" >
+                      <option value = "0"> Hidden </option>
+                      <option value = "1"> Visible </option>
+                  </select>
+
+              <br>
+
             {{-- <div class="form-group"> --}}
              <label for="files">Upload Document Files: (not necessary) </label><br>
                     <div class="wrapper">
@@ -85,7 +103,7 @@
                         <div class="row">
                             <div class="col-md-12">
                                 {{-- <h4>File Upload</h4> --}}
-                                <div class="input-group hdtuto control-group increment" >
+                                <div class="input-group hdtuto control-group increment">
                                     <input type="file" name="files[]" class="myfrm form-control">
                                     <div class="input-group-btn">
                                         <button class="btn btn-success" type="button" onclick="addFileInput(this)">
@@ -109,10 +127,10 @@
 
 
                   </div>
-            {{-- </div> --}}
+            </div>
             <br>
 
-          </div>
+          {{-- </div> --}}
           <!-- /.card-body -->
 
           <div class="card-footer">

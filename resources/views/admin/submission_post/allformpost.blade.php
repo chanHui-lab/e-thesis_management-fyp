@@ -26,7 +26,7 @@
     {{-- <section class="content"> --}}
         {{-- <div class="container-fluid"> --}}
           <div class="row">
-            <div class="col-12">
+            <div class="col-12" style="padding: 10px; float: right;">
               <div class="card">
                 {{-- <div class="card-header">
                   <h3 class="card-title">All Form Templates</h3>
@@ -55,8 +55,8 @@
                     <tr>
                         <td>{{ $counter++ }}</td> <!-- Increment and display the counter -->
                         <td>{{ $postform->title }}</td>
-                        <td>{{  $postform->description  }}</td>
-                        <td>{{  $postform->submission_deadline }}</td>
+                        <td>{{ $postform->description  }}</td>
+                        <td>{{ $postform->submission_deadline }}</td>
                         {{-- <td><a href="{{ asset('storage/' . $templateform->file_data) }}" download>
                             {{ str_replace('upload/templates/', '', $templateform->file_data) }}
                         </a></td> --}}
@@ -76,7 +76,9 @@
                                     Show
                                 </a>
 
-                                <a class="btn btn-primary btn-sm" href="{{ route('template.show',$postform->id) }}">
+                                {{-- <a href="{{ route('submission-post.view-submissions', ['submissionPostId' => $submissionPost->id]) }}" class="btn btn-primary">View All Submissions</a> --}}
+                                <a class="btn btn-primary btn-sm" href="{{ route('formpost.showAll', ['submissionPostId' => $postform->id]) }}">
+                                {{-- <a class="btn btn-primary btn-sm" href="{{ route('formpost.showAll',$postform->id) }}"> --}}
                                     <i class="fas fa-folder">
                                     </i>
                                     View All Submission
@@ -123,10 +125,10 @@
         </table>
         </div>
           <!-- /.card-body -->
+            {{ $post->links() }}
         </div>
             </div></div></div></section></main>
         <!-- /.card -->
-    {{ $post->links() }}
 
 <style>
     .red-bg {
@@ -167,7 +169,7 @@
 <script src="../../plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
 <!-- DataTables  & Plugins -->
 
-<script src={{ asset('./plugins/datatables/jquery.dataTables.min.js') }}></script>
+<script src={{ asset('./plugins/datatables/jquery.dataTables.js') }}></script>
 <script src={{ asset('./plugins/datatables-bs4/js/dataTables.bootstrap4.min.js') }}></script>
 <script src={{ asset('./plugins/datatables-responsive/js/dataTables.responsive.min.js') }}></script>
 <script src={{ asset('./plugins/datatables-responsive/js/responsive.bootstrap4.min.js') }}></script>
@@ -196,8 +198,6 @@
 
         ]
     }).buttons().container().appendTo('#example1_wrapper .col-md-6:eq(0)');
-
-
 
     $('#example2').DataTable({
       "paging": true,

@@ -29,17 +29,19 @@
 
 /* file upload */
 .wrapper{
-	width: 900px;
+	width: 700px;
 	/* background: #fffecd; */
 	border-radius: 5px;
 	/* padding: 20px; */
 	/* box-shadow: 7px 7px 12px rgba(0,0,0,0.05); */
   }
+
 .wrapper .dotted{
 	height: 167px;
 	display: flex;
 	cursor: pointer;
-	margin: 30px 0;
+	/* margin: 30px 0; */
+	margin: 10px 0;
 	align-items: center;
 	justify-content: center;
 	flex-direction: column;
@@ -692,4 +694,13 @@ td.green-bg {
     font-size: 24px;
 	margin-right: 8px; /* Add some space between the icon and the text */
 
+}
+
+.pagination {
+  display: -ms-flexbox;
+  display: flex;
+  padding-right: 20px;
+  list-style: none;
+  border-radius: 0.25rem;
+  float: right;
 }

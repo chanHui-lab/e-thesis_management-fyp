@@ -21,6 +21,7 @@ class SubmissionPost extends Model
         'description',
         'files',
         'submission_deadline',
+        'visibility_status',
     ];
 
 
@@ -37,20 +38,20 @@ class SubmissionPost extends Model
         })
         ->select('submission_posts.*')
         // ->get();
-        ->paginate(5);
+        ->paginate(2);
     }
 
 
-    // get the current post from current id
-    public function getStudentSubmissionPost()
-    {
-        $user = Auth::user(); // Get the current logged-in user
-        $submissions = Submission::where('student_id', $user->id)
-            ->where('section', 'form') // Replace 'section' with your actual column name
-            ->get();
+    // // get the current post from current id -  not yet do.
+    // public function getStudentSubmissionPost()
+    // {
+    //     $user = Auth::user(); // Get the current logged-in user
+    //     $submissions = Submission::where('student_id', $user->id)
+    //         ->where('section', 'form') // Replace 'section' with your actual column name
+    //         ->get();
 
-        return view('submissions.index', ['submissions' => $submissions]);
-    }
+    //     return view('submissions.index', ['submissions' => $submissions]);
+    // }
 
     static public function getSingle($id){
         return self::find($id);
@@ -61,19 +62,16 @@ class SubmissionPost extends Model
         // return compact('getRecord', 'existingFiles');
     }
 
-//     static public function getSingle($id)
-// {
-//     $record = self::find($id);
+    public function formSubmissions()
+    {
+        return $this->hasMany(Form_submission::class, 'submission_post_id');
+    }
 
-//     // Fetch existing files associated with the record
-//     $existingFiles = json_decode($record->files, true);
-
-//     return [
-//         'record' => $record,
-//         'existingFiles' => $existingFiles,
-//     ];
-// }
-
-
+    //to display certain student post!
+    // public function supervisedStudents()
+    // {
+    //     // Assuming you have a 'supervisor_id' foreign key in the 'students' table
+    //     return Student::where('supervisor_id', $this->lecturer_id)->get();
+    // }
 
 }

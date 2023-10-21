@@ -133,6 +133,14 @@
           </a>
       </li>
 
+      <li class="nav-item">
+        <a href="{{ url('admin/advisor-assignment/create') }}" class="nav-link {{ request()->is('admin/advisor-assignment/create*') ? 'active' : '' }}">
+          <i class="nav-icon bx bx-id-card"></i>
+        <p>
+          Assign Student-Supervisor
+        </p>
+      </a>
+    </li>
       <br>
       <br>
       <li class="nav-item">
