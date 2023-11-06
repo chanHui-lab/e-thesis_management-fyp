@@ -729,57 +729,57 @@ public function removeFile(Request $request, $id)
     //     return view('lecturer.view', compact('forms'));
     // }
 
-    // version 3
-    public function getForsdmSubmissionForLecturer($submissionPostId)
-    {
-        // Retrieve the specific submission post
-        $submissionPost = SubmissionPost::find($submissionPostId);
-        $lecturer = auth()->user();
-        // dd($lecturer);
-        // $lecturer = Auth::user();
+    // // version 3
+    // public function getForsdmSubmissionForLecturer($submissionPostId)
+    // {
+    //     // Retrieve the specific submission post
+    //     $submissionPost = SubmissionPost::find($submissionPostId);
+    //     $lecturer = auth()->user();
+    //     // dd($lecturer);
+    //     // $lecturer = Auth::user();
 
-        // Check if the logged-in user is authorized to view submissions for this post
-        // if (auth()->user()->id === $submissionPost->lecturer_id) {
-            // Retrieve the lecturer's supervised students
-            // $supervisedStudents = auth()->user()->student();
+    //     // Check if the logged-in user is authorized to view submissions for this post
+    //     // if (auth()->user()->id === $submissionPost->lecturer_id) {
+    //         // Retrieve the lecturer's supervised students
+    //         // $supervisedStudents = auth()->user()->student();
 
-            // // dd($supervisedStudents);
-            // // Retrieve the forms submitted for this submission post by supervised students
-            // $forms = Form_submission::with('supervisor')->where('submission_post_id', $submissionPostId)
-            //     ->whereIn('student_id', $supervisedStudents->pluck('stu_id'))
-            //     ->get();
+    //         // // dd($supervisedStudents);
+    //         // // Retrieve the forms submitted for this submission post by supervised students
+    //         // $forms = Form_submission::with('supervisor')->where('submission_post_id', $submissionPostId)
+    //         //     ->whereIn('student_id', $supervisedStudents->pluck('stu_id'))
+    //         //     ->get();
 
 
-            // if ($submissionPost->lecturer->id === $lecturer->id) {
-            //     // $formSubmissions = Form_submission::where('submission_post_id', $submissionPost->id)
-            //     //     ->get();
+    //         // if ($submissionPost->lecturer->id === $lecturer->id) {
+    //         //     // $formSubmissions = Form_submission::where('submission_post_id', $submissionPost->id)
+    //         //     //     ->get();
 
-            //     $formSubmissions = $submissionPost->formSubmissions()
-            //         ->whereIn('stu_id', $lecturer->supervisedStudents->pluck('id'))
-            //         ->get();
-            // } else {
-            //     $formSubmissions = collect(); // Return an empty collection if the lecturer is not authorized
-            // }
+    //         //     $formSubmissions = $submissionPost->formSubmissions()
+    //         //         ->whereIn('stu_id', $lecturer->supervisedStudents->pluck('id'))
+    //         //         ->get();
+    //         // } else {
+    //         //     $formSubmissions = collect(); // Return an empty collection if the lecturer is not authorized
+    //         // }
 
-            // if ($submissionPost->lecturer->id === $lecturer->id) {
-            //     $formSubmissions = $lecturer->formSubmissions()->get();
-            // }
-            if ($submissionPost->lecturer_id ===  auth()->user()->id ) {
-                $formSubmissions = $lecturer ->formSubmissions
-                    ->where('submission_post_id', $submissionPost->id);
-            } else {
-                $formSubmissions = collect(); // Return an empty collection if the lecturer is not authorized
-            }
+    //         // if ($submissionPost->lecturer->id === $lecturer->id) {
+    //         //     $formSubmissions = $lecturer->formSubmissions()->get();
+    //         // }
+    //         if ($submissionPost->lecturer_id ===  auth()->user()->id ) {
+    //             $formSubmissions = $lecturer ->formSubmissions
+    //                 ->where('submission_post_id', $submissionPost->id);
+    //         } else {
+    //             $formSubmissions = collect(); // Return an empty collection if the lecturer is not authorized
+    //         }
 
-            return view('admin.submission_post.viewAll', compact('formSubmissions','submissionPost'));
-        // } else {
-        //     abort(403, 'Unauthorized');
-        // }
-    }
+    //         return view('admin.submission_post.viewAll', compact('formSubmissions','submissionPost'));
+    //     // } else {
+    //     //     abort(403, 'Unauthorized');
+    //     // }
+    // }
 
-    public function getFormSubmissionForLecturer($submissionPostId){
+    //display the forms for all students, the kosong one cant be displayed
+    public function TestgetFormSubmissionForLecturer($submissionPostId){
         $lecturer = auth()->user(); // Get the currently logged-in lecturer
-        // $lecturer->load('formSubmissions'); // Eager load the formSubmissions relationship
         $submissionPost = SubmissionPost::find($submissionPostId);
 
         if ($submissionPost->lecturer->id === $lecturer->id) {
@@ -791,23 +791,54 @@ public function removeFile(Request $request, $id)
         return view('admin.submission_post.viewAll', compact('formSubmissions','submissionPost'));
     }
 
-    public function showFormSubmissions($submissionPostId,$formSubmissionId)
-    {
+    public function getFormSubmissionForLecturer($submissionPostId){
+        $lecturer = auth()->user(); // Get the currently logged-in lecturer
         $submissionPost = SubmissionPost::find($submissionPostId);
-        // // Retrieve the form submissions related to the selected submission post
-        // $formSubmissions = $submissionPost->formSubmissions;
-        DB::enableQueryLog();
 
-        $formSubmission = Form_submission::find($formSubmissionId);
+        if ($submissionPost->lecturer->id === $lecturer->id) {
+            // Fetch form submissions for the given submission post
+            // $formSubmissions = Form_submission::where('submission_post_id', $submissionPost->id)
+            // ->where('supervisor_id', $lecturer->id)
+            // ->get();
+            $formSubmissions = $lecturer->formSubmissions()
+            ->where('submission_post_id', $submissionPost->id)
+            ->get();
 
-        \Log::info(DB::getQueryLog());
-
-        // dd($formSubmission);
-        // return view('admin.submission_post.viewOne', compact('formSubmission'));
-
-        return view('admin.submission_post.viewOne', compact('formSubmission', 'submissionPost'));
+            // Fetch students supervised by the lecturer along with their submission statuses
+            $students = DB::table('students')
+            ->select('students.stu_id', 'users.name AS student_name', 'students.matric_number')
+            ->leftJoin('users', 'students.stu_id', '=', 'users.id')
+            ->leftJoin('form_submissions', function ($join) use ($lecturer, $submissionPost) {
+                    $join->on('students.stu_id', '=', 'form_submissions.student_id')
+                        ->where('form_submissions.supervisor_id', $lecturer->id)
+                        ->where('form_submissions.submission_post_id', $submissionPost->id);
+                })
+                ->get();
+        // dd($formSubmissions);
+        return view('admin.submission_post.viewAll', compact('formSubmissions','students','submissionPost'));
+        }
     }
 
+    // public function testshowFormSubmissions($formSubmissionId,$studentId)
+
+    // {
+    //     // $submissionPost = SubmissionPost::findOrFail($submissionPostId);
+    //     $formSubmission = Form_submission::findOrFail($formSubmissionId);
+    //     $student = Student::findOrFail($studentId);
+
+    //     return view('admin.submission_post.viewOne', compact('formSubmission', 'submissionPost','student'));
+    // }
+
+    public function showFormSubmissions($formSubmissionId)
+
+    {
+        // $submissionPost = SubmissionPost::findOrFail($submissionPostId);
+        $formSubmission = Form_submission::findOrFail($formSubmissionId);
+        // $student = Student::findOrFail($studentId);
+        $submissionPostId = $formSubmission->submissionPost->id;
+
+        return view('admin.submission_post.viewOne', compact( 'formSubmission','submissionPostId'));
+    }
     }
 
 

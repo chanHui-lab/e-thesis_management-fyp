@@ -17,7 +17,10 @@
     <link rel="stylesheet" href="{{ url('./plugins/datatables-responsive/css/responsive.bootstrap4.min.css') }}">
     <link rel="stylesheet" href="{{ url('./plugins/datatables-buttons/css/buttons.bootstrap4.min.css') }}">
 
-	<link href='https://unpkg.com/boxicons@2.0.9/css/boxicons.min.css' rel='stylesheet'>
+    <!-- fullCalendar -->
+    <link rel="stylesheet" href="{{ url('./plugins/fullcalendar/main.css') }}">
+
+    <link href='https://unpkg.com/boxicons@2.0.9/css/boxicons.min.css' rel='stylesheet'>
 
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Poppins:400,500,700&display=swap">
     <link rel="stylesheet" href="{{ url('/plugins/fontawesome-free/css/all.min.css') }}">
@@ -27,6 +30,8 @@
 
     {{-- css style --}}
     <link rel="stylesheet" href="{{ url('./admindash/adminform.css') }}">
+    <link rel="stylesheet" href="{{ url('./admindash/admincalendar.css') }}">
+
     <script src="{{ asset('./admindash/adminform.js') }}"></script>
 
     {{-- <script src="https://unpkg.com/dropzone@6.0.0-beta.1/dist/dropzone-min.js"></script> --}}
@@ -53,4 +58,16 @@
 <style>
 
     </style>
+
+<!-- jQuery -->
+{{-- <script src={{ asset('./plugins/jquery/jquery.min.js') }}></script> --}}
+
+{{-- <script src={{ asset('./plugins/bootstrap/js/bootstrap.bundle.min.js') }}></script> --}}
+
+<!-- Bootstrap 4 -->
+{{-- <script src="../../plugins/bootstrap/js/bootstrap.bundle.min.js"></script> --}}
+
+<!-- jQuery UI -->
+{{-- <script src={{ asset('./plugins/jquery-ui/jquery-ui.min.js') }}></script> --}}
+
 </html>

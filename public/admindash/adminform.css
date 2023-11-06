@@ -503,7 +503,17 @@
 	  display: block;
 	}
   }
-
+  .col-1, .col-2, .col-3, .col-4, .col-5, .col-6, .col-7, .col-8, .col-9, .col-10, .col-11, .col-12, .col,
+  .col-auto, .col-sm-1, .col-sm-2, .col-sm-3, .col-sm-4, .col-sm-5, .col-sm-6, .col-sm-7, .col-sm-8, .col-sm-9, .col-sm-10, .col-sm-11, .col-sm-12, .col-sm,
+  .col-sm-auto, .col-md-1, .col-md-2, .col-md-3, .col-md-4, .col-md-5, .col-md-6, .col-md-7, .col-md-8, .col-md-9, .col-md-10, .col-md-11, .col-md-12, .col-md,
+  .col-md-auto, .col-lg-1, .col-lg-2, .col-lg-3, .col-lg-4, .col-lg-5, .col-lg-6, .col-lg-7, .col-lg-8, .col-lg-9, .col-lg-10, .col-lg-11, .col-lg-12, .col-lg,
+  .col-lg-auto, .col-xl-1, .col-xl-2, .col-xl-3, .col-xl-4, .col-xl-5, .col-xl-6, .col-xl-7, .col-xl-8, .col-xl-9, .col-xl-10, .col-xl-11, .col-xl-12, .col-xl,
+  .col-xl-auto {
+	position: relative;
+	width: 100%;
+	padding-right: 5px;
+	padding-left: 0px;
+  }
   progress {
 	vertical-align: baseline;
   }
@@ -703,4 +713,80 @@ td.green-bg {
   list-style: none;
   border-radius: 0.25rem;
   float: right;
+}
+/* view one form */
+.custom-gray-box {
+    background-color: #f0f0f0; /* Adjust the color code as needed */
+    padding: 10px;
+    border: 1px solid #ccc; /* Add a border for a clearer distinction */
+}
+
+.linee {
+    border-bottom: 1px solid #333; /* Add a 1px solid line underneath the title */
+    display: block; /* Ensure that the title is a block-level element to span the width */
+    padding-bottom: 5px; /* Adjust the spacing as needed */
+}
+
+.generaltable{
+	margin-top: 40px;
+}
+.submission-tab {
+	margin-top: 20px;
+    display: flex;
+    border: 1px solid #ccc;
+}
+
+.tab-button {
+    background-color: #0dac6a;
+    color: #fff;
+    padding: 10px;
+    cursor: pointer;
+}
+
+.tab-content {
+    padding: 10px;
+    flex: 1;
+}
+
+.back-button {
+    background-color: #0dac6a;
+    color: #fff;
+    border: none;
+    cursor: pointer;
+}
+
+.student-info {
+    font-weight: bold;
+    margin: 0;
+    padding: 0;
+}
+
+.submission-status {
+    /* display: inline-block;
+    padding: 5px 10px;
+    border-radius: 5px;
+    color: #fff;
+    font-weight: bold;
+    text-align: center; */
+}
+
+.submitted {
+    background-color: lightgreen;
+}
+
+.pending {
+    background-color: red;
+}
+
+/* for the viewOne timereamining part */
+.text-red {
+    color: red;
+}
+
+.bg-light-red {
+    background-color: rgb(255, 154, 154);
+}
+
+.bg-light-green {
+    background-color: lightgreen;
 }

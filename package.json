@@ -13,6 +13,9 @@
         "vite": "^4.0.0"
     },
     "dependencies": {
+        "fullcalendar": "^2.2.5",
+        "jquery": "^3.6.0",
+        "moment": "^2.29.4",
         "vue": "^3.2.36",
         "vue-loader": "^17.2.2",
         "vue-router": "^4.0.13"

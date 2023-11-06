@@ -30,9 +30,15 @@ Route::get('/testing', function(){
 
 Route::get('test', function(){
     // return view ('admin.adminpage.create');
-    return view ('admin.submission_post.testfiles');
+    return view ('admin.presentationSchedule');
 
 });
+
+Route::get('/calendar', [App\Http\Controllers\Admin\PresentationScheduleController::class, 'getEvents']);
+Route::get('/calendar/{eventId}', [App\Http\Controllers\Admin\PresentationScheduleController::class, 'getEventDetails']);
+Route::post('/calendar/update/{eventId}', [App\Http\Controllers\Admin\PresentationScheduleController::class, 'updateEvent']);
+// Route::put('/calendar/update/{eventId}', [App\Http\Controllers\Admin\PresentationScheduleController::class, 'updateEvent']);
+Route::get('/fetch-updated-events', [App\Http\Controllers\Admin\PresentationScheduleController::class, 'fetchUpdatedEventSource']);
 
 // must add a auth there!!
 Route::group(['middleware' => 'auth','isAdmin', 'prefix' => 'admin'], function(){
@@ -63,7 +69,8 @@ Route::group(['middleware' => 'auth','isAdmin', 'prefix' => 'admin'], function()
 
     //view form submission post for each student
     Route::get('formsubmissionpage/viewAll/{submissionPostId}', [App\Http\Controllers\Admin\FormController::class, 'getFormSubmissionForLecturer'])->name('formpost.showAll');
-    Route::get('formsubmissionpage/viewOne/{submissionPostId}/{formSubmissionId}', [App\Http\Controllers\Admin\FormController::class, 'showFormSubmissions'])->name('formpost.show');
+    // Route::get('formsubmissionpage/viewOne/{submissionPostId}/{formSubmissionId}/{studentId}', [App\Http\Controllers\Admin\FormController::class, 'showFormSubmissions'])->name('formpost.show');
+    Route::get('formsubmissionpage/viewOne/{formSubmissionId}', [App\Http\Controllers\Admin\FormController::class, 'showFormSubmissions'])->name('formpost.show');
 
     Route::get('advisor-assignment/create', [App\Http\Controllers\Admin\SupervisorStudentAssignmentController::class, 'create'])->name('advisor-assignment.create');
     Route::post('advisor-assignment/store', [App\Http\Controllers\Admin\SupervisorStudentAssignmentController::class, 'store'])->name('advisor-assignment.store');

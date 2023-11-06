@@ -3,9 +3,11 @@
 @section('master_content')
 <main>
     <div class="row">
-        <div class="col-lg-12">
+        <div style = "padding-top: 20px;" class="col-lg-12">
+            <a class="btn btn-primary back-button" href="{{ route('formpost.index') }}">Back</a>
+
             <div class=" titleforform">
-                <h2 style = "padding-top: 20px;">{{ $submissionPost->title }}</h2>
+                <h2 style = "padding-top: 10px;"  >{{ $submissionPost->title }}</h2>
                 <h6>(Total: {{ $formSubmissions -> count() }})</h6>
             </div>
         </div>
@@ -36,7 +38,6 @@
                         <th>Student name</th>
                         <th>Matric Number </th>
                         <th>Form Title </th>
-                        {{-- <th>Form Date </th> --}}
                         <th>Status</th> <!-- Add the status column -->
                         <th>Deadline</th>
                         <th width="300px">Action</th>
@@ -47,15 +48,30 @@
                             $counter = 1; // Initialize a counter variable
                         @endphp
 
-                    @foreach ($formSubmissions as $submission)
+                    @foreach ($students as $submission)
                     <tr>
-                        <td>{{ $counter++ }}</td> <!-- Increment and display the counter -->
+                        {{-- <td>{{ $counter++ }}</td> <!-- Increment and display the counter -->
                         <td>{{ $submission->student->stu_id }}</td>
                         <td>{{ $submission->student->user->name }}</td>
                         <td>{{ $submission->student->matric_number }}</td>
-                        <td>{{ $submission->form_title  }}</td>
-                        {{-- <td>{{ $submission->form_title  }}</td> --}}
+                        <td>{{ $submission->form_title  }}</td> --}}
+
+                        <td>{{ $counter++ }}</td>
+                        <td>{{ $submission->stu_id }}</td>
+                        <td>{{ $submission->student_name }}</td>
+                        <td>{{ $submission->matric_number }}</td>
+                        @php
+                            $formSubmission = $formSubmissions->where('student_id', $submission->stu_id)->first();
+                        @endphp
+                        <td>{{ $formSubmission ? $formSubmission->form_title : 'N/A' }}</td>
                         <td>
+                            @if ($formSubmission)
+                                Submitted
+                            @else
+                                Pending
+                            @endif
+                        </td>
+                        {{-- <td>
                             @php
                                 $formFilesArray = json_decode($submission->form_files, true);
                             @endphp
@@ -65,8 +81,7 @@
                             @else
                                 Pending
                             @endif
-
-                        </td>
+                        </td> --}}
 
                         <td>
                             @if ($submissionPost->submission_deadline <= now())
@@ -81,14 +96,20 @@
                         </td> --}}
 
                         <td>
-                            {{-- <a class="btn btn-primary btn-sm" href="{{ route('formpost.show', ['submissionPostId' => $submissionPost->id, 'formSubmissionId' => $submission->id]) }}">Show Details</a> --}}
-                            {{-- <a class="btn btn-primary btn-sm" href="{{ route('formpost.show',['submissionPostId' => $submissionPost->id,['formSubmission' => $submission->id])) }}"> --}}
-                            <a class="btn btn-primary btn-sm" href="{{ route('formpost.show', ['submissionPostId' => $submissionPost->id, 'formSubmissionId' => $submission->id]) }}">
-                                <i class="fas fa-folder">
-                                </i>
-                                Show
+
+                            {{-- it works but doiesnt ahve show button for the pending submission one --}}
+                            {{-- @if ($formSubmission)
+                                <a href="{{ route('formpost.show', ['submissionPostId' => $submissionPost->id, 'formSubmissionId' => $formSubmission->id]) }}" class="btn btn-primary">
+                            <i class="fas fa-folder">
+                                </i> Show
+                                </a>
+                            @endif --}}
+
+                            <a href="{{ $formSubmission ? route('formpost.show', ['submissionPostId' => $submissionPost->id, 'formSubmissionId' => $formSubmission->id]) : '#' }}" class="btn btn-primary {{ !$formSubmission ? 'btn-disabled' : '' }}" @if (!$formSubmission) disabled @endif>
+                                <i class="fas fa-folder"></i> Show
                             </a>
-                        </td>
+
+</td>
                 </tr>
                 @endforeach
             </tbody>
@@ -109,6 +130,11 @@
     /* Green background for deadlines with remaining time */
     td.green-bg {
         background-color: lightgreen !important;
+    }
+    /* for the SHOW button in viewAll balde */
+    .btn-disabled {
+        background-color: grey; /* You can customize the background color */
+        cursor: not-allowed; /* Change the cursor style to indicate it's not clickable */
     }
 </style>
 
