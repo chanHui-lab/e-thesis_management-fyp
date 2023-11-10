@@ -35,10 +35,13 @@ Route::get('test', function(){
 });
 
 Route::get('/calendar', [App\Http\Controllers\Admin\PresentationScheduleController::class, 'getEvents']);
+Route::get('/calendar/events/{date}', [App\Http\Controllers\Admin\PresentationScheduleController::class, 'getDateEvents']);
 Route::get('/calendar/{eventId}', [App\Http\Controllers\Admin\PresentationScheduleController::class, 'getEventDetails']);
 Route::post('/calendar/update/{eventId}', [App\Http\Controllers\Admin\PresentationScheduleController::class, 'updateEvent']);
 // Route::put('/calendar/update/{eventId}', [App\Http\Controllers\Admin\PresentationScheduleController::class, 'updateEvent']);
-Route::get('/fetch-updated-events', [App\Http\Controllers\Admin\PresentationScheduleController::class, 'fetchUpdatedEventSource']);
+// Route::get('/fetch-updated-events', [App\Http\Controllers\Admin\PresentationScheduleController::class, 'fetchUpdatedEventSource']);
+Route::post('/calendar/store', [App\Http\Controllers\Admin\PresentationScheduleController::class, 'store'])->name('calendar.store');
+// Route::get('/calendar/events-by-date', [App\Http\Controllers\Admin\PresentationScheduleController::class, 'getEventsByDate']);
 
 // must add a auth there!!
 Route::group(['middleware' => 'auth','isAdmin', 'prefix' => 'admin'], function(){

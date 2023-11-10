@@ -4,6 +4,7 @@
 {{-- <section class="content"> --}}
   <main>
 
+    {{-- only from can be edited by lecturer,admin. (student only view)--}}
   <h1 style="margin-top: 20px; margin-bottom:20px;">PutraMas Calendar Schedule</h1>
     {{-- <div class="container-fluid"> --}}
       @if ($message = Session::get('success'))
@@ -14,13 +15,42 @@
       <div class="row">
         <div class="col-md-3" style="padding:0px">
           <div class="sticky-top mb-3">
+
             <div class="card">
               <div class="card-header">
-                <h4 class="card-title">Draggable Events</h4>
+                <h5 class="card-title">Daily Event List</h5>
+              </div>
+              <div class="card-body">
+                <!-- the events -->
+                {{-- this div very important because without itm, calender wouldnt appear --}}
+                <div id="external-events">
+
+                <ul id="daily-event-list">
+                  <!-- Daily event list will be displayed here -->
+                  {{-- @foreach($eventsByDay as $day => $events)
+                            <li>
+                                <strong>{{ $day }}</strong>
+                                <ul>
+                                    @foreach($events as $event)
+                                        <li>{{ $event->title }}</li>
+                                    @endforeach
+                                </ul>
+                            </li>
+                        @endforeach --}}
+                </ul>
+                </div>
+              </div> <!-- /.card-body -->
+            </div>
+
+            {{-- draggable --}}
+            {{-- <div class="card">
+              <div class="card-header">
+                <h5 class="card-title">Draggable Events</h5>
               </div>
               <div class="card-body">
                 <!-- the events -->
                 <div id="external-events">
+                  can be thesis seminar, workshop, deadline
                   <div class="external-event bg-success">Lunch</div>
                   <div class="external-event bg-warning">Go home</div>
                   <div class="external-event bg-info">Do homework</div>
@@ -33,34 +63,63 @@
                     </label>
                   </div>
                 </div>
-              </div>
-              <!-- /.card-body -->
-            </div>
+              </div> <!-- /.card-body -->
+            </div> --}}
+
             <!-- /.card -->
             <div class="card">
               <div class="card-header">
-                <h3 class="card-title">Create Event</h3>
+                <h5 class="card-title">Create Event</h5>
               </div>
               <div class="card-body">
-                <div class="btn-group" style="width: 100%; margin-bottom: 10px;">
-                  <ul class="fc-color-picker" id="color-chooser">
-                    <li><a class="text-primary" href="#"><i class="fas fa-square"></i></a></li>
-                    <li><a class="text-warning" href="#"><i class="fas fa-square"></i></a></li>
-                    <li><a class="text-success" href="#"><i class="fas fa-square"></i></a></li>
-                    <li><a class="text-danger" href="#"><i class="fas fa-square"></i></a></li>
-                    <li><a class="text-muted" href="#"><i class="fas fa-square"></i></a></li>
-                  </ul>
-                </div>
+
                 <!-- /btn-group -->
                 <div class="input-group">
-                  <input id="new-event" type="text" class="form-control" placeholder="Event Title">
+                  <div class="col-md-12">
+                    {{-- <div class="col-md-12 col-lg-6"> --}}
 
+                  {{-- <input id="new-event" type="text" class="form-control" placeholder="Event Title"> --}}
+                  <form id="createEventForm">
+
+                    @csrf
+                    <div class="btn-group" style="width: 100%; margin-bottom: 2px;">
+                      <ul class="fc-color-picker" id="color-chooser">
+                        <li><a class="text-primary" href="#"><i class="fas fa-square"></i></a></li>
+                        <li><a class="text-warning" href="#"><i class="fas fa-square"></i></a></li>
+                        <li><a class="text-success" href="#"><i class="fas fa-square"></i></a></li>
+                        <li><a class="text-danger" href="#"><i class="fas fa-square"></i></a></li>
+                        <li><a class="text-muted" href="#"><i class="fas fa-square"></i></a></li>
+                      </ul>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="title">Title</label>
+                        <input type="text" class="form-control" id="title" name="title" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="description">Description</label>
+                        <textarea class="form-control" id="description" name="description"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="start">Start Date & Time</label>
+                        <input type="datetime-local" class="form-control" id="start" name="start" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="end">End Date & Time</label>
+                        <input type="datetime-local" class="form-control" id="end" name="end">
+                    </div>
+                    <div class="form-group">
+                        <label for="location">Location</label>
+                        <input type="text" class="form-control" id="location" name="location">
+                    </div>
                   <div class="input-group-append">
-                    <button id="add-new-event" type="button" class="btn btn-primary">Add</button>
+                    <button id="add-event-button" type="button" class="btn btn-primary">Create</button>
                   </div>
+                </form>
                   <!-- /btn-group -->
                 </div>
                 <!-- /input-group -->
+              </div>
               </div>
             </div>
           </div>
@@ -70,8 +129,7 @@
           <div class="card card-primary">
             <div class="card-body p-0">
               <!-- THE CALENDAR -->
-              <div id="calendar" style="padding: 20px;"></div>
-
+              <div id="calendar" style="padding: 20px;overflow: auto;"></div>
             </div>
             <!-- /.card-body -->
 
@@ -191,7 +249,7 @@
   {{-- <script src={{ asset('./dist/js/adminlte.min.js') }}></script> --}}
 
   <!-- fullCalendar 2.2.5 -->
-  <script src="../plugins/moment/moment.min.js"></script>
+  <script src={{ asset('./plugins/moment/moment.min.js') }}></script>
   <script src={{ asset('./plugins/fullcalendar/main.js') }}></script>
   {{-- <script src="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.10.0/fullcalendar.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script> --}}
@@ -209,29 +267,29 @@
 
       // /* initialize the external events
       //  -----------------------------------------------------------------*/
-      function ini_events(ele) {
-        ele.each(function () {
+      // function ini_events(ele) {
+      //   ele.each(function () {
 
-          // create an Event Object (https://fullcalendar.io/docs/event-object)
-          // it doesn't need to have a start or end
-          var eventObject = {
-            title: $.trim($(this).text()) // use the element's text as the event title
-          }
+      //     // create an Event Object (https://fullcalendar.io/docs/event-object)
+      //     // it doesn't need to have a start or end
+      //     var eventObject = {
+      //       title: $.trim($(this).text()) // use the element's text as the event title
+      //     }
 
-          // store the Event Object in the DOM element so we can get to it later
-          $(this).data('eventObject', eventObject)
+      //     // store the Event Object in the DOM element so we can get to it later
+      //     $(this).data('eventObject', eventObject)
 
-          // make the event draggable using jQuery UI
-          $(this).draggable({
-            zIndex        : 1070,
-            revert        : true, // will cause the event to go back to its
-            revertDuration: 0  //  original position after the drag
-          })
+      //     // make the event draggable using jQuery UI
+      //     $(this).draggable({
+      //       zIndex        : 1070,
+      //       revert        : true, // will cause the event to go back to its
+      //       revertDuration: 0  //  original position after the drag
+      //     })
 
-        })
-      }
+      //   })
+      // }
 
-      ini_events($('#external-events div.external-event'))
+      // ini_events($('#external-events div.external-event'))
 
       // /* initialize the calendar
       //  -----------------------------------------------------------------*/
@@ -242,7 +300,7 @@
           y    = date.getFullYear()
 
       var Calendar = FullCalendar.Calendar;
-      // var Draggable = FullCalendar.Draggable;
+      var Draggable = FullCalendar.Draggable;
 
       var containerEl = document.getElementById('external-events');
       var checkbox = document.getElementById('drop-remove');
@@ -251,17 +309,17 @@
       // // initialize the external events
       // // -----------------------------------------------------------------
 
-      // new Draggable(containerEl, {
-      //   itemSelector: '.external-event',
-      //   eventData: function(eventEl) {
-      //     return {
-      //       title: eventEl.innerText,
-      //       backgroundColor: window.getComputedStyle( eventEl ,null).getPropertyValue('background-color'),
-      //       borderColor: window.getComputedStyle( eventEl ,null).getPropertyValue('background-color'),
-      //       textColor: window.getComputedStyle( eventEl ,null).getPropertyValue('color'),
-      //     };
-      //   }
-      // })
+      new Draggable(containerEl, {
+        itemSelector: '.external-event',
+        eventData: function(eventEl) {
+          return {
+            title: eventEl.innerText,
+            backgroundColor: window.getComputedStyle( eventEl ,null).getPropertyValue('background-color'),
+            borderColor: window.getComputedStyle( eventEl ,null).getPropertyValue('background-color'),
+            textColor: window.getComputedStyle( eventEl ,null).getPropertyValue('color'),
+          };
+        }
+      })
 
       // refer the calendar part
       // $('#calendar').fullCalendar({
@@ -335,9 +393,9 @@
         @endforeach
 
       ],
-      data: { // Cache-busting query parameter
-            timestamp: new Date().getTime()
-        },
+      // data: { // Cache-busting query parameter
+      //       timestamp: new Date().getTime()
+      //   },
       editable  : true,
       droppable : true, // this allows things to be dropped onto the calendar !!!
       eventClick: function (info) {
@@ -408,6 +466,18 @@
       selectedEventId = info.event.id; // Get the ID of the selected event
       // Now you can use eventId to open the edit modal or perform other actions
       console.log("selectedEventId",selectedEventId);
+      // Get the current date being displayed in the calendar
+      var currentDate = calendar.getDate();
+
+      // Trigger a click on the current date to fetch and display events for that date
+      calendar.gotoDate(currentDate);
+
+      // Optionally, you can trigger a 'dayClick' event to handle the event list update
+      calendar.trigger('dayClick', {
+          date: currentDate,
+          jsEvent: null,
+          view: 'day',
+      });
     });
 
     $('#closeEventModal').click(function() {
@@ -415,8 +485,7 @@
     });
 
     $('#saveEventChanges').on('click', function () {
-    // Serialize the form data
-    // var formData = $('#editEventForm').serialize();
+        // var formData = $('#editEventForm').serialize();
         const editedEvent = {
           title: $('#editTitle').val(),
           description: $('#editDescription').val(),
@@ -436,8 +505,10 @@
           eventToUpdate.remove(); // Remove the event
           calendar.addEvent(eventToUpdate); // Add the updated event back
 
+
           $('#editEventModal').modal('hide');
       }
+      // updateEventList(formattedDate); // Make sure to pass the correct date
 
       $.ajax({
           url: '/calendar/update/' + selectedEventId, // Use the correct route URL
@@ -462,46 +533,6 @@
           }
       })
     });
-
-    function fetchUpdatedEventSource() {
-    $.ajax({
-        url: '/fetch-updated-events', // Update with the correct route URL
-        type: 'GET',
-        success: function (data) {
-            // Assuming the response is a JSON representation of the updated events
-            const updatedEvents = data;
-
-            // Do any necessary data processing
-
-            // Return the updated event source
-            return updatedEvents;
-        },
-        error: function (xhr, status, error) {
-            console.log(xhr.responseText);
-        }
-    });
-    }
-
-    // Define a function to fetch and update events
-function refreshEvents() {
-    // Fetch new event data from your data source
-    // You may use AJAX or any method to retrieve the updated events
-    $.ajax({
-        url: '/events', // Adjust the URL to your data source
-        method: 'GET',
-        success: function(events) {
-            // Update FullCalendar with the new events
-            $('#calendar').fullCalendar('removeEventSources');
-            $('#calendar').fullCalendar('addEventSource', events);
-        },
-        error: function() {
-            // Handle errors if the data retrieval fails
-        }
-    });
-}
-
-// Set up automatic refresh every 5 minutes (adjust the interval as needed)
-setInterval(refreshEvents, 300000); // 300,000 milliseconds (5 minutes)
 
     $('#editEventButton').click(function() {
         // You can use window.location.href to navigate to the edit page/modal
@@ -541,47 +572,227 @@ setInterval(refreshEvents, 300000); // 300,000 milliseconds (5 minutes)
   }
 
 
+  $('#add-event-button').click(function () {
+        var title = $('#title').val();
+        var description = $('#description').val();
+        var start = $('#start').val();
+        var end = $('#end').val();
+        var location = $('#location').val();
+        // var color = selectedColorClass;
 
-      // JavaScript function to handle the form submission in the edit modal
-    // $('#editEventModal').on('submit', '#editEventForm', function(e) {
-    //     e.preventDefault();
+        var eventData = {
+            title: title,
+            description: description,
+            start: start,
+            end: end,
+            location: location,
+            // color: color,
+        };
 
-    //     // Gather the edited event details from the form inputs
-    //     const editedEvent = {
-    //         title: $('#editTitle').val(),
-    //         description: $('#editDescription').val(),
-    //         start: $('#editStartDate').val(),
-    //         end: $('#editEndDate').val()
-    //         location: $('#editLocation').val()
-    //     };
+        $.ajax({
+            url: '{{ route('calendar.store') }}',
+            type: 'POST',
+            data: eventData,
+            success: function (data) {
+                // Add the new event to the calendar
+                calendar.addEvent({
+                    id: data.id,
+                    title: title,
+                    start: start,
+                    end: end,
+                    location: location,
+                    // color: color,
+                });
 
-    //     // Implement logic to save the edited event details (e.g., using AJAX)
-    //     // After saving, you can close the edit modal if needed
-    //     $('#editEventModal').modal('hide');
+                // Clear the form
+                $('#createEventForm')[0].reset();
+                // $('#color-chooser a').removeClass('active');
+                // $('#color-chooser a.text-primary').addClass('active');
 
-    //     // You can then update the event in the FullCalendar or refresh the events list
-    //     // based on the changes made
+                updateDailyEventList();
+                updateEventList(formattedDate); // Make sure to pass the correct date
+
+            },
+            error: function (xhr, status, error) {
+                console.error(xhr.responseText);
+            }
+        });
+    });
+
+    // var dailyEventList = document.getElementById('daily-event-list');
+
+    // function updateDailyEventList() {
+    //     // Clear the daily event list
+    //     dailyEventList.innerHTML = '';
+
+    //     // Rebuild the daily event list
+    //     calendar.getEvents().forEach(function(event) {
+    //         var startDay = event.start.toISOString().substring(0, 10);
+    //         var listItem = document.createElement('li');
+    //         listItem.innerHTML = `<strong>${startDay}</strong>: ${event.title}`;
+    //         dailyEventList.appendChild(listItem);
+    //     });
+    // }
+
+    calendar.on('dateClick', function (info) {
+      // var clickedDate = info.event.date;
+      // calendar.refetchEvents();
+      const clickedDate = info.date; // Get the date you clicked on
+      // const formatdate = new Date(clickedDate).toLocaleDateString(); // Format the date
+
+      // const date = new Date(clickedDate);
+      // const formattedDate = date.toISOString().split('T')[0]; // Format the date as "YYYY-MM-DD"
+
+      // const year = clickedDate.getFullYear();
+      // const month = (clickedDate.getMonth() + 1).toString().padStart(2, '0');
+      // const day = clickedDate.getDate().toString().padStart(2, '0');
+      // const formattedDate = `${day}/${month}/${year}`;
+
+      const formattedDate = moment(clickedDate).format("YYYY-MM-DD HH:mm:ss");
+      // var dateParts = formattedDate.split(" ");
+      // var formatdate = dateParts[dateParts.length - 2]; // This extracts "2023-11-16"
+
+      // const encodedDate = encodeURIComponent(formattedDate);
+
+      // const formattedDate = '2023-10-31'; // Format the date as "YYYY-MM-DD"
+      // var formattedDate = date.format('YYYY-MM-DD');
+      // var formattedDate = new Intl.DateTimeFormat('en-US', { year: 'numeric', month: '2-digit', day: '2-digit' }).format(date);
+
+      console.log("Clicked date: " + formattedDate);
+      $.ajax({
+          // url: '/calendar/events/${formattedDate}',
+          url: '/calendar/events/' + formattedDate,
+
+          method: 'GET',
+          success: function (events) {
+              console.log(events);
+              var eventList = $('#external-events');
+              eventList.empty();
+
+              var formattedClickedDate = moment(formattedDate).format('D MMMM YYYY');
+              // Create a list item for the clicked date
+              // eventList.append('<li style="font-size: larger;"><strong>' + formattedClickedDate + '</strong></li>');
+
+              // // Iterate through the events and add them to the list
+              // events.forEach(function (event) {
+              //     eventList.append('<li class="event-title"><strong>Title:</strong> ' + event.title + '</li>');
+              //     eventList.append('<li class="event-detail"><strong>Description:</strong> ' + event.description + '</li>');
+              //     eventList.append('<li class="event-detail"><strong>Time:</strong> ' + event.start + '</li>');
+              //     eventList.append('<li class="event-detail"><strong>Location:</strong> ' + event.location + '</li>');
+              // });
+              eventList.append('<li class="event-title"><strong>' + formattedClickedDate + '</strong></li>');
+
+              events.forEach(function (event) {
+                  var eventItem = $('<li class="event-item"></li>');
+                  eventItem.append('<div class="event-title"><strong>Title:</strong> ' + event.title + '</div>');
+                  eventItem.append('<div class="event-detail"><strong>Description:</strong> ' + event.description + '</div>');
+                  eventItem.append('<div class="event-detail"><strong>Time:</strong> ' + event.start + '</div>');
+                  eventItem.append('<div class="event-detail"><strong>Location:</strong> ' + event.location + '</div>');
+
+                  // Add the event item to the event list
+                  eventList.append(eventItem);
+              });
+          },
+          error: function (xhr, status, error) {
+              console.log(error);
+          }
+      });
+    });
+
+    // calendar.on('dateClick', function (info) {
+    //   const clickedDate = info.date;
+    //   updateEventList(clickedDate);
     // });
 
-    // $('#editEventButton').click(function() {
-    //     // Get the currently selected event
-    //     var selectedEvent = calendar.getEventById( eventDetails.id); // Replace 'eventId' with the actual event ID
+    // Define the updateEventList function
+function updateEventList(clickedDate) {
+    const formattedDate = moment(clickedDate).format('YYYY-MM-DD');
+    $.ajax({
+          url: '/calendar/events/' + formattedDate,
+          method: 'GET',
+          success: function (events) {
+              console.log(events);
+              var eventList = $('#external-events');
+              eventList.empty();
 
-    //     if (selectedEvent) {
-    //         // Call the getEventDetails function with the selected event
-    //         var eventDetails = getEventDetails(selectedEvent);
+              var formattedClickedDate = moment(clickedDate).format('D MMMM YYYY');
+              eventList.append('<li class="event-title"><strong>' + formattedClickedDate + '</strong></li>');
 
-    //         // Populate the edit modal with event data
-    //         $('#editEventModalLabel').text('Edit Event: ' + eventDetails.title);
-    //         $('#editEventModal #eventTitle').val(eventDetails.title);
-    //         $('#editEventModal #eventStartDate').val(eventDetails.start);
-    //         // Populate other fields as needed
+              events.forEach(function (event) {
+                  var eventItem = $('<li class="event-item"></li>');
+                  eventItem.append('<div class="event-title"><strong>Title:</strong> ' + event.title + '</div>');
+                  eventItem.append('<div class="event-detail"><strong>Description:</strong> ' + event.description + '</div>');
+                  eventItem.append('<div class="event-detail"><strong>Time:</strong> ' + event.start + '</div>');
+                  eventItem.append('<div class="event-detail"><strong>Location:</strong> ' + event.location + '</div>');
 
-    //         // Show the edit modal
-    //         $('#editEventModal').modal('show');
+                  eventList.append(eventItem);
+              });
+          },
+          error: function (xhr, status, error) {
+              console.log(error);
+          }
+      });
+  }
+
+    // function fetchUpdatedEventSource() {
+    // $.ajax({
+    //     url: '/fetch-updated-events', // Update with the correct route URL
+    //     type: 'GET',
+    //     success: function (data) {
+    //         // Assuming the response is a JSON representation of the updated events
+    //         const updatedEvents = data;
+
+    //         // Do any necessary data processing
+
+    //         // Return the updated event source
+    //         return updatedEvents;
+    //     },
+    //     error: function (xhr, status, error) {
+    //         console.log(xhr.responseText);
     //     }
     // });
-      // calendar.refetchEvents();
+    // }
+
+    // from here until every interval refresh--
+    // Define a function to fetch and update events
+    // function refreshEvents() {
+    //     // Fetch new event data from your data source
+    //     // You may use AJAX or any method to retrieve the updated events
+    //     $.ajax({
+    //         url: '/events', // Adjust the URL to your data source
+    //         method: 'GET',
+    //         success: function(events) {
+    //             // Update FullCalendar with the new events
+    //             $('#calendar').fullCalendar('removeEventSources');
+    //             $('#calendar').fullCalendar('addEventSource', events);
+    //         },
+    //         error: function() {
+    //             // Handle errors if the data retrieval fails
+    //         }
+    //     });
+    // }
+
+    // Set up automatic refresh every 5 minutes (adjust the interval as needed)
+    // setInterval(refreshEvents, 300000); // 300,000 milliseconds (5 minutes)
+    // -- until here
+
+//   function renderEventList(events) {
+//     var eventList = $('#daily-event-list');
+
+//     eventList.empty(); // Clear the existing list
+
+//     if (events.length > 0) {
+//         // Loop through the events and add them to the list
+//         var list = $('<ul>');
+//         events.forEach(function(event) {
+//             list.append('<li>' + event.title + '</li>');
+//         });
+//         eventList.append(list);
+//     } else {
+//         eventList.append('<li>No events for this date.</li>');
+//     }
+// }
+
       calendar.render();
 
       /* ADDING EVENTS */

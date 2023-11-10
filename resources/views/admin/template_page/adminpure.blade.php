@@ -18,7 +18,7 @@
     <link rel="stylesheet" href="{{ url('./plugins/datatables-buttons/css/buttons.bootstrap4.min.css') }}">
 
     <!-- fullCalendar -->
-    <link rel="stylesheet" href="{{ url('./plugins/fullcalendar/main.css') }}">
+    <link rel="stylesheet"  href="{{ url('./plugins/fullcalendar/main.css') }}">
 
     <link href='https://unpkg.com/boxicons@2.0.9/css/boxicons.min.css' rel='stylesheet'>
 

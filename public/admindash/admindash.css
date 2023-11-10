@@ -45,7 +45,7 @@ li {
 }
 
 html {
-	overflow-x: hidden;
+	/* overflow-x: hidden; */
 }
 
 body.dark {

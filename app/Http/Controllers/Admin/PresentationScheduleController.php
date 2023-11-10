@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Presentation_schedule;
 
 use Illuminate\Http\Request;
+use Carbon\Carbon;
 
 class PresentationScheduleController extends Controller
 {
@@ -54,6 +55,13 @@ public function getEvents(Request $request)
 {
     $presentations = Presentation_schedule::all(); // Assuming you have a Presentation model
 
+    // Group events by their start date (you can adjust this as needed)
+    // $eventsByDay = $presentations->groupBy(function ($event) {
+    //     $carbonDate = Carbon::parse($event->start);
+    //     return $carbonDate->format('Y-m-d');
+    // });
+
+    // return view('admin.presentationSchedule', compact('presentations','eventsByDay'));
     return view('admin.presentationSchedule', compact('presentations'));
 
 }
@@ -134,5 +142,91 @@ public function fetchUpdatedEventSource() {
     return $updatedEvents;
 }
 
+    public function store(Request $request)
+    {
+        $event = new Presentation_schedule;
+        $event->title = $request->input('title');
+        $event->description = $request->input('description');
+        $event->start = $request->input('start');
+        $event->end = $request->input('end');
+        $event->location = $request->input('location');
+        // You can add more fields here, including color (if you decide to save it)
 
-}
+        $event->save();
+
+        return response()->json(['id' => $event->id]);
+    }
+
+    // public function getEvents()
+    // {
+    //     // Retrieve events from your database, adjust the query as needed
+    //     $events = Presentation_schedule::all();
+
+    //     // Group events by their start date (you can adjust this as needed)
+    //     $eventsByDay = $events->groupBy(function ($event) {
+    //         return $event->start->format('Y-m-d');
+    //     });
+
+    //     return view('your-view', compact('eventsByDay'));
+    // }
+
+    private function groupEventsByDay($events)
+    {
+        $groupedEvents = [];
+        foreach ($events as $event) {
+            $startDay = date('Y-m-d', strtotime($event->start));
+            $groupedEvents[$startDay][] = $event;
+        }
+        return $groupedEvents;
+    }
+
+    // latest
+    // public function getEventsByDate(Request $request)
+    //     {
+    //     $selectedDate = $request->input('date');
+
+    //     // Fetch events for the selected date, assuming 'start' is the date field
+    //     $events = Presentation_schedule::whereDate('start', $selectedDate)->get();
+
+    //     return response()->json($events);
+    // }
+    // public function getDateEvents(Request $request, $date){
+    //     // $events = Presentation_schedule::whereDate('start', $date)->get();
+
+    //     //comment first
+    //     // $formattedDateee = \Carbon\Carbon::parse($formattedDate)->format('Y-m-d');
+    //     // \Log::info('Formatted Date: ' . $formattedDateee);
+
+    //     // $date = \Carbon\Carbon::createFromFormat('D M d Y H:i:s eO (T)', $formattedDate);
+    //     // $formattedDateee = $date->format('Y-m-d');
+
+    //     // $formattedDate = date('Y-m-d', strtotime(str_replace('-', '/', $date)));
+    //     // $events = Presentation_schedule::where('start', 'LIKE', $formattedDate . '%')->get();
+
+    //     // Query events for the specific date range (from midnight to the end of the day).
+    //     $events = Presentation_schedule::where('start', '>=', $date . ' 00:00:00')
+    //     ->where('start', '<=', $date . ' 23:59:59')
+    //     ->get();
+    //     dd($events);
+
+    //     return response()->json($events);
+    // }
+
+    public function getDateEvents(Request $request, $date)
+    {
+        try {
+            // Parse the input date to match the database format
+            $formattedDate = Carbon::parse($date)->format('Y-m-d H:i:s');
+            // dd($formattedDate);
+
+            // Query the events with the formatted date
+            // $events = Presentation_schedule::where('start', 'LIKE', $formattedDate . '%')->get();
+            $events = Presentation_schedule::whereDate('start', '=', $formattedDate)->get();
+
+            return response()->json($events);
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Internal Server Error'], 500);
+        }
+    }
+
+    }
