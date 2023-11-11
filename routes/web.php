@@ -42,6 +42,7 @@ Route::post('/calendar/update/{eventId}', [App\Http\Controllers\Admin\Presentati
 // Route::get('/fetch-updated-events', [App\Http\Controllers\Admin\PresentationScheduleController::class, 'fetchUpdatedEventSource']);
 Route::post('/calendar/store', [App\Http\Controllers\Admin\PresentationScheduleController::class, 'store'])->name('calendar.store');
 // Route::get('/calendar/events-by-date', [App\Http\Controllers\Admin\PresentationScheduleController::class, 'getEventsByDate']);
+Route::post('/calendar/updateEvent/{id}', [App\Http\Controllers\Admin\PresentationScheduleController::class, 'changeEvent']);
 
 // must add a auth there!!
 Route::group(['middleware' => 'auth','isAdmin', 'prefix' => 'admin'], function(){

@@ -140,7 +140,6 @@
       </div>
       <!-- /.row -->
 
-      {{-- DISPLAY EVENT DETAILS CONFIRMATION MODAL --}}
       <div class="modal fade" id="eventDetailsModal" tabindex="-1" role="dialog" aria-labelledby="eventDetailsModal" aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
@@ -153,25 +152,20 @@
                 <div class="modal-body">
                     <h4 id="eventTitle"></h4>
                     <p>Description: <span id="eventDesc"></span></p>
+                    <p>Start Date: <span id="eventStartDate"></span></p>
+                    <p>End Date: <span id="eventEndDate"></span></p>
+                    <p>Location: <span id="eventLoc"></span></p>
 
                     <!-- Add more event details here -->
-                    <div id="additionalDetails">
-                      <!-- This will be dynamically populated based on the event type -->
-                      {{-- <p>Start Date: <span id="eventStartDate"></span></p>
-                      <p>End Date: <span id="eventEndDate"></span></p> --}}
-                      {{-- <p>Location: <span id="eventLoc"></span></p> --}}
-
-                    </div>
                 </div>
-                <div class="modal-footer" id="eventModalFooter">
-                  {{-- <button class="btn btn-primary" id="editEventButton">Edit</button> --}}
-                  {{-- <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button> --}}
+                <div class="modal-footer">
+                  <button class="btn btn-primary" id="editEventButton">Edit</button>
+                    {{-- <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button> --}}
                 </div>
             </div>
         </div>
-      </div>
+    </div>
 
-    {{-- edit event modal --}}
     <div class="modal fade scrollable-modal" id="editEventModal" tabindex="-1" role="dialog" aria-labelledby="editEventModalLabel" aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
@@ -208,6 +202,20 @@
                     <input type="text" class="form-control" id="editLocation" name="editLocation">
                 </div>
                   </form>
+                  {{-- <div class="form-group">
+                      <label for="editDate">Date:</label>
+                      <input type="date" class="form-control" id="editDate" name="date">
+                  </div>
+                  <div class="form-group">
+                      <label for="editTime">Time:</label>
+                      <input type="time" class="form-control" id="editTime" name="time">
+                  </div> --}}
+
+                  {{-- <p>Description: <span id="eventDesc"></span></p> --}}
+                  {{-- <p>Start Date: <span id="eventStartDate"></span></p>
+                  <p>End Date: <span id="eventEndDate"></span></p>
+
+                  <p>Location: <span id="eventLoc"></span></p> --}}
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
@@ -322,7 +330,6 @@
         center: 'title',
         right : 'dayGridMonth,timeGridWeek,timeGridDay'
       },
-      // initialView: 'timeGridMonth', // Set the initial view to day view
       themeSystem: 'bootstrap',
       //Random default events
       // events: [
@@ -372,31 +379,19 @@
       // ],
       // events: '/calendar',
       events: [
-
-        @foreach($combinedEvents as $event)
+        @foreach($presentations as $presentation)
         {
-          @if ($event['type'] === 'presentation')
-              // <!-- Display presentation event details -->
-              // <p>Presentation: {{ $event['title'] }} - {{ $event['start'] }}</p>
-              id: '{{ $event['id'] }}',
-              title: '{{ $event['title'] }}',
-              start: '{{ $event['start'] }}',
-              @if(isset($event['end']))
-                  end: '{{ $event['end'] }}',
-              @endif
-              description: '{{ $event['description'] }}',
-              location: '{{ $event['location'] }}',
-              type: '{{ $event['type'] }}', // Add this line
-          @elseif ($event['type'] === 'forms')
-              type: '{{ $event['type'] }}', // Add this line
-              id: '{{ $event['id'] }}',
-              title: '{{ $event['title'] }}',
-              description: '{{ $event['description'] }}',
-              start: '{{ $event['start'] }}',
-
-          @endif
+            id: '{{ $presentation->id }}', // Set the event ID
+            title: '{{ $presentation->title }}',
+            start: '{{ $presentation->start }}',
+            @if($presentation->end)
+                end: '{{ $presentation->end }}',
+            @endif
+            description: '{{ $presentation->description }}',
+            location: '{{ $presentation->location }}',
         },
         @endforeach
+
       ],
       // data: { // Cache-busting query parameter
       //       timestamp: new Date().getTime()
@@ -407,45 +402,6 @@
         // Handle the event click
         displayEventDetails(info.event);
       },
-      dateClick:function (info) {
-        const clickedDate = info.date;
-        // calendar.gotoDate(clickedDate);
-        calendar.gotoDate(clickedDate);
-
-        // change terus to day view?
-        calendar.changeView('timeGridDay');
-        updateEventList(clickedDate);
-      },
-      eventDrop:function (info) {
-        changeEvent(info.event);
-        console.log("eventdrope", info.event);
-        const clickedDate = info.date;
-        updateEventList(clickedDate);
-      },
-      eventClassNames: function (arg) {
-        // Add classes based on event type
-        if (arg.event.extendedProps.type === 'presentation') {
-            return ['presentation-event'];
-        } else if (arg.event.extendedProps.type === 'forms') {
-            return ['thesis-event'];
-        }
-        return [];
-      },
-
-      // eventRender: function (info) {
-      //   // Check event type and customize appearance
-      //   if (info.event.extendedProps.type === 'presentation') {
-      //       // info.el.style.backgroundColor = 'blue'; // Set background color
-      //       // info.el.style.borderColor = 'blue'; // Set border color (for the dot)
-      //       info.el.classList.add('presentation-event');
-
-      //   } else if (info.event.extendedProps.type === 'forms') {
-      //       info.el.style.backgroundColor = 'green'; // Set background color
-      //       info.el.style.borderColor = 'green'; // Set border color (for the dot)
-      //   }
-      // },
-      dayMaxEvents: 2,
-      eventLimitClick: 'popover',
       drop      : function(info) {
         // is the "remove after drop" checkbox checked?
         if (checkbox.checked) {
@@ -455,127 +411,61 @@
       }
     });
 
-    // For the eventDetailsModal
-    var detailsModalFooter = $('#eventModalFooter');
-    detailsModalFooter.empty(); // Clear existing buttons
-
-
-    // if (eventType === 'forms') {
-    //   // var eventId = '{{ $event['id'] }}';
-
-    //   // var viewAllButton = $('<button class="btn btn-success" id="viewAllSubmissionButton">View All Submissions</button>');
-    //   //   viewAllButton.on('click', function () {
-    //   //     window.location.href = '{{ route("formpost.showAll", ["submissionPostId" => "event.id"]) }}';
-    //   //   });
-
-    //     // detailsModalFooter.append(viewAllButton);
-    // }
-
-    function changeEvent(event) {
-          const updatedEvent = {
-          id: event.id, // Assuming your event object has an 'id' property
-          start: event.start.toISOString().slice(0, 19).replace("T", " "), // Format as 'Y-m-d H:i:s'
-          end: event.end.toISOString().slice(0, 19).replace("T", " "), // Format as 'Y-m-d H:i:s'
-          title: event.title,
-          location: event.extendedProps.location,
-          description: event.extendedProps.description,
-
-          // description: event.description,
-          // Include any other properties you want to update
-      };
-      console.log('inc ahenfs:', updatedEvent);
-
-      // Make an AJAX request to update the event in the databases
-      $.ajax({
-          url: '/calendar/updateEvent/' + updatedEvent.id,
-          type: 'POST', // Adjust the HTTP method as needed
-          data: updatedEvent,
-          success: function (response) {
-              console.log('Event updated successfully');
-          },
-          error: function (xhr, status, error) {
-              console.log('Errordddd updating event:', error);
-              // Handle errors as needed
-              console.log(xhr.responseText);  // Log the full response for more details
-
-          }
-      });
-    }
-
     function displayEventDetails(event) {
-      detailsModalFooter.empty();
       console.log("displayEventDetails",event);
       // Replace these lines with your own code to display the event details.
       $('#eventid').text(event.id);
       $('#eventTitle').text(event.title);
-      $('#eventDesc').text(event.extendedProps.description);
+      $('#eventStartDate').text(event.start.toLocaleString());
 
-      console.log(event);
-
-      if (event.extendedProps.type === 'presentation') {
-        // Display additional presentation details
-        $('#additionalDetails').html('<p>Start Date: ' + event.start.toLocaleString() + '</p>' +
-                                 '<p>End Date: ' + event.end.toLocaleString() + '</p>');
-        var editButton = $('<button class="btn btn-primary" id="editEventButton">Edit</button>');
-        editButton.on('click', function () {
-          clickingEditButton(event);
-        });
-      detailsModalFooter.append(editButton);
-      } else if (event.extendedProps.type === 'forms') {
-        // Display additional thesis details
-        $('#additionalDetails').html('<p>Submission Deadline: ' + event.start.toLocaleString()+ '</p>');
-        var eventId = '{{ $event['id'] }}';
-        console.log("hereeee" + eventId);
-          var viewAllButton = $('<button class="btn btn-success" id="viewAllSubmissionButton">View All Submissions</button>');
-          viewAllButton.on('click', function () {
-            // window.location.href = '{{ route("formpost.showAll", ["submissionPostId" => "event.id"]) }}';
-            window.location.href = '{{ route("formpost.showAll", ["submissionPostId" => ""]) }}' + eventId;
-          });
-        detailsModalFooter.append(viewAllButton);
+      if (event.end) {
+          $('#eventEndDate').text(event.end.toLocaleString());
+      } else {
+          $('#eventEndDate').text('N/A');
       }
+      if (event.extendedProps.description !== null && event.extendedProps.description !== undefined) {
+        $('#eventDesc').text(event.extendedProps.description);
+      }else {
+        $('#eventDesc').text('N/A');
+      }
+      if (event.extendedProps.location !== null && event.extendedProps.location !== undefined) {
+        $('#eventLoc').text(event.extendedProps.location);
+      }else {
+        $('#eventLoc').text('N/A');
+      }
+      // Add additional event details as needed
 
       // Show the modal
       $('#eventDetailsModal').modal('show');
     }
 
-    // Define the updateEventList function
-    function updateEventList(clickedDate) {
-      const formattedDate = moment(clickedDate).format('YYYY-MM-DD');
-      $.ajax({
-            url: '/calendar/events/' + formattedDate,
-            method: 'GET',
-            success: function (events) {
-                console.log(events);
-                var eventList = $('#external-events');
-                eventList.empty();
+    // function getEventId() {
+    //     // Implement this function to retrieve event details from the selected event.
+    //     // You can access the event properties such as title, start, end, and other custom properties.
+    //     // Return an object with the event details.
+    //   return $('#eventDetailsModal').data('eventid');
+    // }
 
-                const formattedClickedDate = moment(clickedDate).format('D MMMM YYYY');
-                const [day, month, year] = formattedClickedDate.split(' ');
+    // $('#editEventButton').click(function() {
+    //     // Get the event details and populate the edit modal
+    //     var event = getEventDetails(); // Implement a function to get event details
 
-                eventList.append('<li style="font-size: 32px; line-height: 1.5; display: flex;"><strong style="margin-right: 10px;">' + day + '</strong><div style="display: flex; flex-direction: column;"><div style="font-size: 14px;">' + month + '</div><div style="font-size: 16px;">' + year + '</div></div></li>');
+    //     // Populate the edit modal with event data
+    //     $('#editEventModalLabel').text('Edit Event: ' + event.title);
+    //     $('#editEventModal #eventTitle').val(event.title);
+    //     $('#editEventModal #eventStartDate').val(event.start);
+    //     // Populate other fields as needed
 
-                events.forEach(function (event) {
-                    var eventItem = $('<li class="event-item"></li>');
-                    eventItem.append('<div class="event-title">' + event.title + '</div>');
-                    eventItem.append('<div class="event-detail"><strong>Description:</strong> ' + event.description + '</div>');
-                    eventItem.append('<div class="event-detail"><strong>Time:</strong> ' + event.start + '</div>');
-                    eventItem.append('<div class="event-detail"><strong>Location:</strong> ' + event.location + '</div>');
+    //     // Show the edit modal
+    //     $('#editEventModal').modal('show');
+    // })
 
-                    eventList.append(eventItem);
-                });
-            },
-            error: function (xhr, status, error) {
-                console.log(error);
-            }
-        });
-    }
     let selectedEventId = null;
 
     calendar.on('eventClick', function (info) {
       selectedEventId = info.event.id; // Get the ID of the selected event
       // Now you can use eventId to open the edit modal or perform other actions
       console.log("selectedEventId",selectedEventId);
-
       // Get the current date being displayed in the calendar
       var currentDate = calendar.getDate();
 
@@ -604,11 +494,6 @@
           location: $('#editLocation').val()
       };
       const eventToUpdate = calendar.getEventById(selectedEventId);
-      const startDate = moment(editedEvent.start); // Convert start date to moment object
-      console.log(startDate);
-      const formattedDate = startDate.format('YYYY-MM-DD'); // Format the start date
-      console.log(formattedDate);
-
       if (eventToUpdate) {
           eventToUpdate.setProp('title', editedEvent.title);
           eventToUpdate.setExtendedProp('description', editedEvent.description);
@@ -620,9 +505,8 @@
           eventToUpdate.remove(); // Remove the event
           calendar.addEvent(eventToUpdate); // Add the updated event back
 
-          $('#editEventModal').modal('hide');
-          updateEventList(formattedDate);
 
+          $('#editEventModal').modal('hide');
       }
       // updateEventList(formattedDate); // Make sure to pass the correct date
 
@@ -650,13 +534,7 @@
       })
     });
 
-    // calendar.on('dateClick', function (info) {
-    //   const clickedDate = info.date;
-    //   updateEventList(clickedDate);
-    // });
-
-    // $('#editEventButton').click(function() {
-      function clickingEditButton(event){
+    $('#editEventButton').click(function() {
         // You can use window.location.href to navigate to the edit page/modal
         // var eventId = getEventId(); // Implement a function to get the event ID
         // window.location.href = '/edit-event/' + eventId; // Redirect to the edit page/modal
@@ -674,8 +552,7 @@
         // Show the edit modal
         $('#editEventModal').modal('show');
         }
-      }
-    // });
+    });
 
   function retrieveEventDetails(eventId) {
     let eventDetails = null;
@@ -757,73 +634,105 @@
     //     });
     // }
 
+    calendar.on('dateClick', function (info) {
+      // var clickedDate = info.event.date;
+      // calendar.refetchEvents();
+      const clickedDate = info.date; // Get the date you clicked on
+      // const formatdate = new Date(clickedDate).toLocaleDateString(); // Format the date
+
+      // const date = new Date(clickedDate);
+      // const formattedDate = date.toISOString().split('T')[0]; // Format the date as "YYYY-MM-DD"
+
+      // const year = clickedDate.getFullYear();
+      // const month = (clickedDate.getMonth() + 1).toString().padStart(2, '0');
+      // const day = clickedDate.getDate().toString().padStart(2, '0');
+      // const formattedDate = `${day}/${month}/${year}`;
+
+      const formattedDate = moment(clickedDate).format("YYYY-MM-DD HH:mm:ss");
+      // var dateParts = formattedDate.split(" ");
+      // var formatdate = dateParts[dateParts.length - 2]; // This extracts "2023-11-16"
+
+      // const encodedDate = encodeURIComponent(formattedDate);
+
+      // const formattedDate = '2023-10-31'; // Format the date as "YYYY-MM-DD"
+      // var formattedDate = date.format('YYYY-MM-DD');
+      // var formattedDate = new Intl.DateTimeFormat('en-US', { year: 'numeric', month: '2-digit', day: '2-digit' }).format(date);
+
+      console.log("Clicked date: " + formattedDate);
+      $.ajax({
+          // url: '/calendar/events/${formattedDate}',
+          url: '/calendar/events/' + formattedDate,
+
+          method: 'GET',
+          success: function (events) {
+              console.log(events);
+              var eventList = $('#external-events');
+              eventList.empty();
+
+              var formattedClickedDate = moment(formattedDate).format('D MMMM YYYY');
+              // Create a list item for the clicked date
+              // eventList.append('<li style="font-size: larger;"><strong>' + formattedClickedDate + '</strong></li>');
+
+              // // Iterate through the events and add them to the list
+              // events.forEach(function (event) {
+              //     eventList.append('<li class="event-title"><strong>Title:</strong> ' + event.title + '</li>');
+              //     eventList.append('<li class="event-detail"><strong>Description:</strong> ' + event.description + '</li>');
+              //     eventList.append('<li class="event-detail"><strong>Time:</strong> ' + event.start + '</li>');
+              //     eventList.append('<li class="event-detail"><strong>Location:</strong> ' + event.location + '</li>');
+              // });
+              eventList.append('<li class="event-title"><strong>' + formattedClickedDate + '</strong></li>');
+
+              events.forEach(function (event) {
+                  var eventItem = $('<li class="event-item"></li>');
+                  eventItem.append('<div class="event-title"><strong>Title:</strong> ' + event.title + '</div>');
+                  eventItem.append('<div class="event-detail"><strong>Description:</strong> ' + event.description + '</div>');
+                  eventItem.append('<div class="event-detail"><strong>Time:</strong> ' + event.start + '</div>');
+                  eventItem.append('<div class="event-detail"><strong>Location:</strong> ' + event.location + '</div>');
+
+                  // Add the event item to the event list
+                  eventList.append(eventItem);
+              });
+          },
+          error: function (xhr, status, error) {
+              console.log(error);
+          }
+      });
+    });
+
     // calendar.on('dateClick', function (info) {
-    //   // var clickedDate = info.event.date;
-    //   // calendar.refetchEvents();
-    //   const clickedDate = info.date; // Get the date you clicked on
-    //   // const formatdate = new Date(clickedDate).toLocaleDateString(); // Format the date
-
-    //   // const date = new Date(clickedDate);
-    //   // const formattedDate = date.toISOString().split('T')[0]; // Format the date as "YYYY-MM-DD"
-
-    //   // const year = clickedDate.getFullYear();
-    //   // const month = (clickedDate.getMonth() + 1).toString().padStart(2, '0');
-    //   // const day = clickedDate.getDate().toString().padStart(2, '0');
-    //   // const formattedDate = `${day}/${month}/${year}`;
-
-    //   const formattedDate = moment(clickedDate).format("YYYY-MM-DD HH:mm:ss");
-    //   // var dateParts = formattedDate.split(" ");
-    //   // var formatdate = dateParts[dateParts.length - 2]; // This extracts "2023-11-16"
-
-    //   // const encodedDate = encodeURIComponent(formattedDate);
-
-    //   // const formattedDate = '2023-10-31'; // Format the date as "YYYY-MM-DD"
-    //   // var formattedDate = date.format('YYYY-MM-DD');
-    //   // var formattedDate = new Intl.DateTimeFormat('en-US', { year: 'numeric', month: '2-digit', day: '2-digit' }).format(date);
-
-    //   console.log("Clicked date: " + formattedDate);
-    //   $.ajax({
-    //       // url: '/calendar/events/${formattedDate}',
-    //       url: '/calendar/events/' + formattedDate,
-
-    //       method: 'GET',
-    //       success: function (events) {
-    //           console.log(events);
-    //           var eventList = $('#external-events');
-    //           eventList.empty();
-
-    //           var formattedClickedDate = moment(formattedDate).format('D MMMM YYYY');
-    //           // Create a list item for the clicked date
-    //           // eventList.append('<li style="font-size: larger;"><strong>' + formattedClickedDate + '</strong></li>');
-
-    //           // // Iterate through the events and add them to the list
-    //           // events.forEach(function (event) {
-    //           //     eventList.append('<li class="event-title"><strong>Title:</strong> ' + event.title + '</li>');
-    //           //     eventList.append('<li class="event-detail"><strong>Description:</strong> ' + event.description + '</li>');
-    //           //     eventList.append('<li class="event-detail"><strong>Time:</strong> ' + event.start + '</li>');
-    //           //     eventList.append('<li class="event-detail"><strong>Location:</strong> ' + event.location + '</li>');
-    //           // });
-    //           eventList.append('<li class="event-title"><strong>' + formattedClickedDate + '</strong></li>');
-
-    //           events.forEach(function (event) {
-    //               var eventItem = $('<li class="event-item"></li>');
-    //               eventItem.append('<div class="event-title"><strong>Title:</strong> ' + event.title + '</div>');
-    //               eventItem.append('<div class="event-detail"><strong>Description:</strong> ' + event.description + '</div>');
-    //               eventItem.append('<div class="event-detail"><strong>Time:</strong> ' + event.start + '</div>');
-    //               eventItem.append('<div class="event-detail"><strong>Location:</strong> ' + event.location + '</div>');
-
-    //               // Add the event item to the event list
-    //               eventList.append(eventItem);
-    //           });
-    //       },
-    //       error: function (xhr, status, error) {
-    //           console.log(error);
-    //       }
-    //   });
+    //   const clickedDate = info.date;
+    //   updateEventList(clickedDate);
     // });
 
-    // for the update event list part
+    // Define the updateEventList function
+function updateEventList(clickedDate) {
+    const formattedDate = moment(clickedDate).format('YYYY-MM-DD');
+    $.ajax({
+          url: '/calendar/events/' + formattedDate,
+          method: 'GET',
+          success: function (events) {
+              console.log(events);
+              var eventList = $('#external-events');
+              eventList.empty();
 
+              var formattedClickedDate = moment(clickedDate).format('D MMMM YYYY');
+              eventList.append('<li class="event-title"><strong>' + formattedClickedDate + '</strong></li>');
+
+              events.forEach(function (event) {
+                  var eventItem = $('<li class="event-item"></li>');
+                  eventItem.append('<div class="event-title"><strong>Title:</strong> ' + event.title + '</div>');
+                  eventItem.append('<div class="event-detail"><strong>Description:</strong> ' + event.description + '</div>');
+                  eventItem.append('<div class="event-detail"><strong>Time:</strong> ' + event.start + '</div>');
+                  eventItem.append('<div class="event-detail"><strong>Location:</strong> ' + event.location + '</div>');
+
+                  eventList.append(eventItem);
+              });
+          },
+          error: function (xhr, status, error) {
+              console.log(error);
+          }
+      });
+  }
 
     // function fetchUpdatedEventSource() {
     // $.ajax({

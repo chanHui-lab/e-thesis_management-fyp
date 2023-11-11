@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 
 use App\Models\Presentation_schedule;
+use App\Models\SubmissionPost;
 
 use Illuminate\Http\Request;
 use Carbon\Carbon;
@@ -53,16 +54,50 @@ class PresentationScheduleController extends Controller
 
 public function getEvents(Request $request)
 {
-    $presentations = Presentation_schedule::all(); // Assuming you have a Presentation model
+    // Fetch events from Presentation_schedule table
+    $presentationEvents = Presentation_schedule::all(); // Assuming you have a Presentation model
 
     // Group events by their start date (you can adjust this as needed)
     // $eventsByDay = $presentations->groupBy(function ($event) {
     //     $carbonDate = Carbon::parse($event->start);
     //     return $carbonDate->format('Y-m-d');
     // });
-
     // return view('admin.presentationSchedule', compact('presentations','eventsByDay'));
-    return view('admin.presentationSchedule', compact('presentations'));
+
+    // Fetch events from Thesis table
+    $thesisEvents = SubmissionPost::all();
+
+    $presentationEvents = $presentationEvents->map(function ($event) {
+        return [
+            'type' => 'presentation',
+            'id' => $event->id, // Include the 'id' field
+            'title' => $event->title,
+            'description' => $event->description,
+            'start' => $event->start,
+            'end' => $event->end,
+            'location' => $event->location,
+        ];
+    });
+
+    $thesisEvents = $thesisEvents->map(function ($event) {
+        return [
+            'type' => 'forms',
+            'id' => $event->id, // Include the 'id' field
+            'title' => $event->title,
+            'description' => $event->description,
+            'start' => $event->submission_deadline, // Assuming submission_deadline is the field
+        ];
+    });
+
+    // Combine both sets of events
+    $combinedEvents = $presentationEvents->merge($thesisEvents);
+
+    // $eventsByDay = $combinedEvents->groupBy(function ($event) {
+    //     $carbonDate = Carbon::parse($event->start);
+    //     return $carbonDate->format('Y-m-d');
+    // });
+
+    return view('admin.presentationSchedule', compact('combinedEvents'));
 
 }
 
@@ -108,7 +143,8 @@ public function updateEvent(Request $request, $eventId)
         'title' => 'required|string',
         'description' => 'string',
         'start' => 'required|date',
-        'end' => 'date|nullable',
+        // 'end' => 'date|nullable',
+        'end' => 'required|date|after:start',
         'location' => 'required|string',
 
     ]);
@@ -227,6 +263,40 @@ public function fetchUpdatedEventSource() {
         } catch (\Exception $e) {
             return response()->json(['error' => 'Internal Server Error'], 500);
         }
+    }
+
+    public function changeEvent(Request $request, $id)
+    {
+
+        // Validate the request data as needed
+    $validatedData = $request->validate([
+        'title' => 'required|string',
+        'description' => 'string',
+        'start' => 'required|date',
+        // 'end' => 'date|nullable',
+        'end' => 'required|date|after:start',
+        'location' => 'required|string',
+
+    ]);
+
+    // Find the event in the database by ID
+    $event = Presentation_schedule::find($id);
+
+    if ($event) {
+        // Update the event properties with the validated data
+        $event->title = $validatedData['title'];
+        $event->description = $validatedData['description'];
+        $event->start = $validatedData['start'];
+        $event->end = $validatedData['end'];
+        $event->location = $validatedData['location'];
+
+        // Save the changes
+        $event->save();
+
+        return redirect()->back()->with('success', 'Event updated successfully');
+        // return response()->json($event);
+
+    }
     }
 
     }

@@ -185,3 +185,65 @@
   margin-bottom: 5px; /* Add some spacing between details */
 }
 
+/* Define styles for presentation events */
+/* .presentation-event .fc-event-main {
+  background-color: blue;
+  border-color: blue;
+} */
+
+/* Define styles for thesis events */
+.thesis-event .fc-event-main {
+  /* background-color: rgb(227, 193, 81);
+  border-color: rgb(227, 193, 81); */
+}
+
+/* Hide the default dot */
+/* .fc-event-dot {
+  display: none;
+} */
+
+/* Define styles for presentation events */
+/* .presentation-event {
+  position: relative;
+} */
+
+/* .presentation-event:after {
+  content: '';
+  display: block;
+  width: 10px;
+  height: 10px;
+  background-color: rgb(39, 139, 253);
+  border-radius: 50%;
+  position: absolute;
+  top: 50%;
+  left: 7%;
+  transform: translate(-50%, -50%);
+} */
+
+/* Define styles for thesis events -- in dots de*/
+/* .thesis-event {
+  position: relative;
+}
+
+.thesis-event:after {
+  content: '';
+  display: block;
+  width: 10px;
+  height: 10px;
+  background-color: rgb(227, 193, 81);
+  border-radius: 50%;
+  position: absolute;
+  top: 50%;
+  left: 7%;
+  transform: translate(-50%, -50%);
+} */
+
+/* Define THE BACKGROUD COLOUR for presentation events */
+.presentation-event  {
+  /* background-color: rgb(246, 226, 42); */
+}
+
+/* Define styles for thesis events */
+.thesis-event {
+  background-color: rgb(174, 238, 174);  /* Set the desired background color */
+}

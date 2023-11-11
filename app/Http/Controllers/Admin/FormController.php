@@ -780,7 +780,8 @@ public function removeFile(Request $request, $id)
     //display the forms for all students, the kosong one cant be displayed
     public function TestgetFormSubmissionForLecturer($submissionPostId){
         $lecturer = auth()->user(); // Get the currently logged-in lecturer
-        $submissionPost = SubmissionPost::find($submissionPostId);
+        // $submissionPost = SubmissionPost::find($submissionPostId);
+        $submissionPost = SubmissionPost::with('lecturer')->find($submissionPostId);
 
         if ($submissionPost->lecturer->id === $lecturer->id) {
             $formSubmissions = $lecturer->formSubmissions()
