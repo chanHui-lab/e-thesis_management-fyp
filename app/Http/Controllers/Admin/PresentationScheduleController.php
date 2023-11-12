@@ -248,22 +248,70 @@ public function fetchUpdatedEventSource() {
     //     return response()->json($events);
     // }
 
+    // public function getDateEvents(Request $request, $date)
+    // {
+    //     try {
+    //         // Parse the input date to match the database format
+    //         $formattedDate = Carbon::parse($date)->format('Y-m-d H:i:s');
+    //         // dd($formattedDate);
+
+    //         // Query the events with the formatted date
+    //         // $events = Presentation_schedule::where('start', 'LIKE', $formattedDate . '%')->get();
+    //         $presentation = Presentation_schedule::whereDate('start', '=', $formattedDate)->get();
+    //         $forms = SubmissionPost::whereDate('start', '=', $formattedDate)->get();
+
+    //         // Convert collections to arrays and concatenate
+    //         $presentationArray = $presentation->toArray();
+    //         $formsArray = $forms->toArray();
+    //         $events = array_merge($presentationArray, $formsArray);
+
+    //         return response()->json($events);
+    //     } catch (\Exception $e) {
+    //         return response()->json(['error' => 'Internal Server erriririr'], 500);
+    //     }
+    // }
+
     public function getDateEvents(Request $request, $date)
     {
         try {
             // Parse the input date to match the database format
             $formattedDate = Carbon::parse($date)->format('Y-m-d H:i:s');
-            // dd($formattedDate);
 
             // Query the events with the formatted date
-            // $events = Presentation_schedule::where('start', 'LIKE', $formattedDate . '%')->get();
-            $events = Presentation_schedule::whereDate('start', '=', $formattedDate)->get();
+            // $presentation = Presentation_schedule::whereDate('start', '=', $formattedDate)->get();
+            // $forms = SubmissionPost::whereDate('submission_deadline', '=', $formattedDate)->get();
+            $presentation = Presentation_schedule::whereDate('start', '=', $formattedDate)
+                ->get()
+                ->map(function ($event) {
+                    $event['type'] = 'presentation';
+                    return $event;
+            });
+
+            $forms = SubmissionPost::whereDate('submission_deadline', '=', $formattedDate)
+                ->get()
+                ->map(function ($event) {
+                    $event['type'] = 'forms';
+                    return $event;
+            });
+
+        $events = $presentation->concat($forms);
+
+        return response()->json($events);
+
+            // Convert collections to arrays and concatenate
+            $presentationArray = $presentation->toArray();
+            $formsArray = $forms->toArray();
+            $events = array_merge($presentationArray, $formsArray);
 
             return response()->json($events);
         } catch (\Exception $e) {
+            // Log the error details
+            \Log::error('Error in getDateEvents: ' . $e->getMessage());
+
             return response()->json(['error' => 'Internal Server Error'], 500);
         }
     }
+
 
     public function changeEvent(Request $request, $id)
     {

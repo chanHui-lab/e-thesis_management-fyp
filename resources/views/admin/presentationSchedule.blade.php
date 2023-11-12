@@ -414,7 +414,7 @@
 
         // change terus to day view?
         calendar.changeView('timeGridDay');
-        updateEventList(clickedDate);
+        updateEventList(clickedDate, info);
       },
       eventDrop:function (info) {
         changeEvent(info.event);
@@ -524,12 +524,18 @@
       } else if (event.extendedProps.type === 'forms') {
         // Display additional thesis details
         $('#additionalDetails').html('<p>Submission Deadline: ' + event.start.toLocaleString()+ '</p>');
-        var eventId = '{{ $event['id'] }}';
+        // var eventId = '{{ $event['id'] }}';
+        var eventId = event.id;
         console.log("hereeee" + eventId);
           var viewAllButton = $('<button class="btn btn-success" id="viewAllSubmissionButton">View All Submissions</button>');
           viewAllButton.on('click', function () {
-            // window.location.href = '{{ route("formpost.showAll", ["submissionPostId" => "event.id"]) }}';
-            window.location.href = '{{ route("formpost.showAll", ["submissionPostId" => ""]) }}' + eventId;
+            var eventId = event.id;
+            console.log("hereeee after clicked" + eventId);
+
+            var viewAllUrl = '{{ route("formpost.showAll", ["submissionPostId" => ":eventId"]) }}';
+            viewAllUrl = viewAllUrl.replace(':eventId', eventId);
+
+            window.location.href = viewAllUrl;
           });
         detailsModalFooter.append(viewAllButton);
       }
@@ -539,14 +545,15 @@
     }
 
     // Define the updateEventList function
-    function updateEventList(clickedDate) {
+    function updateEventList(clickedDate, info) {
       const formattedDate = moment(clickedDate).format('YYYY-MM-DD');
+      console.log(formattedDate);
       $.ajax({
             url: '/calendar/events/' + formattedDate,
             method: 'GET',
             success: function (events) {
-                console.log(events);
-                var eventList = $('#external-events');
+              console.log(JSON.stringify(events, null, 2));
+              var eventList = $('#external-events');
                 eventList.empty();
 
                 const formattedClickedDate = moment(clickedDate).format('D MMMM YYYY');
@@ -558,9 +565,13 @@
                     var eventItem = $('<li class="event-item"></li>');
                     eventItem.append('<div class="event-title">' + event.title + '</div>');
                     eventItem.append('<div class="event-detail"><strong>Description:</strong> ' + event.description + '</div>');
-                    eventItem.append('<div class="event-detail"><strong>Time:</strong> ' + event.start + '</div>');
-                    eventItem.append('<div class="event-detail"><strong>Location:</strong> ' + event.location + '</div>');
-
+                    // Check the event type
+                    if (event.type === 'presentation') {
+                      console.log(event.type);
+                        eventItem.append('<div class="event-detail"><strong>Location:</strong> ' + event.location + '</div>');
+                    } else if (event.type === 'forms') {
+                        eventItem.append('<div class="event-detail"><strong>Submission Deadline:</strong> ' + event.submission_deadline + '</div>');
+                    }
                     eventList.append(eventItem);
                 });
             },

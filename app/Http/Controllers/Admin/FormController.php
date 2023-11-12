@@ -794,9 +794,13 @@ public function removeFile(Request $request, $id)
 
     public function getFormSubmissionForLecturer($submissionPostId){
         $lecturer = auth()->user(); // Get the currently logged-in lecturer
-        $submissionPost = SubmissionPost::find($submissionPostId);
+        // $submissionPost = SubmissionPost::find($submissionPostId);
+        $submissionPost = SubmissionPost::with('lecturer')->find($submissionPostId);
 
-        if ($submissionPost->lecturer->id === $lecturer->id) {
+        // if ($submissionPost->lecturer->id === $lecturer->id) {
+
+        if ($submissionPost && $submissionPost->lecturer && $submissionPost->lecturer->id === $lecturer->id) {
+
             // Fetch form submissions for the given submission post
             // $formSubmissions = Form_submission::where('submission_post_id', $submissionPost->id)
             // ->where('supervisor_id', $lecturer->id)
