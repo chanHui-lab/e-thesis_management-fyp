@@ -245,5 +245,9 @@
 
 /* Define styles for thesis events */
 .thesis-event {
-  background-color: rgb(174, 238, 174);  /* Set the desired background color */
+  background-color: rgb(210, 255, 210);  /* Set the desired background color */
+}
+
+.fc-v-event.form-event .fc-event-main{
+color: black;
 }

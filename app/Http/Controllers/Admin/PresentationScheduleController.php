@@ -5,9 +5,14 @@ use App\Http\Controllers\Controller;
 
 use App\Models\Presentation_schedule;
 use App\Models\SubmissionPost;
+use App\Models\Template;
 
 use Illuminate\Http\Request;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
+
+use Illuminate\Support\Facades\DB;
 
 class PresentationScheduleController extends Controller
 {
@@ -56,6 +61,7 @@ public function getEvents(Request $request)
 {
     // Fetch events from Presentation_schedule table
     $presentationEvents = Presentation_schedule::all(); // Assuming you have a Presentation model
+    $calen = Template::getCalendarTemplate();
 
     // Group events by their start date (you can adjust this as needed)
     // $eventsByDay = $presentations->groupBy(function ($event) {
@@ -97,7 +103,7 @@ public function getEvents(Request $request)
     //     return $carbonDate->format('Y-m-d');
     // });
 
-    return view('admin.presentationSchedule', compact('combinedEvents'));
+    return view('admin.presentationSchedule', compact('combinedEvents','calen'));
 
 }
 
@@ -345,6 +351,118 @@ public function fetchUpdatedEventSource() {
         // return response()->json($event);
 
     }
+    }
+
+    // upload presentation template
+    public function uploadPresentationSche(Request $request)
+    {
+        try{
+            $request->validate([
+                'file_name' => 'required',
+                'file_data' => 'required|mimes:pdf,doc,doc,xls,xlsx,csv|max:2048', // Add validation rules for the file
+            ]);
+
+            if ($request->hasFile('file_data') && $request->file('file_data')->isValid()) {
+                $file = $request->file('file_data');
+                $fileName = time() . '_' . $file->getClientOriginalName();
+
+                // Store the file using the 'public' disk
+                $filePath = 'upload/templates/presentationSche' . $fileName;
+                Storage::disk('public')->put($filePath, file_get_contents($file));
+            $extension = $file->getClientOriginalExtension();
+            $mime_type = $this->getMimeType($extension);
+
+            // try laterr
+            $userId = Auth::user()->id;
+
+            // $fileNameToBeDisplayed = $file->getClientOriginalName();
+
+            Template::create([
+                'file_name' => $request->input('file_name'),
+                // 'file_name' => $fileNameToBeDisplayed,
+                'description' => "calendarsche",
+                'file_data' => $filePath, //its actually actual path
+                'mime_type' => $mime_type, // set the MIME type
+                'lecturer_id' => Auth::id(),
+                'status' => "1",
+                'section' => "calendarsche"
+            ]);
+            }
+            else{
+                throw new \Exception('Invalid file.');
+            }
+
+
+
+            //redirect user and send friendly message
+            return redirect()->route('calendar.index')->with('success','File uploaded successfully');
+            //appear in the if parttt success messages //'success' is the variable name
+        }
+        catch(\Exception $e){
+            //redirect user and send error message
+            return redirect()->back()->with('error', 'File upload failed. ' . $e->getMessage());
+        }
+
+    }
+
+    private function getMimeType($extension)
+    {
+        // Map file extensions to MIME types as needed
+        switch ($extension) {
+            case 'jpg':
+            case 'jpeg':
+                return 'image/jpeg';
+            case 'png':
+                return 'image/png';
+            case 'pdf':
+                return 'application/pdf';
+            // Add more cases for other file types as needed
+            default:
+                return 'application/octet-stream'; // Default MIME type
+        }
+    }
+
+    public function showAllFile()
+    {
+        // $data['getRecord'] = Template::getSingle($id);
+
+        // if(!empty($data['getRecord'])){
+        //     return view('admin.presentationSchedule', $data);
+        // }
+        // else{
+        //     return redirect()->route('formpost.index')->with('error', 'Submission post not found');
+        // }
+        $calen = Template::getCalendarTemplate();
+        return view('admin.presentationSchedule', $calen);
+    }
+
+    public function downloadTemplate($id)
+    {
+        $template = Template::find($id);
+
+        $filePath = storage_path('app/' . $template->file_data);
+        dd( $filePath);
+
+        if (file_exists($filePath)) {
+            return response()->download($filePath, $template->file_name);
+        } else {
+            // Handle the case where the file does not exist
+            abort(404, 'File not found');
+        }
+
+        return response()->download(storage_path('app/' . $template->file_data), $template->file_name);
+    }
+
+    public function getFile($id)
+    {
+        $data['getRecord'] = Template::getSingle($id);
+
+        if(!empty($data['getRecord'])){
+            return view('admin.presentationSchedule', $data);
+        }
+        else{
+            return redirect()->route('formpost.index')->with('error', 'Submission post not found');
+        }
     }
 
     }

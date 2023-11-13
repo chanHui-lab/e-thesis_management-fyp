@@ -38,4 +38,14 @@ class Template extends Model
     static public function getSingle($id){
         return self::find($id);
     }
+
+    static public function getCalendarTemplate(){
+        return self::where('section', 'calendarsche')
+        ->whereHas('lecturer', function ($query) {
+            $query->where('role_as', 0) // Admin role
+                  ->orWhere('role_as', 1); // Lecturer role
+        })
+        ->select('templates.*')
+        ->get();
+    }
 }

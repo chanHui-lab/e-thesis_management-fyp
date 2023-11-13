@@ -9,7 +9,7 @@
                 <h6>(Total: {{ $post -> total() }})</h6>
             </div>
             <div class="float-right" style = "padding-bottom: 10px;">
-                <a class="btn btn-success" href="{{ route('formpost.create') }}"> Upload New Form Submission Post</a>
+                <a class="btn btn-success" href="{{ route('formpost.create') }}"><i class="fa fa-upload" style="margin-right: 5px;"></i> Upload New Form Submission Post</a>
                 {{-- <a class="btn btn-success" href="{{url("admin/adminpage/createform") }}"> Upload New Form Template</a> --}}
                 {{-- the url will not show this, instead of the one in web.php --}}
 

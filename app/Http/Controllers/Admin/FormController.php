@@ -58,7 +58,7 @@ class FormController extends Controller
     }
 
     /**
-     * Store a newly created resource in storage.
+     * Store a newly created template resource in storage.
      */
     public function store(Request $request)
     {
@@ -799,12 +799,15 @@ public function removeFile(Request $request, $id)
 
         // if ($submissionPost->lecturer->id === $lecturer->id) {
 
-        if ($submissionPost && $submissionPost->lecturer && $submissionPost->lecturer->id === $lecturer->id) {
+        // added accesible for admin role
+        if (($submissionPost && $submissionPost->lecturer && $submissionPost->lecturer->id === $lecturer->id)) {
 
             // Fetch form submissions for the given submission post
             // $formSubmissions = Form_submission::where('submission_post_id', $submissionPost->id)
             // ->where('supervisor_id', $lecturer->id)
             // ->get();
+
+            // NEED TO ADD ONE PART, if lecture role is admin, access all student instead of joinging.
             $formSubmissions = $lecturer->formSubmissions()
             ->where('submission_post_id', $submissionPost->id)
             ->get();

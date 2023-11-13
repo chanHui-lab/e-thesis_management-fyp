@@ -34,15 +34,15 @@ Route::get('test', function(){
 
 });
 
-Route::get('/calendar', [App\Http\Controllers\Admin\PresentationScheduleController::class, 'getEvents']);
-Route::get('/calendar/events/{date}', [App\Http\Controllers\Admin\PresentationScheduleController::class, 'getDateEvents']);
-Route::get('/calendar/{eventId}', [App\Http\Controllers\Admin\PresentationScheduleController::class, 'getEventDetails']);
-Route::post('/calendar/update/{eventId}', [App\Http\Controllers\Admin\PresentationScheduleController::class, 'updateEvent']);
-// Route::put('/calendar/update/{eventId}', [App\Http\Controllers\Admin\PresentationScheduleController::class, 'updateEvent']);
-// Route::get('/fetch-updated-events', [App\Http\Controllers\Admin\PresentationScheduleController::class, 'fetchUpdatedEventSource']);
-Route::post('/calendar/store', [App\Http\Controllers\Admin\PresentationScheduleController::class, 'store'])->name('calendar.store');
-// Route::get('/calendar/events-by-date', [App\Http\Controllers\Admin\PresentationScheduleController::class, 'getEventsByDate']);
-Route::post('/calendar/updateEvent/{id}', [App\Http\Controllers\Admin\PresentationScheduleController::class, 'changeEvent']);
+// Route::get('/calendar', [App\Http\Controllers\Admin\PresentationScheduleController::class, 'getEvents']);
+// Route::get('/calendar/events/{date}', [App\Http\Controllers\Admin\PresentationScheduleController::class, 'getDateEvents']);
+// Route::get('/calendar/{eventId}', [App\Http\Controllers\Admin\PresentationScheduleController::class, 'getEventDetails']);
+// Route::post('/calendar/update/{eventId}', [App\Http\Controllers\Admin\PresentationScheduleController::class, 'updateEvent']);
+// // Route::put('/calendar/update/{eventId}', [App\Http\Controllers\Admin\PresentationScheduleController::class, 'updateEvent']);
+// // Route::get('/fetch-updated-events', [App\Http\Controllers\Admin\PresentationScheduleController::class, 'fetchUpdatedEventSource']);
+// Route::post('/calendar/store', [App\Http\Controllers\Admin\PresentationScheduleController::class, 'store'])->name('calendar.store');
+// // Route::get('/calendar/events-by-date', [App\Http\Controllers\Admin\PresentationScheduleController::class, 'getEventsByDate']);
+// Route::post('/calendar/updateEvent/{id}', [App\Http\Controllers\Admin\PresentationScheduleController::class, 'changeEvent']);
 
 // must add a auth there!!
 Route::group(['middleware' => 'auth','isAdmin', 'prefix' => 'admin'], function(){
@@ -80,6 +80,19 @@ Route::group(['middleware' => 'auth','isAdmin', 'prefix' => 'admin'], function()
     Route::post('advisor-assignment/store', [App\Http\Controllers\Admin\SupervisorStudentAssignmentController::class, 'store'])->name('advisor-assignment.store');
 
 
+    // for calendar - admin view
+    Route::get('/calendar', [App\Http\Controllers\Admin\PresentationScheduleController::class, 'getEvents'])->name('calendar.index');;
+    Route::get('/calendar/events/{date}', [App\Http\Controllers\Admin\PresentationScheduleController::class, 'getDateEvents']);
+    Route::get('/calendar/{eventId}', [App\Http\Controllers\Admin\PresentationScheduleController::class, 'getEventDetails']);
+    Route::post('/calendar/update/{eventId}', [App\Http\Controllers\Admin\PresentationScheduleController::class, 'updateEvent']);
+    Route::post('/calendar/store', [App\Http\Controllers\Admin\PresentationScheduleController::class, 'store'])->name('calendar.store');
+    Route::post('/calendar/updateEvent/{id}', [App\Http\Controllers\Admin\PresentationScheduleController::class, 'changeEvent']);
+
+    Route::post('calendar/uploadSche', [App\Http\Controllers\Admin\PresentationScheduleController::class, 'uploadPresentationSche'])->name('calendarsche.upload');
+    // Route::get('calendar/showAllFile',[App\Http\Controllers\Admin\FormController::class, 'showAllFile']) -> name('calendarsche.showfile');
+    Route::get('calendar/ii',[App\Http\Controllers\Admin\PresentationScheduleController::class, 'showAllFile']) -> name('calendarsche.showfile');
+    // Route::get('calendar/download/{id}',[App\Http\Controllers\Admin\FormController::class, 'showAllFile']) -> name('calendarsche.showfile');
+    Route::get('/download/template/{id}', [App\Http\Controllers\Admin\PresentationScheduleController::class,'downloadTemplate'])->name('download.template');
 
 // routes/web.php
 // Route::get('/templates/download/{template}', 'TemplateController@download')->name('templates.download');

@@ -7,11 +7,79 @@
     {{-- only from can be edited by lecturer,admin. (student only view)--}}
   <h1 style="margin-top: 20px; margin-bottom:20px;">PutraMas Calendar Schedule</h1>
     {{-- <div class="container-fluid"> --}}
-      @if ($message = Session::get('success'))
-      <div class="alert alert-success">
-          <p>{{ $message }}</p>
+      @if ($errors->any())
+      <div class="alert alert-danger">
+          <ul>
+              @foreach ($errors->all() as $error)
+                  <li>{{ $error }}</li>
+              @endforeach
+          </ul>
       </div>
-    @endif
+  @endif
+
+  @if (session('success'))
+      <div class="alert alert-success">
+          {{ session('success') }}
+      </div>
+  @endif
+
+  @if (session('error'))
+      <div class="alert alert-danger">
+          {{ session('error') }}
+      </div>
+  @endif
+
+    <div class="card"  style="padding:0px; margin-left: -15px; margin-top: 20px; margin-bottom:20px;">
+      <div class="card-header d-flex justify-content-between align-items-center">
+        <h5>Presentation Schedule Template</h5>
+          <div class="float-right" style = " color:white;">
+            <a class="btn btn-success" data-toggle="modal" data-target="#uploadModal"><i class="fa fa-upload" style="margin-right: 5px;"></i>
+              Upload New Presentation Sche File
+              </a>
+          </div>
+      </div>
+      <div class="card-body">
+          <div>
+            <p>Download the presentation schedule template in Excel format:</p>
+            @foreach ($calen as $template)
+                <p>{{ $template->file_name }}</p>
+                <a href="{{ route('download.template', $template->id) }}" class="btn btn-primary">Download</a>
+                {{-- @php
+                  $files = json_decode($getRecord->files, true);
+                @endphp --}}
+            @endforeach
+          </div>
+      </div>
+  </div>
+
+  <div class="modal fade" id="uploadModal" tabindex="-1" role="dialog" aria-labelledby="uploadModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="uploadModalLabel">Upload New Presentation Schedule File</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                {{-- Your form for uploading Excel file goes here --}}
+                <form action="{{ route('calendarsche.upload') }}" method="post" enctype="multipart/form-data">
+                    @csrf
+                    <div class="form-group">
+                      <label for="file_name"  class = "labelling">File Name: (to be displayed)</label>
+                      <input type="text" id="file_name" name="file_name" class = "form-control" placeholder=" Name" ><br>
+                    </div>
+                    <div class="form-group">
+                        <label for="file_data">Please upload the presentation schedule file: </label>
+                        <input type="file" class="form-control-file" id="file_data" name="file_data" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Upload</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
       <div class="row">
         <div class="col-md-3" style="padding:0px">
           <div class="sticky-top mb-3">
@@ -393,7 +461,7 @@
               title: '{{ $event['title'] }}',
               description: '{{ $event['description'] }}',
               start: '{{ $event['start'] }}',
-
+              className: 'form-event',
           @endif
         },
         @endforeach
@@ -487,7 +555,7 @@
 
       // Make an AJAX request to update the event in the databases
       $.ajax({
-          url: '/calendar/updateEvent/' + updatedEvent.id,
+          url: '/admin/calendar/updateEvent/' + updatedEvent.id,
           type: 'POST', // Adjust the HTTP method as needed
           data: updatedEvent,
           success: function (response) {
@@ -549,7 +617,7 @@
       const formattedDate = moment(clickedDate).format('YYYY-MM-DD');
       console.log(formattedDate);
       $.ajax({
-            url: '/calendar/events/' + formattedDate,
+            url: '/admin/calendar/events/' + formattedDate,
             method: 'GET',
             success: function (events) {
               console.log(JSON.stringify(events, null, 2));
@@ -559,7 +627,7 @@
                 const formattedClickedDate = moment(clickedDate).format('D MMMM YYYY');
                 const [day, month, year] = formattedClickedDate.split(' ');
 
-                eventList.append('<li style="font-size: 32px; line-height: 1.5; display: flex;"><strong style="margin-right: 10px;">' + day + '</strong><div style="display: flex; flex-direction: column;"><div style="font-size: 14px;">' + month + '</div><div style="font-size: 16px;">' + year + '</div></div></li>');
+                eventList.append('<li style="font-size: 34px; line-height: 1.5; display: flex;align-items: center; justify-content: center;"><strong style="margin-right: 10px;">' + day + '</strong><div style="display: flex; flex-direction: column;"><div style="font-size: 14px;">' + month + '</div><div style="font-size: 14px;">' + year + '</div></div></li>');
 
                 events.forEach(function (event) {
                     var eventItem = $('<li class="event-item"></li>');
@@ -567,9 +635,11 @@
                     eventItem.append('<div class="event-detail"><strong>Description:</strong> ' + event.description + '</div>');
                     // Check the event type
                     if (event.type === 'presentation') {
+                      eventItem.css('background-color', '#FFFFCC');
                       console.log(event.type);
                         eventItem.append('<div class="event-detail"><strong>Location:</strong> ' + event.location + '</div>');
                     } else if (event.type === 'forms') {
+                      eventItem.css('background-color', 'rgb(210, 255, 210)');
                         eventItem.append('<div class="event-detail"><strong>Submission Deadline:</strong> ' + event.submission_deadline + '</div>');
                     }
                     eventList.append(eventItem);
@@ -638,7 +708,7 @@
       // updateEventList(formattedDate); // Make sure to pass the correct date
 
       $.ajax({
-          url: '/calendar/update/' + selectedEventId, // Use the correct route URL
+          url: '/admin/calendar/update/' + selectedEventId, // Use the correct route URL
           // type: 'PUT',
           type: 'POST',
           // data: formData,
@@ -694,7 +764,7 @@
     // Send an AJAX request to fetch event details from the server
     $.ajax({
         method: 'GET',
-        url: `/calendar/${eventId}`, // Adjust the URL to match your Laravel route
+        url: `/admin/calendar/${eventId}`, // Adjust the URL to match your Laravel route
         success: function (response) {
             // Assuming the response is a JSON object containing event details
             eventDetails = response;
