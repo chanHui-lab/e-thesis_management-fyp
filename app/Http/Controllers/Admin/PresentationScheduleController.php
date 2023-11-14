@@ -367,10 +367,11 @@ public function fetchUpdatedEventSource() {
                 $fileName = time() . '_' . $file->getClientOriginalName();
 
                 // Store the file using the 'public' disk
-                $filePath = 'upload/templates/presentationSche' . $fileName;
+                $filePath = 'upload/templates/presentationSche/' . $fileName;
                 Storage::disk('public')->put($filePath, file_get_contents($file));
             $extension = $file->getClientOriginalExtension();
             $mime_type = $this->getMimeType($extension);
+            $filePath = str_replace('storage/app/', '', $filePath);
 
             // try laterr
             $userId = Auth::user()->id;
@@ -436,33 +437,71 @@ public function fetchUpdatedEventSource() {
         return view('admin.presentationSchedule', $calen);
     }
 
+    // working on thsi part penidng,,,,,
+    // public function downloadTemplate($id)
+    // {
+    //     $template = Template::find($id);
+    //     // $fileInfo = json_decode($template->file_data);
+
+    //     // $filePath = storage_path('app/' . str_replace('storage/app/', '', $template->file_data));
+    //     $filePath = storage_path('app/' . $template->file_data);
+    //     // dd($filePath);
+    //     \Log::info('File Path: ' . storage_path('app/' . $template->file_data));
+
+    //     if (file_exists($filePath)) {
+    //         return response()->download($filePath, $template->file_name);
+    //     } else {
+    //         // Handle the case where the file does not exist
+    //         abort(404, 'File not found');
+    //     }
+
+    //     return response()->download(storage_path('app/' . $template->file_data), $template->file_name);
+    // }
+
     public function downloadTemplate($id)
-    {
-        $template = Template::find($id);
+{
+    $template = Template::find($id);
 
-        $filePath = storage_path('app/' . $template->file_data);
-        dd( $filePath);
+    if ($template) {
+        $filePath = $template->file_data; // Use the stored file path directly
 
-        if (file_exists($filePath)) {
-            return response()->download($filePath, $template->file_name);
+        // Check if the file exists
+        if (Storage::disk('public')->exists($filePath)) {
+            return response()->download(storage_path('app/' . $filePath), $template->file_name);
         } else {
-            // Handle the case where the file does not exist
-            abort(404, 'File not found');
+            return response()->json(['error' => 'File not found'], 404);
         }
-
-        return response()->download(storage_path('app/' . $template->file_data), $template->file_name);
     }
 
-    public function getFile($id)
+    return response()->json(['error' => 'Template not found'], 404);
+}
+
+    // public function getFile($id)
+    // public function downloadTemplate($id)
+    // {
+    //     $data['getRecord'] = Template::getSingle($id);
+
+    //     if(!empty($data['getRecord'])){
+    //         return view('admin.presentationSchedule', $data);
+    //     }
+    //     else{
+    //         return redirect()->route('formpost.index')->with('error', 'Submission post not found');
+    //     }
+    // }
+    public function deleteTemplate($id)
     {
-        $data['getRecord'] = Template::getSingle($id);
+        try {
+            $template = Template::findOrFail($id);
 
-        if(!empty($data['getRecord'])){
-            return view('admin.presentationSchedule', $data);
-        }
-        else{
-            return redirect()->route('formpost.index')->with('error', 'Submission post not found');
+            // Delete file from storage
+            Storage::delete($template->file_data);
+
+            // Delete the template record from the database
+            $template->delete();
+
+            return redirect()->back()->with('success', 'File deleted successfully.');
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', 'Error deleting file.');
         }
     }
-
     }

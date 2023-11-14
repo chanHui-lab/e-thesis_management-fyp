@@ -42,15 +42,53 @@
           <div>
             <p>Download the presentation schedule template in Excel format:</p>
             @foreach ($calen as $template)
-                <p>{{ $template->file_name }}</p>
-                <a href="{{ route('download.template', $template->id) }}" class="btn btn-primary">Download</a>
-                {{-- @php
-                  $files = json_decode($getRecord->files, true);
-                @endphp --}}
-            @endforeach
+                <p>{{ $template->file_name }}
+                {{-- <a href="{{ route('download.template', $template->id) }}" class="btn btn-primary">Download</a> --}}
+                @if (Str::endsWith($template->file_data, '.pdf'))
+                <a href="{{ asset('storage/' . $template->file_data) }}" download>
+                  <i class="fa fa-file-pdf file-icon" style = "color: rgb(255, 86, 86)"></i>
+                  {{ last(explode('_', $template->file_name)) }}
+                  {{-- {{ str_replace('upload/templates/', '', $template->file_data) }} --}}
+                </a>
+                @elseif (Str::endsWith($template->file_data, ['.xlsx', '.xls']))
+                <i class="fa fa-file-excel file-icon" style = "color: rgb(39, 158, 81)"></i>
+                <a href="{{ asset('storage/' . $template->file_data) }}" download>
+                  {{ str_replace('upload/templates/', '', $template->file_data) }}
+                </a>
+                @endif
+                {{-- <button class="btn btn-danger" onclick="confirmDelete('{{ $template->id }}')">
+                  <i class="fa fa-trash"></i>
+              </button> --}}
+              <i class="fa fa-trash remove-icon"></i><button type="button" class="btn btn-danger" data-toggle="modal" data-modal-id="confirmationModal{{ $template->file_data }}" data-target="#confirmationModal{{ $template->id }}">
+                Remove
+              </button>
+              {{-- <i class="fa fa-trash remove-icon" style="color: red; cursor: pointer;" data-toggle="modal" data-target="#confirmationModal{{ $template->id }}"></i> --}}
+            </p>
+                      <!-- Confirmation Modal -->
+        <div class="modal fade" id="confirmationModal{{ $template->id }}" tabindex="-1" role="dialog" aria-labelledby="confirmationModalLabel" aria-hidden="true">
+          <div class="modal-dialog" role="document">
+              <div class="modal-content">
+                  <div class="modal-header">
+                      <h5 class="modal-title" id="confirmationModalLabel">Confirm Deletion</h5>
+                      <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                          <span aria-hidden="true">&times;</span>
+                      </button>
+                  </div>
+                  <div class="modal-body">
+                      Are you sure you want to delete this file?
+                  </div>
+                  <div class="modal-footer">
+                      <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                      <a href="{{ route('delete.template', $template->id) }}" class="btn btn-danger">Delete</a>
+                  </div>
+              </div>
           </div>
       </div>
   </div>
+              @endforeach
+        </div>
+      </div>
+      {{-- ATTENTION: can delete upload file, but the spacing lari --}}
 
   <div class="modal fade" id="uploadModal" tabindex="-1" role="dialog" aria-labelledby="uploadModalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">

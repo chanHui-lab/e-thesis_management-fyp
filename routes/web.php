@@ -93,6 +93,8 @@ Route::group(['middleware' => 'auth','isAdmin', 'prefix' => 'admin'], function()
     Route::get('calendar/ii',[App\Http\Controllers\Admin\PresentationScheduleController::class, 'showAllFile']) -> name('calendarsche.showfile');
     // Route::get('calendar/download/{id}',[App\Http\Controllers\Admin\FormController::class, 'showAllFile']) -> name('calendarsche.showfile');
     Route::get('/download/template/{id}', [App\Http\Controllers\Admin\PresentationScheduleController::class,'downloadTemplate'])->name('download.template');
+    // web.php or routes file
+    Route::get('/delete/template/{id}', [App\Http\Controllers\Admin\PresentationScheduleController::class, 'deleteTemplate'])->name('delete.template');
 
 // routes/web.php
 // Route::get('/templates/download/{template}', 'TemplateController@download')->name('templates.download');
