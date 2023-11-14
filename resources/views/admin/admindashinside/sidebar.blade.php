@@ -125,13 +125,23 @@
         </li>
 
         <li class="nav-item">
-            <a href="{{ url('admin/adminpage/adminallthesissubmission') }}" class="nav-link {{ request()->is('admin/adminpage/adminallthesissubmission*') ? 'active' : '' }}">
+            <a href="{{ url('admin/calendar') }}" class="nav-link {{ request()->is('admin/calendar*') ? 'active' : '' }}">
               <i class="nav-icon bx bxs-calendar"></i>
             <p>
               Presentation Schedule
             </p>
           </a>
       </li>
+
+      <li class="nav-item">
+        <a href="{{ url('admin/calendar') }}" class="nav-link {{ request()->is('admin/calendar*') ? 'active' : '' }}">
+          <i class="nav-icon bx bx-library"></i>
+          <p>
+            Thesis Repository
+          </p>
+        </a>
+      </li>
+
 
       <li class="nav-item">
         <a href="{{ url('admin/advisor-assignment/create') }}" class="nav-link {{ request()->is('admin/advisor-assignment/create*') ? 'active' : '' }}">

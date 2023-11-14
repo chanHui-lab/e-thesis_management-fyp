@@ -1,338 +1,350 @@
 @extends('admin.template_page.adminpure')
 
 @section('master_content')
+{{-- <section class="content"> --}}
+  <main>
 
-<main>
-  <h1 style="margin-top:20px;margin-bottom:10px;">PutraMas Calendar Schedule</h1>
-  <div class="row" >
-    <div class="col-md-12" style="margin-left: -15px;">
-      @if ($errors->any())
-      <div class="alert alert-danger">
-          <ul>
-              @foreach ($errors->all() as $error)
-                  <li>{{ $error }}</li>
-              @endforeach
-          </ul>
-      </div>
-      @endif
-
-      @if (session('success'))
-          <div class="alert alert-success">
-              {{ session('success') }}
+    {{-- only from can be edited by lecturer,admin. (student only view)--}}
+  <h1 style="margin-top: 20px; margin-bottom:20px;">PutraMas Calendar Schedule</h1>
+    {{-- <div class="container-fluid"> --}}
+      <div class="row">
+        <div class="col-md-12">
+          @if ($errors->any())
+          <div class="alert alert-danger">
+              <ul>
+                  @foreach ($errors->all() as $error)
+                      <li>{{ $error }}</li>
+                  @endforeach
+              </ul>
           </div>
-      @endif
+          @endif
 
-      @if (session('error'))
-        <div class="alert alert-danger">
-            {{ session('error') }}
-        </div>
-      @endif
+          @if (session('success'))
+              <div class="alert alert-success">
+                  {{ session('success') }}
+              </div>
+          @endif
 
-    </div>
-  </div>
-
-
-  {{-- Presentation Sche file card section --}}
-  <div class="row">
-    <div class="col-md-12">
-      <div class="card"  style="padding:0px; margin-left: -15px; margin-bottom:20px;">
-        <div class="card-header d-flex justify-content-between align-items-center">
-          <h5>Presentation Schedule Template</h5>
-            <div class="float-right" style = " color:white;">
-              <a class="btn btn-success" data-toggle="modal" data-target="#uploadModal"><i class="fa fa-upload" style="margin-right: 5px;"></i>
-                Upload New Presentation Sche File
-                </a>
+        @if (session('error'))
+            <div class="alert alert-danger">
+                {{ session('error') }}
             </div>
-        </div>
+        @endif
+      </div>
+    </div>
 
-        <div class="card-body">
-          <p>Download the presentation schedule template in Excel format:</p>
-          <div >
-            @foreach ($calen as $template)
-            <div class="file-container">
-            {{-- <div class="file-container" style="display: flex; justify-content: space-between;margin-bottom:1px;"> --}}
-            <p class="file-link">
-              &#x2514;
-              @if (Str::endsWith($template->file_data, '.pdf'))
-                <a href="{{ asset('storage/' . $template->file_data) }}" download>
-                  <i class="fa fa-file-pdf file-icon" style = "color: rgb(255, 86, 86); font-size: 20px;"></i>
-                  {{ last(explode('_', $template->file_name)) }}
-                </a>
-              @elseif (Str::endsWith($template->file_data, ['.xlsx', '.xls']))
-                <a href="{{ asset('storage/' . $template->file_data) }}" download>
-                  <i class="fa fa-file-excel file-icon" style = "color: rgb(39, 158, 81); font-size: 20px;"></i>
-                  {{-- {{ str_replace('upload/templates/', '', $template->file_data) }} --}}
-                  {{ last(explode('_', $template->file_name)) }}
-                </a>
-              @else
-              <a href="{{ asset('storage/' . $template->file_data) }}" download>
-                <i class="fa fa-file-word file-icon" style = "color: rgb(39, 77, 158); font-size: 20px;" ></i>
-                {{-- {{ str_replace('upload/templates/', '', $template->file_data) }} --}}
-                {{ last(explode('_', $template->file_name)) }}
-              </a>
-              @endif
-            </p>
-            <button type="button" class="btn btn-danger btn-sm" data-toggle="modal" data-modal-id="confirmationModal{{ $template->file_data }}" data-target="#confirmationModal{{ $template->id }}">
-              <i class="fa fa-trash remove-icon" style="margin-right: 5px;"></i>Remove
-            </button>
+    {{-- <div class="row"> --}}
+      <div class="col-md-12">
+        <div class="card"  style="padding:0px; margin-left: -15px; margin-top: 20px; margin-bottom:20px;">
+          <div class="card-header d-flex justify-content-between align-items-center">
+            <h5>Presentation Schedule Template</h5>
+              <div class="float-right" style = " color:white;">
+                <a class="btn btn-success" data-toggle="modal" data-target="#uploadModal"><i class="fa fa-upload" style="margin-right: 5px;"></i>
+                  Upload New Presentation Sche File
+                  </a>
+              </div>
           </div>
+          <div class="card-body">
+              <div>
+                <p>Download the presentation schedule template in Excel format:</p>
+                @foreach ($calen as $template)
+                    {{-- <p>{{ $template->file_name }} --}}
+                    <p>
+                    {{-- <a href="{{ route('download.template', $template->id) }}" class="btn btn-primary">Download</a> --}}
+                    @if (Str::endsWith($template->file_data, '.pdf'))
+                    <a href="{{ asset('storage/' . $template->file_data) }}" download>
+                      <i class="fa fa-file-pdf file-icon" style = "color: rgb(255, 86, 86)"></i>
+                      {{ last(explode('_', $template->file_name)) }}
+                      {{-- {{ str_replace('upload/templates/', '', $template->file_data) }} --}}
+                    </a>
+                    @elseif (Str::endsWith($template->file_data, ['.xlsx', '.xls']))
+                    <i class="fa fa-file-excel file-icon" style = "color: rgb(39, 158, 81)"></i>
+                    <a href="{{ asset('storage/' . $template->file_data) }}" download>
+                      {{ str_replace('upload/templates/', '', $template->file_data) }}
+                    </a>
+                    @endif
+                    {{-- <button class="btn btn-danger" onclick="confirmDelete('{{ $template->id }}')">
+                      <i class="fa fa-trash"></i>
+                  </button> --}}
+                  <i class="fa fa-trash remove-icon"></i><button type="button" class="btn btn-danger" data-toggle="modal" data-modal-id="confirmationModal{{ $template->file_data }}" data-target="#confirmationModal{{ $template->id }}">
+                    Remove
+                  </button>
+                  {{-- <i class="fa fa-trash remove-icon" style="color: red; cursor: pointer;" data-toggle="modal" data-target="#confirmationModal{{ $template->id }}"></i> --}}
+                </p>
+                </p>
+                          <!-- Confirmation Modal -->
+            <div class="modal fade" id="confirmationModal{{ $template->id }}" tabindex="-1" role="dialog" aria-labelledby="confirmationModalLabel" aria-hidden="true">
+              <div class="modal-dialog" role="document">
+                  <div class="modal-content">
+                      <div class="modal-header">
+                          <h5 class="modal-title" id="confirmationModalLabel">Confirm Deletion</h5>
+                          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                              <span aria-hidden="true">&times;</span>
+                          </button>
+                      </div>
+                      <div class="modal-body">
+                          Are you sure you want to delete this file?
+                      </div>
+                      <div class="modal-footer">
+                          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                          <a href="{{ route('delete.template', $template->id) }}" class="btn btn-danger">Delete</a>
+                      </div>
+                  </div>
+              </div>
+            </div>
+          {{-- </div> --}}
+                  @endforeach
+            </div>
+          </div>
+      </div>
+      {{-- </div> --}}
 
-        <!-- Confirmation DELETE Modal -->
-        <div class="modal fade" id="confirmationModal{{ $template->id }}" tabindex="-1" role="dialog" aria-labelledby="confirmationModalLabel" aria-hidden="true">
+          {{-- ATTENTION: can delete upload file, but the spacing lari --}}
+          <div class="row">
+            <div class="col-md-3" style="padding:0px">
+              <div class="sticky-top mb-3">
+
+                <div class="card">
+                  <div class="card-header">
+                    <h5 class="card-title">Daily Event List</h5>
+                  </div>
+                  <div class="card-body">
+                    <!-- the events -->
+                    {{-- this div very important because without itm, calender wouldnt appear --}}
+                    <div id="external-events">
+
+                    <ul id="daily-event-list">
+                      <!-- Daily event list will be displayed here -->
+                      {{-- @foreach($eventsByDay as $day => $events)
+                                <li>
+                                    <strong>{{ $day }}</strong>
+                                    <ul>
+                                        @foreach($events as $event)
+                                            <li>{{ $event->title }}</li>
+                                        @endforeach
+                                    </ul>
+                                </li>
+                            @endforeach --}}
+                    </ul>
+                    </div>
+                  </div> <!-- /.card-body -->
+                </div>
+
+                {{-- draggable --}}
+                {{-- <div class="card">
+                  <div class="card-header">
+                    <h5 class="card-title">Draggable Events</h5>
+                  </div>
+                  <div class="card-body">
+                    <!-- the events -->
+                    <div id="external-events">
+                      can be thesis seminar, workshop, deadline
+                      <div class="external-event bg-success">Lunch</div>
+                      <div class="external-event bg-warning">Go home</div>
+                      <div class="external-event bg-info">Do homework</div>
+                      <div class="external-event bg-primary">Work on UI design</div>
+                      <div class="external-event bg-danger">Sleep tight</div>
+                      <div class="checkbox">
+                        <label for="drop-remove">
+                          <input type="checkbox" id="drop-remove">
+                          remove after drop
+                        </label>
+                      </div>
+                    </div>
+                  </div> <!-- /.card-body -->
+                </div> --}}
+
+                <!-- /.card -->
+                <div class="card">
+                  <div class="card-header">
+                    <h5 class="card-title">Create Event</h5>
+                  </div>
+                  <div class="card-body">
+
+                    <!-- /btn-group -->
+                    <div class="input-group">
+                      <div class="col-md-12">
+                        {{-- <div class="col-md-12 col-lg-6"> --}}
+
+                      {{-- <input id="new-event" type="text" class="form-control" placeholder="Event Title"> --}}
+                      <form id="createEventForm">
+
+                        @csrf
+                        <div class="btn-group" style="width: 100%; margin-bottom: 2px;">
+                          <ul class="fc-color-picker" id="color-chooser">
+                            <li><a class="text-primary" href="#"><i class="fas fa-square"></i></a></li>
+                            <li><a class="text-warning" href="#"><i class="fas fa-square"></i></a></li>
+                            <li><a class="text-success" href="#"><i class="fas fa-square"></i></a></li>
+                            <li><a class="text-danger" href="#"><i class="fas fa-square"></i></a></li>
+                            <li><a class="text-muted" href="#"><i class="fas fa-square"></i></a></li>
+                          </ul>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="title">Title</label>
+                            <input type="text" class="form-control" id="title" name="title" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="description">Description</label>
+                            <textarea class="form-control" id="description" name="description"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="start">Start Date & Time</label>
+                            <input type="datetime-local" class="form-control" id="start" name="start" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="end">End Date & Time</label>
+                            <input type="datetime-local" class="form-control" id="end" name="end">
+                        </div>
+                        <div class="form-group">
+                            <label for="location">Location</label>
+                            <input type="text" class="form-control" id="location" name="location">
+                        </div>
+                      <div class="input-group-append">
+                        <button id="add-event-button" type="button" class="btn btn-primary">Create</button>
+                      </div>
+                    </form>
+                      <!-- /btn-group -->
+                    </div>
+                    <!-- /input-group -->
+                  </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <!-- /.col -->
+            <div class="col-md-9">
+              <div class="card card-primary">
+                <div class="card-body p-0">
+                  <!-- THE CALENDAR -->
+                  <div id="calendar" style="padding: 20px;overflow: auto;"></div>
+                </div>
+                <!-- /.card-body -->
+
+            </div>
+              <!-- /.card -->
+            </div>
+            <!-- /.col -->
+          </div>
+          <!-- /.row -->
+
+
+        <div class="modal fade" id="uploadModal" tabindex="-1" role="dialog" aria-labelledby="uploadModalLabel" aria-hidden="true">
           <div class="modal-dialog" role="document">
               <div class="modal-content">
                   <div class="modal-header">
-                      <h5 class="modal-title" id="confirmationModalLabel">Confirm Deletion</h5>
+                      <h5 class="modal-title" id="uploadModalLabel">Upload New Presentation Schedule File</h5>
                       <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                           <span aria-hidden="true">&times;</span>
                       </button>
                   </div>
                   <div class="modal-body">
-                      Are you sure you want to delete this file?
-                  </div>
-                  <div class="modal-footer">
-                      <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                      <a href="{{ route('delete.template', $template->id) }}" class="btn btn-danger">Delete</a>
+                      {{-- Your form for uploading Excel file goes here --}}
+                      <form action="{{ route('calendarsche.upload') }}" method="post" enctype="multipart/form-data">
+                          @csrf
+                          <div class="form-group">
+                            <label for="file_name"  class = "labelling">File Name: (to be displayed)</label>
+                            <input type="text" id="file_name" name="file_name" class = "form-control" placeholder=" Name" ><br>
+                          </div>
+                          <div class="form-group">
+                              <label for="file_data">Please upload the presentation schedule file: </label>
+                              <input type="file" class="form-control-file" id="file_data" name="file_data" required>
+                          </div>
+                          <button type="submit" class="btn btn-primary">Upload</button>
+                      </form>
                   </div>
               </div>
           </div>
         </div>
-        {{-- end delete modal--}}
-
-        @endforeach
-        </div>
-        {{-- end card body --}}
       </div>
-      {{-- end card --}}
     </div>
-  </div>
-  {{-- col-md-12 --}}
-  </div>
-  {{-- end  row--}}
 
-  {{-- display calendar, create event, event-list START --}}
-  <div class="row">
-    <div class="col-md-3" style="padding:0px">
-      <div class="sticky-top mb-3">
-        {{-- start card event list --}}
-        <div class="card">
-          <div class="card-header">
-            <h5 class="card-title">Daily Event List</h5>
-          </div>
-          <div class="card-body">
-            <!-- the events -->
-            {{-- this div very important because without itm, calender wouldnt appear --}}
-            <div id="external-events">
 
-            <ul id="daily-event-list">
-              <!-- Daily event list will be displayed here -->
-              {{-- @foreach($eventsByDay as $day => $events)
-                        <li>
-                            <strong>{{ $day }}</strong>
-                            <ul>
-                                @foreach($events as $event)
-                                    <li>{{ $event->title }}</li>
-                                @endforeach
-                            </ul>
-                        </li>
-                    @endforeach --}}
-            </ul>
+      {{-- DISPLAY EVENT DETAILS CONFIRMATION MODAL --}}
+      <div class="modal fade" id="eventDetailsModal" tabindex="-1" role="dialog" aria-labelledby="eventDetailsModal" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="eventDetailsModal">Event Details</h5>
+                    <button type="button" class="close" id="closeEventModal" data-dismiss="modal" aria-label="Close">
+                      <span aria-hidden="true">x</span>
+                  </button>
+                </div>
+                <div class="modal-body">
+                    <h4 id="eventTitle"></h4>
+                    <p>Description: <span id="eventDesc"></span></p>
+
+                    <!-- Add more event details here -->
+                    <div id="additionalDetails">
+                      <!-- This will be dynamically populated based on the event type -->
+                      {{-- <p>Start Date: <span id="eventStartDate"></span></p>
+                      <p>End Date: <span id="eventEndDate"></span></p> --}}
+                      {{-- <p>Location: <span id="eventLoc"></span></p> --}}
+
+                    </div>
+                </div>
+                <div class="modal-footer" id="eventModalFooter">
+                  {{-- <button class="btn btn-primary" id="editEventButton">Edit</button> --}}
+                  {{-- <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button> --}}
+                </div>
             </div>
-          </div> <!-- /.card-body -->
         </div>
-        {{-- end card to display event list --}}
-
-        {{-- start card to create event --}}
-        <div class="card">
-          <div class="card-header">
-            <h5 class="card-title">Create Event</h5>
-          </div>
-          <div class="card-body">
-
-            <!-- /btn-group -->
-            <div class="input-group">
-              <div class="col-md-12">
-                {{-- <div class="col-md-12 col-lg-6"> --}}
-
-              {{-- <input id="new-event" type="text" class="form-control" placeholder="Event Title"> --}}
-              <form id="createEventForm">
-
-                @csrf
-                <div class="btn-group" style="width: 100%; margin-bottom: 2px;">
-                  <ul class="fc-color-picker" id="color-chooser">
-                    <li><a class="text-primary" href="#"><i class="fas fa-square"></i></a></li>
-                    <li><a class="text-warning" href="#"><i class="fas fa-square"></i></a></li>
-                    <li><a class="text-success" href="#"><i class="fas fa-square"></i></a></li>
-                    <li><a class="text-danger" href="#"><i class="fas fa-square"></i></a></li>
-                    <li><a class="text-muted" href="#"><i class="fas fa-square"></i></a></li>
-                  </ul>
-                </div>
-
-                <div class="form-group">
-                    <label for="title">Title</label>
-                    <input type="text" class="form-control" id="title" name="title" required>
-                </div>
-                <div class="form-group">
-                    <label for="description">Description</label>
-                    <textarea class="form-control" id="description" name="description"></textarea>
-                </div>
-                <div class="form-group">
-                    <label for="start">Start Date & Time</label>
-                    <input type="datetime-local" class="form-control" id="start" name="start" required>
-                </div>
-                <div class="form-group">
-                    <label for="end">End Date & Time</label>
-                    <input type="datetime-local" class="form-control" id="end" name="end">
-                </div>
-                <div class="form-group">
-                    <label for="location">Location</label>
-                    <input type="text" class="form-control" id="location" name="location">
-                </div>
-              <div class="input-group-append">
-                <button id="add-event-button" type="button" class="btn btn-primary">Create</button>
-              </div>
-            </form>
-              <!-- /btn-group -->
-            </div>
-            <!-- /input-group -->
-          </div>
-          </div>
-          </div>
-          {{-- end card-body --}}
-        </div>
-        {{-- end card to create event --}}
-
       </div>
 
-    <div class="col-md-9">
-      <div class="card card-primary">
-        <div class="card-body p-0">
-          <!-- THE CALENDAR -->
-          <div id="calendar" style="padding: 20px;overflow: auto;"></div>
-        </div>
-        <!-- /.card-body -->
-    </div>
-    </div>
-
-    </div>
-    {{-- end sticky-top-3 --}}
-
-  </div>
-  {{-- calendar, create event, event-list row end --}}
-
-  {{-- Presentation Sche Upload File Modal starts --}}
-  <div class="modal fade" id="uploadModal" tabindex="-1" role="dialog" aria-labelledby="uploadModalLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="uploadModalLabel">Upload New Presentation Schedule File</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                {{-- Your form for uploading Excel file goes here --}}
-                <form action="{{ route('calendarsche.upload') }}" method="post" enctype="multipart/form-data">
+    {{-- START edit event modal --}}
+    <div class="modal fade scrollable-modal" id="editEventModal" tabindex="-1" role="dialog" aria-labelledby="editEventModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editEventModalLabel">Edit Event</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">×</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                  <form id="editEventForm">
                     @csrf
-                    <div class="form-group">
-                      <label for="file_name"  class = "labelling">File Name: (to be displayed)</label>
-                      <input type="text" id="file_name" name="file_name" class = "form-control" placeholder=" Name" ><br>
-                    </div>
-                    <div class="form-group">
-                        <label for="file_data">Please upload the presentation schedule file: </label>
-                        <input type="file" class="form-control-file" id="file_data" name="file_data" required>
-                    </div>
-                    <button type="submit" class="btn btn-primary">Upload</button>
-                </form>
-            </div>
-        </div>
-    </div>
-  </div>
-  {{-- Presentation Sche modal ends --}}
+                    {{-- @method('PUT') --}}
 
-  {{-- DISPLAY EVENT DETAILS CONFIRMATION MODAL --}}
-  <div class="modal fade" id="eventDetailsModal" tabindex="-1" role="dialog" aria-labelledby="eventDetailsModal" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="eventDetailsModal">Event Details</h5>
-                <button type="button" class="close" id="closeEventModal" data-dismiss="modal" aria-label="Close">
-                  <span aria-hidden="true">x</span>
-              </button>
-            </div>
-            <div class="modal-body">
-                <h4 id="eventTitle"></h4>
-                <p>Description: <span id="eventDesc"></span></p>
-
-                <!-- Add more event details here -->
-                <div id="additionalDetails">
-                  <!-- This will be dynamically populated based on the event type -->
-                  {{-- <p>Start Date: <span id="eventStartDate"></span></p>
-                  <p>End Date: <span id="eventEndDate"></span></p> --}}
-                  {{-- <p>Location: <span id="eventLoc"></span></p> --}}
-
+                  <h4 id="eventTitle"></h4>
+                  <div class="form-group">
+                      <label for="editTitle">Title</label>
+                      <input type="text" class="form-control" id="editTitle" name="editTitle">
+                  </div>
+                  <div class="form-group">
+                      <label for="editDescription">Description:</label>
+                      <textarea class="form-control" id="editDescription" name="description"></textarea>
+                  </div>
+                  <div class="form-group">
+                      <label for="editStartDate">Start Date and Time:</label>
+                      <input type="datetime-local" class="form-control datetimepicker" id="editStartDate" name="startdate">
+                  </div>
+                  <div class="form-group">
+                      <label for="editEndDate">End Date and Time:</label>
+                      <input type="datetime-local" class="form-control datetimepicker" id="editEndDate" name="enddate">
+                  </div>
+                  <div class="form-group">
+                    <label for="editLocation">Location</label>
+                    <input type="text" class="form-control" id="editLocation" name="editLocation">
                 </div>
-            </div>
-            <div class="modal-footer" id="eventModalFooter">
-              {{-- <button class="btn btn-primary" id="editEventButton">Edit</button> --}}
-              {{-- <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button> --}}
+                  </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" id="saveEventChanges">Save Changes</button>
+                </div>
+                {{-- </form> --}}
             </div>
         </div>
     </div>
-  </div>
-  {{-- display enet details modal end --}}
 
-  {{-- START edit event modal --}}
-  <div class="modal fade scrollable-modal" id="editEventModal" tabindex="-1" role="dialog" aria-labelledby="editEventModalLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="editEventModalLabel">Edit Event</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">×</span>
-                </button>
-            </div>
-            <div class="modal-body">
-              <form id="editEventForm">
-                @csrf
-                {{-- @method('PUT') --}}
-
-              <h4 id="eventTitle"></h4>
-              <div class="form-group">
-                  <label for="editTitle">Title</label>
-                  <input type="text" class="form-control" id="editTitle" name="editTitle">
-              </div>
-              <div class="form-group">
-                  <label for="editDescription">Description:</label>
-                  <textarea class="form-control" id="editDescription" name="description"></textarea>
-              </div>
-              <div class="form-group">
-                  <label for="editStartDate">Start Date and Time:</label>
-                  <input type="datetime-local" class="form-control datetimepicker" id="editStartDate" name="startdate">
-              </div>
-              <div class="form-group">
-                  <label for="editEndDate">End Date and Time:</label>
-                  <input type="datetime-local" class="form-control datetimepicker" id="editEndDate" name="enddate">
-              </div>
-              <div class="form-group">
-                <label for="editLocation">Location</label>
-                <input type="text" class="form-control" id="editLocation" name="editLocation">
-            </div>
-              </form>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-primary" id="saveEventChanges">Save Changes</button>
-            </div>
-            {{-- </form> --}}
-        </div>
-    </div>
- </div>
-    {{-- edit modal end --}}
-
+    {{-- </div> --}}
+    <!-- /.container-fluid -->
+  {{-- </section> --}}
 </main>
-
-<script src={{ asset('./plugins/bootstrap/js/bootstrap.bundle.min.js') }}></script>
+  <!-- jQuery -->
+  {{-- <script src={{ asset('./plugins/jquery/jquery.min.js') }}></script> --}}
+  <script src={{ asset('./plugins/bootstrap/js/bootstrap.bundle.min.js') }}></script>
 
   <!-- Bootstrap 4 -->
   {{-- <script src="../../plugins/bootstrap/js/bootstrap.bundle.min.js"></script> --}}
@@ -667,19 +679,17 @@
                 const formattedClickedDate = moment(clickedDate).format('D MMMM YYYY');
                 const [day, month, year] = formattedClickedDate.split(' ');
 
-                eventList.append('<li style="font-size: 30px; line-height: 1.5; display: flex;align-items: center; justify-content: center;"><strong style="margin-right: 10px;">' + day + '</strong><div style="display: flex; flex-direction: column;"><div style="font-size: 13px;">' + month + '</div><div style="font-size: 12px;">' + year + '</div></div></li>');
+                eventList.append('<li style="font-size: 34px; line-height: 1.5; display: flex;align-items: center; justify-content: center;"><strong style="margin-right: 10px;">' + day + '</strong><div style="display: flex; flex-direction: column;"><div style="font-size: 14px;">' + month + '</div><div style="font-size: 14px;">' + year + '</div></div></li>');
 
                 events.forEach(function (event) {
-                    var eventItem = $('<li class="event-item" style="font-size: 12px;"></li>');
+                    var eventItem = $('<li class="event-item"></li>');
                     eventItem.append('<div class="event-title">' + event.title + '</div>');
-                    eventItem.append('<div class="event-detail"><strong>Student:</strong> ' + event.description + '</div>');
+                    eventItem.append('<div class="event-detail"><strong>Description:</strong> ' + event.description + '</div>');
                     // Check the event type
                     if (event.type === 'presentation') {
                       eventItem.css('background-color', '#FFFFCC');
                       console.log(event.type);
-                      eventItem.append('<div class="event-detail"><strong>Start:</strong> ' + event.start + '</div>');
-                      eventItem.append('<div class="event-detail"><strong>End:</strong> ' + event.end + '</div>');
-                      eventItem.append('<div class="event-detail"><strong>Location:</strong> ' + event.location + '</div>');
+                        eventItem.append('<div class="event-detail"><strong>Location:</strong> ' + event.location + '</div>');
                     } else if (event.type === 'forms') {
                       eventItem.css('background-color', 'rgb(210, 255, 210)');
                         eventItem.append('<div class="event-detail"><strong>Submission Deadline:</strong> ' + event.submission_deadline + '</div>');

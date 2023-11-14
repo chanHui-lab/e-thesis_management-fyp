@@ -359,7 +359,7 @@ public function fetchUpdatedEventSource() {
         try{
             $request->validate([
                 'file_name' => 'required',
-                'file_data' => 'required|mimes:pdf,doc,doc,xls,xlsx,csv|max:2048', // Add validation rules for the file
+                'file_data' => 'required|mimes:pdf,doc,docx,xls,xlsx,csv|max:2048', // Add validation rules for the file
             ]);
 
             if ($request->hasFile('file_data') && $request->file('file_data')->isValid()) {
