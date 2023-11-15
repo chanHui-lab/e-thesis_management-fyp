@@ -77,7 +77,7 @@
             </button>
           </div>
 
-        <!-- Confirmation DELETE Modal -->
+        <!-- Confirmation DELETE file Modal -->
         <div class="modal fade" id="confirmationModal{{ $template->id }}" tabindex="-1" role="dialog" aria-labelledby="confirmationModalLabel" aria-hidden="true">
           <div class="modal-dialog" role="document">
               <div class="modal-content">
@@ -105,6 +105,7 @@
       </div>
       {{-- end card --}}
     </div>
+    {{-- end card body --}}
   </div>
   {{-- col-md-12 --}}
   </div>
@@ -330,6 +331,21 @@
  </div>
     {{-- edit modal end --}}
 
+    {{-- START DELETE EVENT CONFIRMATION MODAL --}}
+    <div class="modal fade dimmed-modal" id="confirmDeleteCountdownEventModal" tabindex="-1" role="dialog" aria-hidden="true" aria-labelledby="confirmDeleteCountdownEventModal">
+      <div class="modal-dialog" role="document">
+          <div class="modal-content">
+              <div class="modal-body">
+                  <p>Are you sure you want to delete this event?</p>
+                  <p id="confirmationTimer">10</p>
+              </div>
+              <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                  <button type="button" class="btn btn-danger" id="confirmDeleteButton">Confirm Delete</button>
+              </div>
+          </div>
+      </div>
+  </div>
 </main>
 
 <script src={{ asset('./plugins/bootstrap/js/bootstrap.bundle.min.js') }}></script>
@@ -610,6 +626,7 @@
       });
     }
 
+    // function to display evnent details in modal
     function displayEventDetails(event) {
       detailsModalFooter.empty();
       console.log("displayEventDetails",event);
@@ -628,7 +645,20 @@
         editButton.on('click', function () {
           clickingEditButton(event);
         });
-      detailsModalFooter.append(editButton);
+
+        var deleteButton = $('<button class="btn btn-danger" id="deleteEventButton">Delete</button>');
+        deleteButton.on('click', function () {
+          $('#confirmDeleteCountdownEventModal').modal('show');
+          // $('#eventDetailsModal').modal('hide'); // Hide the event details modal
+          $('#eventDetailsModal .modal-content').css('opacity', '0.5');
+          $('#eventDetailsModal').attr('data-backdrop', 'static');
+
+          startConfirmationCountdown();
+        });
+
+        detailsModalFooter.append(editButton);
+        detailsModalFooter.append(deleteButton);
+
       } else if (event.extendedProps.type === 'forms') {
         // Display additional thesis details
         $('#additionalDetails').html('<p>Submission Deadline: ' + event.start.toLocaleString()+ '</p>');
@@ -817,6 +847,59 @@
     return eventDetails;
   }
 
+  // when user click on confirm delete button in the modal
+  $('#confirmDeleteButton').on('click', function () {
+    // Call the function to delete the event
+    clickingDeleteButton(event);
+
+    // Close the confirmation modal after deletion
+    $('#confirmDeleteCountdownEventModal').modal('hide');
+  });
+
+  //PENDINGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGG
+  function clickingDeleteButton(event){
+    // Get the event ID
+    var eventId = $('#eventDetailsModal').data('event-id');
+
+    // Send an AJAX request to delete the event on the server
+    $.ajax({
+        url: '/calendar/delete-event/' + eventId, // Adjust the URL to your server endpoint
+        method: 'DELETE',
+        success: function (response) {
+            // Handle success, e.g., remove the event from the calendar
+            $('#calendar').fullCalendar('removeEvents', eventId);
+
+            // Optionally, show a success message or perform other actions
+            console.log('Event deleted successfully.');
+        },
+        error: function (xhr, status, error) {
+            // Handle error, e.g., show an error message
+            console.error('Error deleting event:', error);
+        }
+    });
+
+  }
+
+
+// Function to start the countdown timer in the confirmation modal
+function startConfirmationCountdown() {
+    var countdown = 10; // Set the initial countdown time
+    var confirmationTimer = $('#confirmationTimer');
+
+    var countdownInterval = setInterval(function () {
+        countdown--;
+        confirmationTimer.text(countdown);
+
+        if (countdown <= 0) {
+            // Time's up, trigger delete function
+            clearInterval(countdownInterval);
+            var eventId = $('#eventDetailsModal').data('event-id');
+            deleteEvent(eventId);
+            // // Close the confirmation modal
+            // $('#confirmationModal').modal('hide');
+        }
+    }, 1000);
+  };
 
   $('#add-event-button').click(function () {
         var title = $('#title').val();

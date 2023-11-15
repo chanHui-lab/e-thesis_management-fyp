@@ -488,6 +488,9 @@ public function fetchUpdatedEventSource() {
     //         return redirect()->route('formpost.index')->with('error', 'Submission post not found');
     //     }
     // }
+
+
+
     public function deleteTemplate($id)
     {
         try {
@@ -504,4 +507,18 @@ public function fetchUpdatedEventSource() {
             return redirect()->back()->with('error', 'Error deleting file.');
         }
     }
+
+    public function deleteEvent($id) {
+        // Find the event by ID
+        $event = Presentation_schedule::find($id);
+
+        // Delete the event
+        if ($event) {
+            $event->delete();
+            return response()->json(['success' => true]);
+        } else {
+            return response()->json(['error' => 'Event not found'], 404);
+        }
+    }
+
     }

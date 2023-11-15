@@ -96,6 +96,8 @@ Route::group(['middleware' => 'auth','isAdmin', 'prefix' => 'admin'], function()
     // web.php or routes file
     Route::get('/delete/template/{id}', [App\Http\Controllers\Admin\PresentationScheduleController::class, 'deleteTemplate'])->name('delete.template');
 
+    Route::delete('/calendar/delete-event/{eventId}', [App\Http\Controllers\Admin\PresentationScheduleController::class, 'deleteEvent']);
+
 // routes/web.php
 // Route::get('/templates/download/{template}', 'TemplateController@download')->name('templates.download');
 

@@ -277,3 +277,16 @@ color: black;
 .remove-button {
   font-size: 14px; /* Adjust the font size as needed */
 }
+
+/* delete event */
+.dimmed-modal {
+  z-index: 1050; /* Adjust the z-index as needed */
+}
+
+.dimmed-modal .modal-dialog {
+  /* Adjust the modal styling if necessary */
+}
+
+.dimmed-overlay {
+  background: rgba(0, 0, 0, 0.5); /* Adjust the opacity as needed */
+}
