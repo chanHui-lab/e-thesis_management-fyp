@@ -149,6 +149,7 @@
             <h5 class="card-title">Create Event</h5>
           </div>
           <div class="card-body">
+            <div id="error-messages" class="alert alert-danger" style="display:none;"></div>
 
             <!-- /btn-group -->
             <div class="input-group">
@@ -212,7 +213,29 @@
           <div id="calendar" style="padding: 20px;overflow: auto;"></div>
         </div>
         <!-- /.card-body -->
-    </div>
+      </div>
+      {{-- /end card --}}
+      <br>
+      <div>
+        <div class="card card-primary">
+          <div class="card-header">
+          <h4>Draggable External Events</h4>
+          </div>
+          <div class = "card-body">
+            <div id="external-drag">
+              <div class="external-event bg-success">Seminar</div>
+              <div class="external-event bg-warning">FYP Workshop</div>
+              <div class="external-event bg-info">FYP Final Presentation and Demo</div>
+            </div>
+            <div class="checkbox">
+              <label for="drop-remove">
+                <input type="checkbox" id="drop-remove">
+                remove after drop
+              </label>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
 
     </div>
@@ -340,7 +363,7 @@
                   <p id="confirmationTimer">10</p>
               </div>
               <div class="modal-footer">
-                  <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                  <button type="button" class="btn btn-secondary" data-dismiss="modal" id="cancelDeleteButton" >Cancel</button>
                   <button type="button" class="btn btn-danger" id="confirmDeleteButton">Confirm Delete</button>
               </div>
           </div>
@@ -383,29 +406,29 @@
 
       // /* initialize the external events
       //  -----------------------------------------------------------------*/
-      // function ini_events(ele) {
-      //   ele.each(function () {
+      function ini_events(ele) {
+        ele.each(function () {
 
-      //     // create an Event Object (https://fullcalendar.io/docs/event-object)
-      //     // it doesn't need to have a start or end
-      //     var eventObject = {
-      //       title: $.trim($(this).text()) // use the element's text as the event title
-      //     }
+          // create an Event Object (https://fullcalendar.io/docs/event-object)
+          // it doesn't need to have a start or end
+          var eventObject = {
+            title: $.trim($(this).text()) // use the element's text as the event title
+          }
 
-      //     // store the Event Object in the DOM element so we can get to it later
-      //     $(this).data('eventObject', eventObject)
+          // store the Event Object in the DOM element so we can get to it later
+          $(this).data('eventObject', eventObject)
 
-      //     // make the event draggable using jQuery UI
-      //     $(this).draggable({
-      //       zIndex        : 1070,
-      //       revert        : true, // will cause the event to go back to its
-      //       revertDuration: 0  //  original position after the drag
-      //     })
+          // make the event draggable using jQuery UI
+          $(this).draggable({
+            zIndex        : 1070,
+            revert        : true, // will cause the event to go back to its
+            revertDuration: 0  //  original position after the drag
+          })
 
-      //   })
-      // }
+        })
+      }
 
-      // ini_events($('#external-events div.external-event'))
+      ini_events($('#external-drag div.external-event'))
 
       // /* initialize the calendar
       //  -----------------------------------------------------------------*/
@@ -418,13 +441,14 @@
       var Calendar = FullCalendar.Calendar;
       var Draggable = FullCalendar.Draggable;
 
-      var containerEl = document.getElementById('external-events');
+      var containerEl = document.getElementById('external-drag');
       var checkbox = document.getElementById('drop-remove');
       var calendarEl = document.getElementById('calendar');
 
       // // initialize the external events
       // // -----------------------------------------------------------------
 
+      console.log("ndraggeble estardts");
       new Draggable(containerEl, {
         itemSelector: '.external-event',
         eventData: function(eventEl) {
@@ -434,9 +458,49 @@
             borderColor: window.getComputedStyle( eventEl ,null).getPropertyValue('background-color'),
             textColor: window.getComputedStyle( eventEl ,null).getPropertyValue('color'),
           };
-        }
-      })
+        },
+        eventConstraint: 'body', // Try adding this line
+        eventDragStop: function () {
+          console.log("hereeeeeeeeeeeee");
+          console.log('Stop callback triggered');
 
+          // Send the event title to the Laravel backend
+          $.ajax({
+              url: '/admin/calendar/dragevents',
+              method: 'POST',
+              data: {
+                  title: ui.helper[0].innerText,
+              },
+              success: function (data) {
+                  console.log('Event saved:', data);
+              },
+              error: function (error) {
+                  console.error('Error saving event:', error);
+              },
+          });
+        },
+      });
+      console.log("ndraggeble rnddd");
+
+
+      // $('.external-event').on('dragstop', function (event, ui) {
+      //     console.log('Stop callback triggered');
+      //     // Your logic for handling the dragged event
+      //     // You can include the logic for sending the event title to the Laravel backend here if needed
+      //     $.ajax({
+      //         url: '/admin/calendar/dragevents',
+      //         method: 'POST',
+      //         data: {
+      //             title: ui.helper[0].innerText,
+      //         },
+      //         success: function (data) {
+      //             console.log('Event saved:', data);
+      //         },
+      //         error: function (error) {
+      //             console.error('Error saving event:', error);
+      //         },
+      //     });
+      // });
       // refer the calendar part
       // $('#calendar').fullCalendar({
 
@@ -555,7 +619,6 @@
         }
         return [];
       },
-
       // eventRender: function (info) {
       //   // Check event type and customize appearance
       //   if (info.event.extendedProps.type === 'presentation') {
@@ -576,8 +639,84 @@
           // if so, remove the element from the "Draggable Events" list
           info.draggedEl.parentNode.removeChild(info.draggedEl);
         }
+      },
+      eventReceive: function(event) {
+        // This is where you handle the end of the drag operation
+        console.log('Event received:', event);
+        // Send the event title to the Laravel backend
+        // Handle the received event here
+        event.title = (event.event && event.event.title) || 'Default Title';
+        console.log('Event received:', event.title);
+        // if (!event.start) {
+        //     // Set a default start time based on the date of the day cell the event was dropped onto
+        //     event.start = moment(event.date);
+        // }
+
+        // if (!event.end) {
+        //     // Set a default end time (e.g., 1 hour duration) if not provided
+        //     event.end = moment(event.start).add(1, 'hour');
+        // }
+
+        // Set default values for location and description if not provided
+        event.location = event.location || 'N/A';
+        event.description = event.description || 'N/A';
+
+        // Format the datetime strings without including the timezone information
+        // $startTime = now(); // Replace this with your actual start time
+
+        // $startTimeFormatted = $startTime->format('Y-m-d H:i:s');
+        // const formattedEnd = event.end.format('YYYY-MM-DD HH:mm:ss');
+        // $endTimeFormatted = $startTime->format('Y-m-d H:i:s');
+        if (!event.event || !event.event.start ) {
+        // Set a default start time based on the date of the day cell the event was dropped onto
+        event.event.start = new Date(event.date);
+        event.event.end = new Date(event.date);
+        }
+        if (!event.event || !event.event.end ) {
+        // Set a default start time based on the date of the day cell the event was dropped onto
+        // event.event.end = new Date(event.date);
+        }
+
+        console.log('Event received:', event.event.start);
+        // console.log('Event received: end', event.event.end);
+
+
+
+        // const formattedStart = event.start.toISOString().slice(0, 19).replace("T", " ");
+        const formattedStart = event.event.start.toISOString().slice(0, 19).replace("T", " ");
+        console.log('Event received:', formattedStart);
+        event.event.end = new Date(formattedStart);
+
+        console.log('Event received: after end', event.event.end);
+        event.event.end.setHours(event.event.end.getHours() + 1);
+
+        // const formattedEnd = event.event.end.toISOString().slice(0, 19).replace("T", " ");
+        // console.log('Event received:', formattedEnd);
+
+        $.ajax({
+              url: '/admin/calendar/dragevents',
+              method: 'POST',
+              data: {
+                title: event.title,
+                start:  formattedStart, // Format the start date as needed
+                end: formattedEnd,     // Format the end date as needed
+                location: event.location,
+                description: event.description,
+              },
+              success: function (data) {
+                  console.log('Event saved: ', data);
+              },
+              error: function (error) {
+                  console.error('Error saving event: ', error);
+              },
+          });
       }
     });
+
+    calendar.render();
+
+    const today = moment().startOf('day');
+    updateEventList(today);
 
     // For the eventDetailsModal
     var detailsModalFooter = $('#eventModalFooter');
@@ -616,6 +755,8 @@
           data: updatedEvent,
           success: function (response) {
               console.log('Event updated successfully');
+              calendar.refetchEvents();
+
           },
           error: function (xhr, status, error) {
               console.log('Errordddd updating event:', error);
@@ -629,6 +770,8 @@
     // function to display evnent details in modal
     function displayEventDetails(event) {
       detailsModalFooter.empty();
+      calendar.refetchEvents();
+
       console.log("displayEventDetails",event);
       // Replace these lines with your own code to display the event details.
       $('#eventid').text(event.id);
@@ -636,6 +779,7 @@
       $('#eventDesc').text(event.extendedProps.description);
 
       console.log(event);
+      var eventId = event.id;
 
       if (event.extendedProps.type === 'presentation') {
         // Display additional presentation details
@@ -647,17 +791,41 @@
         });
 
         var deleteButton = $('<button class="btn btn-danger" id="deleteEventButton">Delete</button>');
+        detailsModalFooter.append(editButton);
+        detailsModalFooter.append(deleteButton);
+
         deleteButton.on('click', function () {
+
           $('#confirmDeleteCountdownEventModal').modal('show');
           // $('#eventDetailsModal').modal('hide'); // Hide the event details modal
           $('#eventDetailsModal .modal-content').css('opacity', '0.5');
           $('#eventDetailsModal').attr('data-backdrop', 'static');
+          startCountdown();
+          console.log("in deelte button"+ eventId);
+          // startConfirmationCountdown(event);
 
-          startConfirmationCountdown();
+          // Bind click event handler for the confirm delete button
+          $('#confirmDeleteButton').on('click', function () {
+              // Stop the countdown
+              clearInterval(countdownInterval);
+
+              // Perform the delete operation
+              deleteEvent(eventId);
+
+              // Close the confirmation modal
+              $('#confirmDeleteCountdownEventModal').modal('hide');
+          });
+
+          $('#cancelDeleteButton').on('click', function () {
+              // Stop the countdown
+              clearInterval(countdownInterval);
+
+              // Close the confirmation modal
+              $('#confirmDeleteCountdownEventModal').modal('hide');
+
+              $('#eventDetailsModal .modal-content').css('opacity', '1');
+          });
         });
-
-        detailsModalFooter.append(editButton);
-        detailsModalFooter.append(deleteButton);
 
       } else if (event.extendedProps.type === 'forms') {
         // Display additional thesis details
@@ -682,45 +850,120 @@
       $('#eventDetailsModal').modal('show');
     }
 
-    // Define the updateEventList function
-    function updateEventList(clickedDate, info) {
-      const formattedDate = moment(clickedDate).format('YYYY-MM-DD');
-      console.log(formattedDate);
+
+    function startCountdown() {
+      // Reset the countdown to its initial value
+      countdown = 10;
+
+      // Update the countdown timer immediately before starting the interval
+      var confirmationTimer = $('#confirmationTimer');
+
+      // Start the countdown interval
+      countdownInterval = setInterval(function () {
+          countdown--;
+
+          confirmationTimer.text(countdown);
+
+          if (countdown <= 0) {
+              // Time's up, trigger delete function
+              clearInterval(countdownInterval);
+              deleteEvent(selectedEventId);
+              // Close the confirmation modal
+              $('#confirmDeleteCountdownEventModal').modal('hide');
+              $('#eventDetailsModal').modal('hide');
+
+          }
+      }, 1000);
+  }
+
+  function deleteEvent(eventId) {
+    // Your delete event logic here
+    // This function should handle the AJAX request to delete the event from the server
+    // After successful deletion, you might want to update the UI or refresh the calendar
       $.ajax({
-            url: '/admin/calendar/events/' + formattedDate,
-            method: 'GET',
-            success: function (events) {
-              console.log(JSON.stringify(events, null, 2));
-              var eventList = $('#external-events');
-                eventList.empty();
+          url: '/admin/calendar/delete-event/'  + eventId,
+          type: 'DELETE',
+          success: function(response) {
+              console.log('Event deleted successfully');
+              location.reload();
 
-                const formattedClickedDate = moment(clickedDate).format('D MMMM YYYY');
-                const [day, month, year] = formattedClickedDate.split(' ');
+              // Handle success (e.g., update the calendar)
+              // Get the calendar's event source
+              // var eventSource = calendar.getEventSourceById(eventId);
+              // calendar.getEventById();
 
-                eventList.append('<li style="font-size: 30px; line-height: 1.5; display: flex;align-items: center; justify-content: center;"><strong style="margin-right: 10px;">' + day + '</strong><div style="display: flex; flex-direction: column;"><div style="font-size: 13px;">' + month + '</div><div style="font-size: 12px;">' + year + '</div></div></li>');
+              // DOESNT WORK SOEMHOW
+              // // Remove the event from FullCalendar
+              // var eventToRemove = calendar.getEventById(eventId);
+              // console.log("here is event to be removed" + eventToRemove);
+              // if (eventToRemove) {
+              //     eventToRemove.remove();
+              // } else {
+              //     console.error('Event not found in calendar:', eventId);
+              // }
+              // calendar.refetchEvents();
 
-                events.forEach(function (event) {
-                    var eventItem = $('<li class="event-item" style="font-size: 12px;"></li>');
-                    eventItem.append('<div class="event-title">' + event.title + '</div>');
-                    eventItem.append('<div class="event-detail"><strong>Student:</strong> ' + event.description + '</div>');
-                    // Check the event type
-                    if (event.type === 'presentation') {
-                      eventItem.css('background-color', '#FFFFCC');
-                      console.log(event.type);
-                      eventItem.append('<div class="event-detail"><strong>Start:</strong> ' + event.start + '</div>');
-                      eventItem.append('<div class="event-detail"><strong>End:</strong> ' + event.end + '</div>');
-                      eventItem.append('<div class="event-detail"><strong>Location:</strong> ' + event.location + '</div>');
-                    } else if (event.type === 'forms') {
-                      eventItem.css('background-color', 'rgb(210, 255, 210)');
-                        eventItem.append('<div class="event-detail"><strong>Submission Deadline:</strong> ' + event.submission_deadline + '</div>');
-                    }
-                    eventList.append(eventItem);
-                });
-            },
-            error: function (xhr, status, error) {
-                console.log(error);
-            }
-        });
+              // Remove the event from the event source
+              // var removedEvents = eventSource.getEvents().filter(function(event) {
+              //     return event.id !== eventId;
+              // });
+
+              // eventSource.removeEventSource(eventId);
+              // eventSource.addEventSource(removedEvents);
+              calendar.refetchEvents();
+
+          },
+          error: function(error) {
+              console.error('Error deleting event:', error);
+              // Handle error
+          }
+      });
+  }
+
+  // Define the updateEventList function
+  function updateEventList(clickedDate, info) {
+    calendar.refetchEvents();
+
+    // Use the current date if clickedDate is not provided
+    const formattedDate = clickedDate ? moment(clickedDate).format('YYYY-MM-DD') : moment().format('YYYY-MM-DD');
+    console.log("here formatted"+formattedDate);
+    // const formattedDate = moment(clickedDate).format('YYYY-MM-DD');
+    // console.log(formattedDate);
+    $.ajax({
+          url: '/admin/calendar/events/' + formattedDate,
+          method: 'GET',
+          success: function (events) {
+
+            console.log(JSON.stringify(events, null, 2));
+            var eventList = $('#external-events');
+              eventList.empty();
+
+              const formattedClickedDate = moment(clickedDate).format('D MMMM YYYY');
+              const [day, month, year] = formattedClickedDate.split(' ');
+
+              eventList.append('<li style="font-size: 30px; line-height: 1.5; display: flex;align-items: center; justify-content: center;"><strong style="margin-right: 10px;">' + day + '</strong><div style="display: flex; flex-direction: column;"><div style="font-size: 13px;">' + month + '</div><div style="font-size: 12px;">' + year + '</div></div></li>');
+
+              events.forEach(function (event) {
+                  var eventItem = $('<li class="event-item" style="font-size: 12px;"></li>');
+                  eventItem.append('<div class="event-title">' + event.title + '</div>');
+                  eventItem.append('<div class="event-detail"><strong>Student:</strong> ' + event.description + '</div>');
+                  // Check the event type
+                  if (event.type === 'presentation') {
+                    eventItem.css('background-color', '#FFFFCC');
+                    eventItem.append('<div class="event-detail"><strong>Start:</strong> ' + event.start + '</div>');
+                    eventItem.append('<div class="event-detail"><strong>End:</strong> ' + event.end + '</div>');
+                    eventItem.append('<div class="event-detail"><strong>Location:</strong> ' + event.location + '</div>');
+                  } else if (event.type === 'forms') {
+                    eventItem.css('background-color', 'rgb(210, 255, 210)');
+                      eventItem.append('<div class="event-detail"><strong>Submission Deadline:</strong> ' + event.submission_deadline + '</div>');
+                  }
+                  eventList.append(eventItem);
+              });
+          },
+          error: function (xhr, status, error) {
+              console.log(error);
+          }
+      });
     }
     let selectedEventId = null;
 
@@ -772,6 +1015,7 @@
           // Render the updated event
           eventToUpdate.remove(); // Remove the event
           calendar.addEvent(eventToUpdate); // Add the updated event back
+          calendar.refetchEvents();
 
           $('#editEventModal').modal('hide');
           updateEventList(formattedDate);
@@ -795,6 +1039,9 @@
 
               calendar.refetchEvents();
               // Close the edit modal
+
+              // location.reload();
+
           },
           error: function (xhr, status, error) {
               // Handle errors and show error messages
@@ -847,59 +1094,6 @@
     return eventDetails;
   }
 
-  // when user click on confirm delete button in the modal
-  $('#confirmDeleteButton').on('click', function () {
-    // Call the function to delete the event
-    clickingDeleteButton(event);
-
-    // Close the confirmation modal after deletion
-    $('#confirmDeleteCountdownEventModal').modal('hide');
-  });
-
-  //PENDINGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGG
-  function clickingDeleteButton(event){
-    // Get the event ID
-    var eventId = $('#eventDetailsModal').data('event-id');
-
-    // Send an AJAX request to delete the event on the server
-    $.ajax({
-        url: '/calendar/delete-event/' + eventId, // Adjust the URL to your server endpoint
-        method: 'DELETE',
-        success: function (response) {
-            // Handle success, e.g., remove the event from the calendar
-            $('#calendar').fullCalendar('removeEvents', eventId);
-
-            // Optionally, show a success message or perform other actions
-            console.log('Event deleted successfully.');
-        },
-        error: function (xhr, status, error) {
-            // Handle error, e.g., show an error message
-            console.error('Error deleting event:', error);
-        }
-    });
-
-  }
-
-
-// Function to start the countdown timer in the confirmation modal
-function startConfirmationCountdown() {
-    var countdown = 10; // Set the initial countdown time
-    var confirmationTimer = $('#confirmationTimer');
-
-    var countdownInterval = setInterval(function () {
-        countdown--;
-        confirmationTimer.text(countdown);
-
-        if (countdown <= 0) {
-            // Time's up, trigger delete function
-            clearInterval(countdownInterval);
-            var eventId = $('#eventDetailsModal').data('event-id');
-            deleteEvent(eventId);
-            // // Close the confirmation modal
-            // $('#confirmationModal').modal('hide');
-        }
-    }, 1000);
-  };
 
   $('#add-event-button').click(function () {
         var title = $('#title').val();
@@ -937,16 +1131,38 @@ function startConfirmationCountdown() {
                 $('#createEventForm')[0].reset();
                 // $('#color-chooser a').removeClass('active');
                 // $('#color-chooser a.text-primary').addClass('active');
+                $('#error-messages').empty().hide();
+                calendar.refetchEvents();
+                location.reload();
 
-                updateDailyEventList();
+                // updateDailyEventList();
                 updateEventList(formattedDate); // Make sure to pass the correct date
 
             },
             error: function (xhr, status, error) {
+              if (xhr.status === 422) {
+                var errors = xhr.responseJSON.errors;
+                var errorMessages = [];
+
+                // Display errors to the user
+                for (var field in errors) {
+                    var errorMessage = errors[field][0]; // Take the first error message
+                    errorMessages.push(errorMessage);
+                }
+
+                $('#error-messages').html('<ul><li>' + errorMessages.join('</li><li>') + '</li></ul>').show();
+
+            } else {
                 console.error(xhr.responseText);
             }
+          }
         });
     });
+
+    // $('#confirmDeleteButton').on('click', function () {
+    //   var eventId = event.id;
+
+    // });
 
     // var dailyEventList = document.getElementById('daily-event-list');
 
@@ -1090,21 +1306,21 @@ function startConfirmationCountdown() {
 //     }
 // }
 
-      calendar.render();
 
       /* ADDING EVENTS */
-      // var currColor = '#3c8dbc' //Red by default
-      // // Color chooser button
-      // $('#color-chooser > li > a').click(function (e) {
-      //   e.preventDefault()
-      //   // Save color
-      //   currColor = $(this).css('color')
-      //   // Add color effect to button
-      //   $('#add-new-event').css({
-      //     'background-color': currColor,
-      //     'border-color'    : currColor
-      //   })
-      // })
+      var currColor = '#3c8dbc' //Red by default
+      // Color chooser button
+      $('#color-chooser > li > a').click(function (e) {
+        e.preventDefault()
+        // Save color
+        currColor = $(this).css('color')
+        // Add color effect to button
+        $('#add-new-event').css({
+          'background-color': currColor,
+          'border-color'    : currColor
+        })
+      });
+
       // $('#add-new-event').click(function (e) {
       //   e.preventDefault()
       //   // Get value and make sure it is not null
@@ -1121,14 +1337,15 @@ function startConfirmationCountdown() {
       //     'color'           : '#fff'
       //   }).addClass('external-event')
       //   event.text(val)
-      //   $('#external-events').prepend(event)
+      //   $('#external-drag').prepend(event)
 
       //   // Add draggable funtionality
       //   ini_events(event)
 
       //   // Remove event from text input
       //   $('#new-event').val('')
-      // })
+      // });
+
     });
 
   </script>

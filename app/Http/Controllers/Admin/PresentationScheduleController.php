@@ -186,19 +186,65 @@ public function fetchUpdatedEventSource() {
 
     public function store(Request $request)
     {
+        // $start = $request->input('start');
+        // $end = $request->input('end');
+        $validatedData = $request->validate([
+            'title' => 'required|string',
+            'description' => 'string',
+            'start' => 'required|date',
+            // 'end' => 'date|nullable',
+            'end' => 'required|date|after:start',
+            'location' => 'required|string',
+        ], [
+            'end.after' => 'Error: End date must be after the start date.',
+        ]);
+
+        // Check if the end date is greater than or equal to the start date
+        // if (strtotime($end) < strtotime($start)) {
+        //     return response()->json(['errorhere' => 'End date must be equal to or after the start date'], 400);
+        // }
+
+        // $event = new Presentation_schedule;
+        // $event->title = $request->input('title');
+        // $event->description = $request->input('description');
+        // $event->start = $request->input('start');
+        // $event->end = $request->input('end');
+        // $event->location = $request->input('location');
+
+        // $event->save();
+
         $event = new Presentation_schedule;
-        $event->title = $request->input('title');
-        $event->description = $request->input('description');
-        $event->start = $request->input('start');
-        $event->end = $request->input('end');
-        $event->location = $request->input('location');
-        // You can add more fields here, including color (if you decide to save it)
 
-        $event->save();
+        if ($event) {
+            $event->title = $validatedData['title'];
+            $event->description = $validatedData['description'];
+            $event->start = $validatedData['start'];
+            $event->end = $validatedData['end'];
+            $event->location = $validatedData['location'];
 
-        return response()->json(['id' => $event->id]);
+            // Save the changes
+            $event->save();
+        }
     }
 
+    public function storeDrag(Request $request)
+    {
+        try {
+            info('Request Payload: ' . json_encode($request->all()));
+
+        $event = Presentation_schedule::create([
+            'title' => $request->input('title'),
+            'description' => "NA",
+            'start' => $request->input('start', now()), // Set default value if not provided
+            'end' => $request->input('end', now()),
+            'location' => "NA"
+        ]);
+        dd($event);
+        return response()->json($event);
+        } catch (\Exception $e) {
+            return response()->json(['error' => $e->getMessage()], 500);
+        }
+    }
     // public function getEvents()
     // {
     //     // Retrieve events from your database, adjust the query as needed

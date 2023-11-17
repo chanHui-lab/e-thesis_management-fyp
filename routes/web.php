@@ -98,6 +98,9 @@ Route::group(['middleware' => 'auth','isAdmin', 'prefix' => 'admin'], function()
 
     Route::delete('/calendar/delete-event/{eventId}', [App\Http\Controllers\Admin\PresentationScheduleController::class, 'deleteEvent']);
 
+    // DRAGGABLE EVENTS
+    Route::post('/calendar/dragevents', [App\Http\Controllers\Admin\PresentationScheduleController::class, 'storeDrag'])->name('calendarsche.storedrag');
+
 // routes/web.php
 // Route::get('/templates/download/{template}', 'TemplateController@download')->name('templates.download');
 
