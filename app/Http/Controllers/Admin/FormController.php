@@ -847,7 +847,81 @@ public function removeFile(Request $request, $id)
 
         return view('admin.submission_post.viewOne', compact( 'formSubmission','submissionPostId'));
     }
+
+    // test for vue part
+    public function indexVueeee()
+    {
+        $theses = Form_submission::select('id', 'form_title', 'description') // Include only the needed columns
+        ->get();
+        // return response()->json($data);
+        $data = $theses->toArray();
+
+        // return view('tesetvue', ['data' => $data]);
+        return view('tesetvue', compact('data'));
+
+    }
+    public function indexVue()
+    {
+        // $dashboardData = Form_submission::select('id', 'form_title', 'description') // Include only the needed columns
+        // ->get();
+
+        // return view('tesetvue', ['dashboardData' => $dashboardData]);
+        // return response()->json($dashboardData);
+
+        // $data = Form_submission::select('id', 'form_title', 'description') // Include only the needed columns
+        // ->get();
+        // return view('tesetvue', compact('data'));
+        // return response()->json($data);
+
+        return view('admin.thesisrepo_page.thesisrepo');
+
     }
 
+    public function fetchdata()
+    {
+        $data = Form_submission::select('id', 'form_title', 'description','form_files') // Include only the needed columns
+        ->get();
+        return response()->json($data);
 
+    }
 
+    // public function downloadVue($filePath)
+    // {
+    //     // Check if the file exists
+    // if (Storage::disk('public')->exists($filePath)) {
+    //     // Get the full path to the file
+    //     // $filePath = Storage::disk('public')->path($filePath);
+    //     $filePathh = storage_path('app/' . $filePath);
+
+    //     // Extract the filename from the path
+    //     $fileName = pathinfo($filePathh, PATHINFO_BASENAME);
+
+    //     // Set the headers for the response
+    //     $headers = [
+    //         'Content-Type' => 'application/octet-stream',
+    //         'Content-Disposition' => 'attachment; filename="' . $fileName . '"',
+    //     ];
+
+    //     // Use Laravel's response()->download() method
+    //     return response()->download($filePathh, $fileName, $headers);
+    //     } else {
+    //         // Handle the case when the file does not exist
+    //         abort(404, 'File not found');
+    //     }
+    // }
+
+    public function downloadVue($filePath) {
+        // return Storage::disk('public')->download($filePath);
+        // Get the full path of the file
+        // dd($filePath);
+        $path = storage_path('app/public/' . $filePath);
+
+        // Get the file name
+        $fileName = basename($filePath);
+
+        // Download the file
+        return response()->download($path, $fileName);
+
+    }
+
+    }

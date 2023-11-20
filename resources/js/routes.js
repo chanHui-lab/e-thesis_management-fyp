@@ -4,9 +4,19 @@ import Errore from './components/NotFound.vue'
 
 const routes = [
     {
-        path:'/',
+        path:'/testvue',
         // name: 'admin.dashboard',
         component: Dashboard,
+        // props: (route) => {
+        //     const data = route.query.data ? JSON.parse(route.query.data)[0] : [];
+        //     console.log('Received data in route:', data);
+        //       console.log('Route Query:', route.query);
+
+        //     return { data };
+        // },
+        // props: (route) => ({ data: route.params.data }),
+        props: true
+
     },
     {
         // path:'/admin/dashboard/:pathMatch(.*)*',
@@ -20,4 +30,5 @@ const router = createRouter({
     routes,
     history: createWebHistory(),
 })
+
 export default router

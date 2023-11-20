@@ -232,14 +232,28 @@ public function fetchUpdatedEventSource() {
         try {
             info('Request Payload: ' . json_encode($request->all()));
 
+            $data = $request->validate([
+                'title' => 'required|string',
+                'start' => 'required|string',
+            ]);
+        // Convert the date to Malaysia timezone and format it
+        // $start = \Carbon\Carbon::parse($data['start'])->setTimezone('Asia/Kuala_Lumpur')->format('Y-m-d H:i:s');
+        // $end = \Carbon\Carbon::parse($data['end'])->setTimezone('Asia/Kuala_Lumpur')->format('Y-m-d H:i:s');
+        $start = \Carbon\Carbon::parse($data['start'])->setTimezone('Asia/Kuala_Lumpur');
+
+        $end = $start->copy()->addHour()->format('Y-m-d H:i:s');
+
         $event = Presentation_schedule::create([
-            'title' => $request->input('title'),
+            // 'title' => $request->input('title'),
             'description' => "NA",
-            'start' => $request->input('start', now()), // Set default value if not provided
-            'end' => $request->input('end', now()),
+            'title' => $data['title'],
+            'start' => $start->format('Y-m-d H:i:s'),
+            'end' => $end,
             'location' => "NA"
         ]);
+
         dd($event);
+
         return response()->json($event);
         } catch (\Exception $e) {
             return response()->json(['error' => $e->getMessage()], 500);

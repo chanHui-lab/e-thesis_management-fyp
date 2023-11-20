@@ -2,6 +2,7 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Admin\FormController;
 
 /*
 |--------------------------------------------------------------------------
@@ -17,3 +18,7 @@ use Illuminate\Support\Facades\Route;
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
+Route::get('/testvuedata', [App\Http\Controllers\Admin\FormController::class, 'fetchdata']);
+
+Route::get('/download/{filePath}', [App\Http\Controllers\Admin\FormController::class, 'downloadVue'])->where('filePath', '.*');
+

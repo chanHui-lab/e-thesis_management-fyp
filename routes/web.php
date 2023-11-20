@@ -17,6 +17,11 @@ Route::get('/', function () {
     return view('welcome');
 });
 
+// Route::get('/testvue', function () {
+//     return view('tesetvue');
+// });
+Route::get('/testvue', [App\Http\Controllers\Admin\FormController::class, 'indexVue']);
+
 Auth::routes();
 
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');

@@ -643,6 +643,8 @@
       eventReceive: function(event) {
         // This is where you handle the end of the drag operation
         console.log('Event received:', event);
+        var originalBackgroundColor = event.event.backgroundColor;
+        console.log(originalBackgroundColor);
         // Send the event title to the Laravel backend
         // Handle the received event here
         event.title = (event.event && event.event.title) || 'Default Title';
@@ -670,44 +672,40 @@
         if (!event.event || !event.event.start ) {
         // Set a default start time based on the date of the day cell the event was dropped onto
         event.event.start = new Date(event.date);
-        event.event.end = new Date(event.date);
-        }
-        if (!event.event || !event.event.end ) {
-        // Set a default start time based on the date of the day cell the event was dropped onto
         // event.event.end = new Date(event.date);
         }
+        const options = { timeZone: 'Asia/Kuala_Lumpur', year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit' };
 
-        console.log('Event received:', event.event.start);
-        // console.log('Event received: end', event.event.end);
+        const startDate = event.event.start;
+        const endDate = new Date(startDate.getTime() + 60 * 60 * 1000);
 
+        // console.log('Event received: startDate', event.event.start);
+        // console.log('Event received: before manipulate end', endDate);
+        // const formattedEnd = endDate.toLocaleString('en-MY', options);
+        // console.log('Event received: after format end', formattedEnd);
 
-
-        // const formattedStart = event.start.toISOString().slice(0, 19).replace("T", " ");
-        const formattedStart = event.event.start.toISOString().slice(0, 19).replace("T", " ");
-        console.log('Event received:', formattedStart);
-        event.event.end = new Date(formattedStart);
-
-        console.log('Event received: after end', event.event.end);
-        event.event.end.setHours(event.event.end.getHours() + 1);
-
-        // const formattedEnd = event.event.end.toISOString().slice(0, 19).replace("T", " ");
-        // console.log('Event received:', formattedEnd);
+        // const formattedStart = startDate.toLocaleString('en-MY', options).replace(/,/g, '');
+        // console.log('Event received: after formate start', formattedStart);
 
         $.ajax({
               url: '/admin/calendar/dragevents',
               method: 'POST',
               data: {
                 title: event.title,
-                start:  formattedStart, // Format the start date as needed
-                end: formattedEnd,     // Format the end date as needed
+                start:  event.event.start.toISOString(), // Format the start date as needed
+                // end: event.event.end.toISOString(),     // Format the end date as needed
                 location: event.location,
                 description: event.description,
               },
               success: function (data) {
                   console.log('Event saved: ', data);
+                  event.event.setProp('backgroundColor', originalBackgroundColor);
+
               },
               error: function (error) {
                   console.error('Error saving event: ', error);
+                  event.event.setProp('backgroundColor', originalBackgroundColor);
+
               },
           });
       }
