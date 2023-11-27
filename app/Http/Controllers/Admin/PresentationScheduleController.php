@@ -103,8 +103,12 @@ public function getEvents(Request $request)
     //     return $carbonDate->format('Y-m-d');
     // });
 
-    return view('admin.presentationSchedule', compact('combinedEvents','calen'));
-
+    if(Auth::user()-> role_as == 0){
+        return view('admin.presentationSchedule', compact('combinedEvents','calen'));
+    }
+    // elseif(Auth::user()-> role_as == 2){
+    //     return view('student.studentcalendar', compact('combinedEvents','calen'));
+    // }
 }
 
 // public function editEvent($eventId) {
@@ -581,4 +585,68 @@ public function fetchUpdatedEventSource() {
         }
     }
 
+    // FOR STUDENTS
+    public function getStuEvents(Request $request){
+
+        // Fetch events from Presentation_schedule table
+        $presentationEvents = Presentation_schedule::all(); // Assuming you have a Presentation model
+        $calen = Template::getCalendarTemplate();
+
+        $student = auth()->user(); // Assuming you have a user() function to get the logged-in user
+        $supervisorId = $student->supervisor_id; // Adjust this according to your actual relationship
+
+        $thesisEvents = SubmissionPost::where(function ($query) use ($supervisorId) {
+                $query->where('lecturer_id', $supervisorId) // Assuming supervisor_id is the field linking to the lecturer
+                    ->orWhere(function ($adminQuery) {
+                        // Fetch events created by admin (role_as = 0)
+                        $adminQuery->whereHas('lecturer', function ($lecturerQuery) {
+                            $lecturerQuery->where('role_as', 0);
+                        });
+                    });
+            })
+            ->get();
+
+
+        // Group events by their start date (you can adjust this as needed)
+        // $eventsByDay = $presentations->groupBy(function ($event) {
+        //     $carbonDate = Carbon::parse($event->start);
+        //     return $carbonDate->format('Y-m-d');
+        // });
+        // return view('admin.presentationSchedule', compact('presentations','eventsByDay'));
+
+        // Fetch events from Thesis table
+        $thesisEvents = SubmissionPost::all();
+
+        $presentationEvents = $presentationEvents->map(function ($event) {
+            return [
+                'type' => 'presentation',
+                'id' => $event->id, // Include the 'id' field
+                'title' => $event->title,
+                'description' => $event->description,
+                'start' => $event->start,
+                'end' => $event->end,
+                'location' => $event->location,
+            ];
+        });
+
+        $thesisEvents = $thesisEvents->map(function ($event) {
+            return [
+                'type' => 'forms',
+                'id' => $event->id, // Include the 'id' field
+                'title' => $event->title,
+                'description' => $event->description,
+                'start' => $event->submission_deadline, // Assuming submission_deadline is the field
+            ];
+        });
+
+        // Combine both sets of events
+        $combinedEvents = $presentationEvents->merge($thesisEvents);
+
+        // $eventsByDay = $combinedEvents->groupBy(function ($event) {
+        //     $carbonDate = Carbon::parse($event->start);
+        //     return $carbonDate->format('Y-m-d');
+        // });
+
+        return view('student.studentcalendar', compact('combinedEvents','calen'));
+    }
     }

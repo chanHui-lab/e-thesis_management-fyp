@@ -1,62 +1,154 @@
 @extends('student.studentpure')
+
 @section('master_content')
 <main>
+  <h1 style="margin-top:20px;margin-bottom:10px;">PutraMas Calendar Schedule</h1>
+    <div class="row">
+      <div class="col-md-12" style="margin-left: -15px;">
+        @if ($errors->any())
+        <div class="alert alert-danger">
+          <ul>
+            @foreach ($errors->all() as $error)
+                <li>{{ $error }}</li>
+            @endforeach
+          </ul>
+        </div>
+        @endif
 
-{{-- <div class="row justify-content-center"> --}}
-<h1 style="margin-top: 20px;" >Dashboard</h1>
-<h4>Hello, Welcome back {{ auth()->user()->name }}</h4>
-<p>User Role: Student</p>
+        @if (session('success'))
+            <div class="alert alert-success">
+                {{ session('success') }}
+            </div>
+        @endif
 
-<div class="row">
-  <div class="col-md-8">
-    <div class="card card-primary">
-        <div class="card-body p-0">
-          <!-- THE CALENDAR -->
-          <div id="calendar" style="padding: 10px;overflow: auto;">
+        @if (session('error'))
+          <div class="alert alert-danger">
+              {{ session('error') }}
           </div>
-        </div>
-        {{-- end card body --}}
-      </div>
-  </div>
-  <div class="col-md-4" style="padding:0px;margin:0px">
-      <div class="sticky-top mb-3">
-        <div id="app">
-            {{-- <router-view :server-data="{{ json_encode($data) }}"></router-view> --}}
-            <component-b></component-b>
-        </div>
+        @endif
       </div>
     </div>
 
-</div>
-@vite('resources/js/app.js');
+    {{-- START template --}}
+    <div class="row">
+      <div class="col-md-12">
+        <div class="card"  style="padding:0px; margin-left: -15px; margin-bottom:20px;">
+          <div class="card-header d-flex justify-content-between align-items-center">
+            <h5>Presentation Schedule Template</h5>
+
+          </div>
+          <div class="card-body">
+            <p>Download the presentation schedule template in Excel format:</p>
+            <div >
+              @foreach ($calen as $template)
+              <div class="file-container">
+                <p class="file-link">
+                  &#x2514;
+                  @if (Str::endsWith($template->file_data, '.pdf'))
+                    <a href="{{ asset('storage/' . $template->file_data) }}" download>
+                      <i class="fa fa-file-pdf file-icon" style = "color: rgb(255, 86, 86); font-size: 20px;"></i>
+                      {{ last(explode('_', $template->file_name)) }}
+                    </a>
+                  @elseif (Str::endsWith($template->file_data, ['.xlsx', '.xls']))
+                    <a href="{{ asset('storage/' . $template->file_data) }}" download>
+                      <i class="fa fa-file-excel file-icon" style = "color: rgb(39, 158, 81); font-size: 20px;"></i>
+                      {{ last(explode('_', $template->file_name)) }}
+                    </a>
+                  @else
+                  <a href="{{ asset('storage/' . $template->file_data) }}" download>
+                    <i class="fa fa-file-word file-icon" style = "color: rgb(39, 77, 158); font-size: 20px;" ></i>
+                    {{ last(explode('_', $template->file_name)) }}
+                  </a>
+                  @endif
+                </p>
+              </div>
+              @endforeach
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+    {{-- END row for presentation --}}
+
+    {{-- START display calendar, create event, event-list START --}}
+    <div class="row">
+      <div class="col-md-3" style="padding:0px">
+        <div class="sticky-top mb-3">
+          {{-- start card event list --}}
+          <div class="card">
+            <div class="card-header">
+              <h5 class="card-title">Daily Event List</h5>
+            </div>
+
+            <div class="card-body">
+              <div id="external-events">
+                <ul id="daily-event-list">
+                </ul>
+              </div>
+
+            </div>
+
+          </div>
+          {{-- end card event list --}}
+        </div>
+        {{-- end sticky-top --}}
+        </div>
 
 
-@foreach ($deadlines as $deadline)
-    <p>{{ $deadline->title }} - {{ $deadline->submission_deadline }}</p>
-@endforeach
+        <div class="col-md-9">
+          <div class="card card-primary">
+            <div class="card-body p-0">
+              <!-- THE CALENDAR -->
+              <div id="calendar" style="padding: 20px;overflow: auto;">
+              </div>
+            </div>
+            {{-- end card body --}}
+          </div>
+          {{--end calendar card  --}}
 
-{{-- @if ($reminders->isEmpty())
-        <p>No reminders found.</p>
-    @else
-        <ul>
-            @foreach ($reminders as $producthehe)
-                <li>
-                    <strong>Reminder:</strong> {{ $producthehe->name }}
-                    <strong>Due Date:</strong> {{ $producthehe->submission_deadline->format('Y-m-d H:i') }}
-                    <strong>Remaining Time:</strong> {{ $producthehe->remainingDays }} days {{ $producthehe->remainingHours }} hours
-                    <br>
-                    <br>
+          <br>
 
-                </li>
-            @endforeach
-        </ul>
-    @endif --}}
-    {{-- </div> --}}
+        </div>
+        {{-- end col-md-9 --}}
+        {{-- END display calendar --}}
+
+      </div>
+
+        {{-- DISPLAY EVENT DETAILS CONFIRMATION MODAL --}}
+  <div class="modal fade" id="eventDetailsModal" tabindex="-1" role="dialog" aria-labelledby="eventDetailsModal" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="eventDetailsModal">Event Details</h5>
+                <button type="button" class="close" id="closeEventModal" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">x</span>
+              </button>
+            </div>
+            <div class="modal-body">
+                <h4 id="eventTitle"></h4>
+                <p>Description: <span id="eventDesc"></span></p>
+
+                <!-- Add more event details here -->
+                <div id="additionalDetails">
+                  <!-- This will be dynamically populated based on the event type -->
+                  {{-- <p>Start Date: <span id="eventStartDate"></span></p>
+                  <p>End Date: <span id="eventEndDate"></span></p> --}}
+                  {{-- <p>Location: <span id="eventLoc"></span></p> --}}
+
+                </div>
+            </div>
+            <div class="modal-footer" id="eventModalFooter">
+              {{-- <button class="btn btn-primary" id="editEventButton">Edit</button> --}}
+              {{-- <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button> --}}
+            </div>
+        </div>
+    </div>
+  </div>
+  {{-- display evnet details modal end --}}
+
+  {{-- </div> --}}
 </main>
-@endsection
-
-<script type="module" src="{{ mix('resources/js/app.js') }}">
-
 
 <script src={{ asset('./plugins/bootstrap/js/bootstrap.bundle.min.js') }}></script>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
@@ -97,7 +189,7 @@ $(document).ready(function () {
       center: 'title',
       right : 'dayGridMonth,timeGridWeek,timeGridDay'
     },
-    // themeSystem: 'bootstrap',
+    themeSystem: 'bootstrap',
     events: [
       @foreach($combinedEvents as $event){
         @if ($event['type'] === 'presentation')
@@ -137,32 +229,6 @@ $(document).ready(function () {
       // change terus to day view?
       calendar.changeView('timeGridDay');
       updateEventList(clickedDate, info);
-    },
-    // eventRender: function(info, element) {
-    //     element.attr('title', info.title); // Set the title attribute as the event title
-    // },
-    // eventRender: function(info) {
-    //     $(info.el).tooltip({
-    //         title: info.event.title,
-    //         placement: 'top',
-    //         container: 'body'
-    //     });
-    // },
-    eventRender: function (event, element, view) {
-        console.log("eventafterrender");
-        $(element).qtip({
-            content: {
-                text: event.title
-            },
-            position: {
-                my: 'bottom center',
-                at: 'top center',
-                target: $(element)
-            },
-            style: {
-                classes: 'qtip-dark'
-            }
-        });
     },
     eventDrop:function (info) {
       changeEvent(info.event);
@@ -329,7 +395,4 @@ function retrieveEventDetails(eventId) {
 });
 
 </script>
-<style>
-
-
-</style>
+@endsection

@@ -4,9 +4,8 @@
 
 <main>
 <h1 style = "padding-top: 20px; padding-bottom:20px">Edit Form Template</h1>
-<div class="pull-right">
-  <a class="btn btn-primary" href="{{ route('formpost.index') }}"> Back</a>
-</div>
+
+<a style = "margin-bottom: 20px;" class="btn btn-primary" href="{{ route('formpost.index') }}"> Back</a>
  {{--handle error  --}}
 @if ($errors->any())
     <div class="alert alert-danger">
@@ -84,13 +83,13 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach ($files as $file)
+                        @foreach ($files as $filee)
                             <tr>
                                 <td>
                                     {{-- <a href="{{ asset('storage/' . $file) }}" target="_blank" download>
                                         {{ basename($file) }}
                                     </a> --}}
-                                    @if (Str::endsWith($file, '.pdf'))
+                                    {{-- @if (Str::endsWith($file, '.pdf'))
                                         <a href="{{ asset('storage/' . $file) }}" target="_blank" download class="downloadfile-link">
                                             <i class="fa fa-file-pdf file-icon" style = "color: rgb(255, 86, 86)"></i> {{ basename($file) }}
                                         </a>
@@ -102,7 +101,22 @@
                                         <a href="{{ asset('storage/' . $file) }}" target="_blank" download class="downloadfile-link">
                                             <i class="fa fa-file file-icon" style = "color: rgb(77, 144, 250)"></i> {{ basename($file) }}
                                         </a>
-                                    @endif
+                                    @endif --}}
+
+                                    <a href="{{ asset('storage/' . $filee['path']) }}" target="_blank" download class="downloadfile-link">
+                                        @if (Str::endsWith($filee['path'], '.pdf'))
+                                        <i class="fa fa-file-pdf file-icon" style = "color:  rgb(255, 86, 86)"></i>
+
+                                        @elseif (Str::endsWith($filee['path'], '.doc') || Str::endsWith($filee['path'], '.docx'))
+                                        <i class="fa fa-file-word file-icon" style = "color: rgb(77, 144, 250)"></i>
+
+                                        @else
+                                        <i class="fa fa-solid fa-file file-icon" style = "color: rgb(77, 144, 250)"></i>
+                                        @endif
+                                        {{ substr($filee['path'], strpos($filee['path'], '_') + 1) }}
+
+                                    </a >
+
                                 </td>
                                 {{-- <td> --}}
                                     {{-- {{ \Carbon\Carbon::parse(\Storage::lastModified($file))->toDateTimeString() }} --}}
@@ -110,7 +124,7 @@
                                     {{-- {{ $file['uploaded_at']->format('Y-m-d H:i:s') }} --}}
                                 {{-- </td> --}}
                                 <td>
-                                    <button type="button" class="btn btn-danger" data-toggle="modal" data-modal-id="confirmationModal{{ $file }}" data-target="#confirmationModal{{ Str::slug(basename($file)) }}">
+                                    <button type="button" class="btn btn-danger" data-toggle="modal" data-modal-id="confirmationModal{{ $filee['path']}}" data-target="#confirmationModal{{ Str::slug(basename($filee['path'] )) }}">
                                         Remove
                                     </button>
                                 </td>
@@ -142,7 +156,7 @@
 
                                     <!-- Confirmation Modal -->
                                     {{-- <div class="modal fade" id="confirmationModal{{ $file }}" tabindex="-1" role="dialog" aria-labelledby="confirmationModalLabel" aria-hidden="true"> --}}
-                                    <div class="modal fade" id="confirmationModal{{ Str::slug(basename($file)) }}" tabindex="-1" role="dialog" aria-labelledby="confirmationModalLabel" aria-hidden="true">
+                                    <div class="modal fade" id="confirmationModal{{Str::slug(basename($filee['path'] )) }}" tabindex="-1" role="dialog" aria-labelledby="confirmationModalLabel" aria-hidden="true">
                                             <div class="modal-dialog">
                                           <div class="modal-content">
                                               <div class="modal-header">
@@ -160,7 +174,7 @@
                                                         @csrf
                                                         @method('DELETE')
                                                       <input type="hidden" name="file" value="{{ $file }}"> --}}
-                                                      <button class="btn btn-danger" data-postid="{{ $getRecord->id }}" data-filepath="{{ $file }}" onclick="removeThisFile(this)">Delete</button>
+                                                      <button class="btn btn-danger" data-postid="{{ $getRecord->id }}" data-filepath="{{ $filee['path'] }}" onclick="removeThisFile(this)">Delete</button>
                                                       {{-- </form> --}}
 
                                               </div>

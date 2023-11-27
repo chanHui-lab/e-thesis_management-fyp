@@ -47,7 +47,7 @@
 
         <div class="card-body">
           <p>Download the presentation schedule template in Excel format:</p>
-          <div >
+          <div>
             @foreach ($calen as $template)
             <div class="file-container">
             {{-- <div class="file-container" style="display: flex; justify-content: space-between;margin-bottom:1px;"> --}}
@@ -403,6 +403,7 @@
               'X-CSRF-TOKEN' : $('meta[name="csrf-token"]').attr('content')
           }
       });
+      toastr.options.positionClass = 'toast-bottom-right';
 
       // /* initialize the external events
       //  -----------------------------------------------------------------*/
@@ -561,8 +562,7 @@
       // events: '/calendar',
       events: [
 
-        @foreach($combinedEvents as $event)
-        {
+        @foreach($combinedEvents as $event){
           @if ($event['type'] === 'presentation')
               // <!-- Display presentation event details -->
               // <p>Presentation: {{ $event['title'] }} - {{ $event['start'] }}</p>
@@ -744,7 +744,7 @@
           // description: event.description,
           // Include any other properties you want to update
       };
-      console.log('inc ahenfs:', updatedEvent);
+      console.log('before update: ', updatedEvent);
 
       // Make an AJAX request to update the event in the databases
       $.ajax({
@@ -1037,13 +1037,16 @@
 
               calendar.refetchEvents();
               // Close the edit modal
+              toastr.success('Success! The event has been updated.');
 
               // location.reload();
 
           },
           error: function (xhr, status, error) {
-              // Handle errors and show error messages
-              console.log(xhr.responseText);
+            toastr.error('Error! The event could not be updated.');
+
+            // Handle errors and show error messages
+            console.log(xhr.responseText);
           }
       })
     });
@@ -1124,14 +1127,17 @@
                     location: location,
                     // color: color,
                 });
+                toastr.success('Success! The event has been created.');
 
                 // Clear the form
                 $('#createEventForm')[0].reset();
+
                 // $('#color-chooser a').removeClass('active');
                 // $('#color-chooser a.text-primary').addClass('active');
                 $('#error-messages').empty().hide();
-                calendar.refetchEvents();
                 location.reload();
+
+                calendar.refetchEvents();
 
                 // updateDailyEventList();
                 updateEventList(formattedDate); // Make sure to pass the correct date
@@ -1349,5 +1355,7 @@
   </script>
 
 
+<style>
 
+</style>
 @endsection

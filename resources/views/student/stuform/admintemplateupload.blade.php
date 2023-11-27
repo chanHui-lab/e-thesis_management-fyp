@@ -165,37 +165,9 @@
                         <td>{{ $counter++ }}</td> <!-- Increment and display the counter -->
                         <td>{{ $templateform->file_name }}</td>
                         <td>{{  $templateform->description  }}</td>
-                        <td>
-                            {{-- <a href="{{ asset('storage/' . $templateform->file_data) }}" download>
+                        <td><a href="{{ asset('storage/' . $templateform->file_data) }}" download>
                             {{ str_replace('upload/templates/', '', $templateform->file_data) }}
-                            </a> --}}
-                            @php
-                                $files = json_decode($templateform->file_data, true);
-                            @endphp
-                            @foreach ($files as $file)
-                                @if (Str::endsWith($file['path'], '.pdf'))
-                                    <a href="{{ asset('storage/' . $file['path']) }}" target="_blank" download class="downloadfile-link">
-                                        <i class="fa fa-file-pdf file-template" style = "color: rgb(255, 86, 86)"></i>
-                                        {{-- {{ substr($file['path'], strpos($file['path'], '_') + 1) }} --}}
-                                        {{ basename($file['path']) }}
-                                    </a>
-                                @elseif (Str::endsWith($file['path'], '.doc') || Str::endsWith($file['path'], '.docx'))
-                                    <a href="{{ asset('storage/' . $file['path']) }}" target="_blank" download class="downloadfile-link">
-                                        <i class="fa fa-file-word file-template" style = "color: rgb(77, 144, 250)"></i>
-                                        {{ basename($file['path']) }}
-                                    </a>
-                                @else
-                                    <a href="{{ asset('storage/' . $file['path']) }}" target="_blank" download class="downloadfile-link">
-                                        <i class="fa fa-file file-template" style = "color: rgb(77, 144, 250)"></i>
-                                        {{-- {{ basename($file) }} --}}
-                                        {{ basename($file['path']) }}
-                                    </a>
-                                @endif
-                                <br>
-                            @endforeach
-                        </td>
-
-
+                        </a></td>
                         <td>
                             @if ($templateform->status == '1')
                                 <span class="status-visible">Visible</span>
@@ -353,12 +325,10 @@
       "responsive": true, "lengthChange": false, "autoWidth": false,
       "buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"],
       columnDefs: [
-            { width: '5px', targets: [0] }, // Adjust the width of the first column (index 0)
+            { width: '10px', targets: [0] }, // Adjust the width of the first column (index 0)
             { width: '10px', targets: [1] }, // Adjust the width of the first column (index 0)
-            { width: '15px', targets: [2] },
-            { width: '10px', targets: [3] }
-            { width: '5px', targets: [4] }
-            { width: '20px', targets: [5] }
+            { width: '30px', targets: [2] },
+            { width: '30px', targets: [3] }
 
         ]
     }).buttons().container().appendTo('#example1_wrapper .col-md-6:eq(0)');

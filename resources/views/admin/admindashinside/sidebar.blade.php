@@ -134,7 +134,7 @@
       </li>
 
       <li class="nav-item">
-        <a href="{{ url('admin/calendar') }}" class="nav-link {{ request()->is('admin/calendar*') ? 'active' : '' }}">
+        <a href="{{ url('admin/thesis') }}" class="nav-link {{ request()->is('admin/thesis*') ? 'active' : '' }}">
           <i class="nav-icon bx bx-library"></i>
           <p>
             Thesis Repository

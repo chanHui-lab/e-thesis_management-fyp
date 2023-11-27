@@ -9,6 +9,14 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
     <title>Putramas E-thesis Management System</title>
+
+
+    {{-- FOR TOAST NOTI --}}
+    <!-- jQuery -->
+    <script src="../../plugins/jquery/jquery.min.js"></script>
+    <!-- Bootstrap 4 -->
+    <script src="../../plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
+
     {{-- <script src="{{ mix('/js/app.js') }}"></script>
     <link rel="stylesheet" href="{{ mix('css/app.css') }}"> --}}
     <link rel="stylesheet" href="{{ url('./plugins/fontawesome-free/css/all.min.css') }}">
@@ -29,8 +37,11 @@
     <script src="{{ asset('./plugins/dropzone/min/dropzone.min.js') }}"></script>
 
     {{-- css style --}}
+    <link rel="stylesheet" type="text/css" href="{{ asset('admindash/stuform.css') }}">
+    {{-- <link rel="stylesheet" href="{{ url('./admindash/stuform.css') }}"> --}}
     <link rel="stylesheet" href="{{ url('./admindash/adminform.css') }}">
     <link rel="stylesheet" href="{{ url('./admindash/admincalendar.css') }}">
+    <link rel="stylesheet" href="{{ url('./admindash/studash.css') }}">
 
     <script src="{{ asset('./admindash/adminform.js') }}"></script>
 
@@ -43,12 +54,8 @@
     <!-- Theme style -->
     {{-- <link rel="stylesheet" href="{{ url('./dist/css/adminlte.min.css') }}"> --}}
 
-
-    {{-- FOR TOAST NOTI --}}
-    <!-- jQuery -->
-    <script src="../../plugins/jquery/jquery.min.js"></script>
-    <!-- Bootstrap 4 -->
-    <script src="../../plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qtip2/3.0.3/jquery.qtip.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/qtip2/3.0.3/jquery.qtip.min.css" />
 
     <!-- SweetAlert2 -->
     <link rel="stylesheet" href="{{ url('./plugins/sweetalert2-theme-bootstrap-4/bootstrap-4.min.css') }}">
@@ -78,18 +85,19 @@
 
 </body>
 <style>
+    .fc-next-button {
+  background-color: #FACD3F;
+}
 
+/* Previous button */
+.fc-prev-button {
+  background-color: #FACD3F;
+}
+
+/* Today button */
+.fc-today-button {
+  background-color: #FACD3F;
+}
     </style>
-
-<!-- jQuery -->
-{{-- <script src={{ asset('./plugins/jquery/jquery.min.js') }}></script> --}}
-
-{{-- <script src={{ asset('./plugins/bootstrap/js/bootstrap.bundle.min.js') }}></script> --}}
-
-<!-- Bootstrap 4 -->
-{{-- <script src="../../plugins/bootstrap/js/bootstrap.bundle.min.js"></script> --}}
-
-<!-- jQuery UI -->
-{{-- <script src={{ asset('./plugins/jquery-ui/jquery-ui.min.js') }}></script> --}}
 
 </html>

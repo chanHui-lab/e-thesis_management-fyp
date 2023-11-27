@@ -272,6 +272,7 @@ color: black;
   margin-right: 10px; /* Add some right margin to the link */
   font-size: 16px; /* Adjust the font size as needed */
   align-items: center;
+  padding-left: 10px;
 }
 
 .remove-button {
@@ -290,3 +291,9 @@ color: black;
 .dimmed-overlay {
   background: rgba(0, 0, 0, 0.5); /* Adjust the opacity as needed */
 }
+#toast-container > .toast {
+  width: 500px;
+  font-size: 20px;
+}
+
+

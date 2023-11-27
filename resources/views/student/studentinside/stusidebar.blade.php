@@ -1,86 +1,169 @@
 <section id="sidebar">
     <a class="navbar-brand brand-logo" href="#">
-         <img class="logo-image" src='{{ asset('admindash/img/logoethesis.png') }}' alt="logo"/>
-     </a>
-     <div class="user-panel mt-4" style="margin-left: 40px; margin-top: 20px; padding-bottom: 5px; border-bottom: 1px solid #e6e6e6; border-top: 1px solid #e6e6e6;">
-        {{-- <div class="image">
-          <img src="../../dist/img/user2-160x160.jpg" class="img-circle elevation-2" alt="User Image">
-        </div> --}}
-        {{-- <div class="info"> --}}
-          {{-- <a href="#" class="d-block">Alexander Pierce</a> --}}
-          <h6 style="margin-top: 10px;" >Hello, {{ auth()->user()->name }}</h6>
-        {{-- </div> --}}
+        <img class="logo-image" src='{{ asset('admindash/img/logoethesis.png') }}' alt="logo"/>
+    </a>
+    {{-- <div class="user-panel mt-4" style="margin-left: 40px; margin-top: 20px; padding-bottom: 5px; border-bottom: 1px solid #4f5962; border-top: 1px solid #4f5962;"> --}}
+    <div class="user-panel mt-3 mb-3 d-flex" style=" border-bottom: 1px solid #4f5962; border-top: 1px solid #4f5962;">
+      {{-- <h6 class="info" style="margin-left: 40px; margin-top: 10px;" >Hello, {{ auth()->user()->name }}</h6> --}}
     </div>
-     <ul class="nav-links top">
 
-         <li class="nav-item active">
-             {{-- <a href="{{ url('student/studentpage/studenthome') }}"> --}}
-            {{-- <a href="{{ url('admin/admin/adminlist') }}"> --}}
-                <a href="#">
-                 <i class='bx bxs-home' style='color:#422f01'></i>
-                 <span class="text">Home</span>
-             </a>
-         </li>
+    <nav class="mt-2">
+        <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
 
-         <li class="nav-item">
-             {{-- <div class ="iocn-link"> --}}
-                 <a href="#">
-                     <i class='bx bxs-file-doc' style='color:#422f01'  ></i>
-                     <span class="text">Forms</span>
-                 </a>
-             {{-- </div> --}}
+        <li class="nav-item">
+            {{-- <a href="{{ url('dashboardfake') }}" class="nav-link"> --}}
+              <a href="{{ url('student/dashboard') }}" class="nav-link {{ request()->is('student/dashboard*') ? 'active' : '' }}">
+                <i class="nav-icon bx bxs-home"></i>
+              <p>
+                Home
+              </p>
+            </a>
+        </li>
 
-         </li>
+          <!-- Add icons to the links using the .nav-icon class
+               with font-awesome or any other icon font library -->
+          <li class="nav-item">
+            <a href="{{ url('student/form') }}" class="nav-link {{ request()->is('student/form*') ? 'active' : '' }}">
+              {{-- <i class="nav-icon fas fa-tachometer-alt"></i> --}}
+              <i class="nav-icon bx bxs-file-doc"></i>
+              <p>
+                Form
+                {{-- <i class="bx bxs-chevron-down" style="justify-content: space-between; position: absolute; right: 0;"></i> --}}
+              </p>
+            </a>
 
-         <li class="nav-item">
-             {{-- <div class ="iocn-link"> --}}
-                 <a href="#">
-                     <i class='bx bxs-file' style='color:#422f01'></i>
-                     <span class="text">Proposal Submission</span>
-                 </a>
-             {{-- </div> --}}
-         </li>
+            {{-- <ul class="nav nav-treeview" style="background-color: #fafaeb">
+              <li class="nav-item">
+                <a href="{{ url('admin/formpage/admintemplateupload') }}" class="nav-link {{ request()->is('admin/template_page/admintemplateupload*') ? 'active' : '' }}">
+                  <i class="bx bx-circle nav-icons"></i>
+                  <p>Upload Form Template</p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="{{ url('admin/formsubmissionpage/allpost') }}" class="nav-link">
+                    <i class="bx bx-circle  nav-icons"></i>
+                  <p>Create Form Submission Post</p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="./index3.html" class="nav-link">
+                  <i class="bx bx-circle  nav-icons"></i>
+                  <p>All Form Submission</p>
+                </a>
+              </li>
+            </ul> --}}
+          </li>
 
-         <li class="nav-item">
-             {{-- <div class ="iocn-link"> --}}
-                 <a href="#">
-                     <i class='bx bxs-slideshow' style='color:#422f01'></i>
-                     <span class="text">Thesis Submission </span>
-                 </a>
-             {{-- </div> --}}
-         </li>
+          {{-- thesis section --}}
+          <li class="nav-item">
+            <a href="#" class="nav-link">
+              {{-- <i class="nav-icon fas fa-tachometer-alt"></i> --}}
+              <i class="nav-icon bx bxs-file"></i>
+              <p>
+                Proposal
+                {{-- <i class="right fas fa-angle-left"></i> --}}
+                <i class="bx bxs-chevron-down" style="justify-content: space-between; position: absolute; right: 0;"></i>
+              </p>
+            </a>
 
-         <li class="nav-item">
-             <a href="#">
-                 <i class="bx bxs-calendar" style='color:#422f01'></i>
-                 <span class="text">Viva Schedule</span>
-             </a>
-         </li>
+            <ul class="nav nav-treeview" style="background-color: #fafaeb">
+              <li class="nav-item">
+                <a href="{{ url('admin/thesispage/thesistemplateupload') }}" class="nav-link {{ request()->is('admin/thesispage/thesistemplateupload*') ? 'active' : '' }}" >
+                  <i class="bx bx-circle nav-icons"></i>
+                  <p>Upload Proposal Template</p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="./index2.html" class="nav-link">
+                  <i class="bx bx-circle  nav-icons"></i>
+                  <p>Create Proposal Submission Post</p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="./index3.html" class="nav-link">
+                  <i class="bx bx-circle  nav-icons"></i>
+                  <p>All Proposal Submission</p>
+                </a>
+              </li>
+            </ul>
+          </li>
 
-         <li class="nav-item">
-             <a href="#">
-                 <i class='bx bx-library' ></i>
-                 <span class="text">Thesis Library</span>
-             </a>
-         </li>
-     </ul>
+        {{-- slides section --}}
+        <li class="nav-item">
+          <a href="#" class="nav-link">
+            {{-- <i class="nav-icon fas fa-tachometer-alt"></i> --}}
+            <i class="nav-icon bx bxs-slideshow"></i>
+            <p>
+              Slides
+              {{-- <i class="right fas fa-angle-left"></i> --}}
+              <i class="bx bxs-chevron-down" style="justify-content: space-between; position: absolute; right: 0;"></i>
+            </p>
+          </a>
+
+          <ul class="nav nav-treeview" style="background-color: #fafaeb">
+            <li class="nav-item">
+              <a href="{{ url('admin/thesispage/thesistemplateupload') }}" class="nav-link {{ request()->is('admin/thesispage/thesistemplateupload*') ? 'active' : '' }}" >
+                <i class="bx bx-circle nav-icons"></i>
+                <p>Upload Slides Template</p>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a href="./index2.html" class="nav-link">
+                <i class="bx bx-circle  nav-icons"></i>
+                <p>Create Slides Submission Post</p>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a href="./index3.html" class="nav-link">
+                <i class="bx bx-circle  nav-icons"></i>
+                <p>All Slides Submission</p>
+              </a>
+            </li>
+          </ul>
+        </li>
+
+        <li class="nav-item">
+            <a href="{{ url('student/calendar') }}" class="nav-link {{ request()->is('admin/calendar*') ? 'active' : '' }}">
+              <i class="nav-icon bx bxs-calendar"></i>
+            <p>
+              Presentation Schedule
+            </p>
+          </a>
+      </li>
+
+      <li class="nav-item">
+        <a href="{{ url('student/calendar') }}" class="nav-link {{ request()->is('student/calendar*') ? 'active' : '' }}">
+          <i class="nav-icon bx bx-library"></i>
+          <p>
+            Thesis Repository
+          </p>
+        </a>
+      </li>
 
 
-     <ul class="nav-links">
-
-         <li>
-
-             {{-- copy from app.blade --}}
-             <a class="logout" href="{{route('logout')}}"
-             onclick="event.preventDefault();
-                           document.getElementById('logout-form').submit();">
-             <i class='bx bxs-log-out-circle' ></i>{{ __('Logout') }}
+      <li class="nav-item">
+        <a href="{{ url('admin/advisor-assignment/create') }}" class="nav-link {{ request()->is('admin/advisor-assignment/create*') ? 'active' : '' }}">
+          <i class="nav-icon bx bx-id-card"></i>
+        <p>
+          Assign Student-Supervisor
+        </p>
+      </a>
+    </li>
+      <br>
+      <br>
+      <li class="nav-item">
+          <a class="logout nav-link" href="{{route('logout')}}"
+              onclick="event.preventDefault();
+                          document.getElementById('logout-form').submit();">
+              <i class='nav-icon bx bxs-log-out-circle'></i>{{ __('Logout') }}
           </a>
 
           <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
               @csrf
           </form>
+      </li>
 
-         </li>
-     </ul>
- </section>
+
+        </ul>
+    </nav>
+</section>

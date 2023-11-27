@@ -1,6 +1,6 @@
 <section id="content">
-    <nav>
-    <i class='bx bx-menu' ></i>
+    <nav id="navbar" class="navbar">
+        <i class='bx bx-menu' ></i>
 
     {{-- display e-thesis at the top --}}
     {{-- <a href="#" class="nav-link">E-Thesis</a> --}}

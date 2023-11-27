@@ -20,7 +20,6 @@ Route::get('/', function () {
 // Route::get('/testvue', function () {
 //     return view('tesetvue');
 // });
-Route::get('/testvue', [App\Http\Controllers\Admin\FormController::class, 'indexVue']);
 
 Auth::routes();
 
@@ -108,15 +107,24 @@ Route::group(['middleware' => 'auth','isAdmin', 'prefix' => 'admin'], function()
 
 // routes/web.php
 // Route::get('/templates/download/{template}', 'TemplateController@download')->name('templates.download');
+    Route::get('/thesis', [App\Http\Controllers\Admin\FormController::class, 'indexVue'])->middleware('cors');
 
 });
 // Route::delete('/admin/formsubmissionpage/{id}/deletefile/{file}', 'FormController@deleteFile')->name('formpost.deletefile');
 
 Route::group(['middleware' => 'auth','isStudent', 'prefix' => 'student'], function(){
 
-
     Route::get('dashboard',[App\Http\Controllers\Admin\DashboardController::class, 'index']) -> name('student_dashboard');
     Route::get('student/studentlist',[App\Http\Controllers\Admin\DashboardController::class, 'test']);
+
+    Route::get('calendar', [App\Http\Controllers\Admin\PresentationScheduleController::class, 'getStuEvents'])->name('stucalendar.index');;
+    Route::get('/calendar/events/{date}', [App\Http\Controllers\Admin\PresentationScheduleController::class, 'getDateEvents']);
+    Route::get('/calendar/{eventId}', [App\Http\Controllers\Admin\PresentationScheduleController::class, 'getEventDetails']);
+
+    // FORMS SECTION
+    Route::get('form',[App\Http\Controllers\Student\FormController::class, 'index']) -> name('stutemplate.index');
+    Route::get('form/submission/{id}', [App\Http\Controllers\Student\FormController::class, 'showStuFormSubmissionDetails'])->name('stuFormSubmission.details');
+
 });
 
 // Route::get('/admin/dashboard');

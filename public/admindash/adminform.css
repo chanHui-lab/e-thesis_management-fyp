@@ -24,7 +24,9 @@
 }
 
 .content-wrapper{
-   margin-left: 150px;
+width: 1000px;
+margin-left: 150px;
+   /* actual150 */
 }
 .table-bordered th,
   .table-bordered td {
@@ -706,7 +708,12 @@ td.green-bg {
 }
 
 .file-icon {
-    font-size: 24px;
+    font-size: 20px;
+	margin-right: 8px; /* Add some space between the icon and the text */
+
+}
+.file-template {
+    font-size: 18px;
 	margin-right: 8px; /* Add some space between the icon and the text */
 
 }
@@ -749,7 +756,7 @@ td.green-bg {
 }
 
 .tab-content {
-    padding: 10px;
+    margin-bottom: 10px;
     flex: 1;
 }
 
@@ -789,9 +796,20 @@ td.green-bg {
 }
 
 .bg-light-red {
-    background-color: rgb(255, 154, 154);
+    /* background-color: rgb(53, 39, 39); */
+	background-color: rgb(199, 123, 123);
+
 }
 
 .bg-light-green {
     background-color: lightgreen;
+}
+
+.v-chip {
+    display: inline-block;
+    padding: 4px 8px;
+    border-radius: 12px;
+    font-size: 14px;
+    margin-right: 5px;
+    margin-bottom: 5px;
 }

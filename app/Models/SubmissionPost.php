@@ -5,10 +5,10 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 // reminder
 use Carbon\Carbon;
-use Illuminate\Support\Facades\DB;
 
 class SubmissionPost extends Model
 {
@@ -41,7 +41,19 @@ class SubmissionPost extends Model
         ->paginate(2);
     }
 
+    static public function getStuFormSP(){
+        $user = Auth::user();
 
+        return DB::table('submission_posts')
+            ->join('users', 'users.id', '=', 'submission_posts.lecturer_id')
+            ->leftJoin('supervisors', 'supervisors.lecturer_id', '=', 'users.id')
+            ->where(function ($query) use ($user) {
+                $query->where('users.role_as', 0)
+                      ->orWhere('supervisors.lecturer_id', '=', $user->supervisor_id);
+            })
+            ->where('section', 'form')
+            ->get();
+    }
     // // get the current post from current id -  not yet do.
     // public function getStudentSubmissionPost()
     // {

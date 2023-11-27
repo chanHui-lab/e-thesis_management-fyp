@@ -56,10 +56,15 @@ use Illuminate\Support\Facades\Auth;
 
         <!-- CONTENT -->
  	<div class="container-fluid page-body-wrapper">
-        @include('admin.admindashinside.sidebar')
+        @if (Auth::user()->role_as == 0)
+            @include('admin.admindashinside.sidebar')
+        @elseif (Auth::user()->role_as == 2)
+            @include('student.studentinside.stusidebar')
+        @endif
+
 		<div class = "main-panel">
 			<div class = "content-wrapper">
-					@yield('content')
+				@yield('content')
             </div>
         </div>
     </div>

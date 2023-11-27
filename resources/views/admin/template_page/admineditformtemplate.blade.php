@@ -52,12 +52,95 @@
                     <i class="fas fa-cloud-upload-alt"></i>
                     <p>Browse File</p>
                   </div>
-                  <p>Current File:
-                      @if ($getRecord->file_data)
-                        <a href="{{ asset('storage/' . $getRecord->file_data) }}" download>
-                        {{ str_replace('upload/templates/', '', $getRecord->file_data) }}
-                        </a></p>
-                    @endif
+                  {{-- <p>Current File:
+                    @if ($getRecord->file_data)
+                      <a href="{{ asset('storage/' . $getRecord->file_data) }}" download>
+                      {{ str_replace('upload/templates/', '', $getRecord->file_data) }}
+                      </a>
+                  </p>
+                  @endif --}}
+                  <p>Current File:</p>
+
+                  @php
+                      $files = json_decode($getRecord->file_data, true);
+                  @endphp
+                @if (is_array($files) && count($files) > 0)
+                <table class="table table-bordered" style = "width: 900px;">
+                    <thead>
+                        <tr>
+                            <th class="wider-column">File Name</th>
+                            {{-- <th>Uploaded Time</th> --}}
+                            <th style = "width: 100px;">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach ($files as $file)
+                            <tr>
+                                <td>
+
+                                    @if (Str::endsWith($file['path'], '.pdf'))
+                                        <a href="{{ asset('storage/' . $file['path']) }}" target="_blank" download class="downloadfile-link">
+                                            <i class="fa fa-file-pdf file-icon" style = "color: rgb(255, 86, 86)"></i>
+                                            {{ substr($file['path'], strpos($file['path'], '_') + 1) }}
+                                        </a>
+                                    @elseif (Str::endsWith($file['path'], '.doc') || Str::endsWith($file['path'], '.docx'))
+                                        <a href="{{ asset('storage/' . $file['path']) }}" target="_blank" download class="downloadfile-link">
+                                            <i class="fa fa-file-word file-icon" style = "color: rgb(77, 144, 250)"></i>
+                                            {{ substr($file['path'], strpos($file['path'], '_') + 1) }}
+                                        </a>
+                                    @else
+                                        <a href="{{ asset('storage/' . $file['path']) }}" target="_blank" download class="downloadfile-link">
+                                            <i class="fa fa-file file-icon" style = "color: rgb(77, 144, 250)"></i>
+                                            {{-- {{ basename($file) }} --}}
+                                            {{ substr($file['path'], strpos($file['path'], '_') + 1) }}
+                                        </a>
+                                    @endif
+                                </td>
+                                {{-- <td> --}}
+                                    {{-- {{ \Carbon\Carbon::parse(\Storage::lastModified($file))->toDateTimeString() }} --}}
+                                    {{-- {{ $file['uploaded_at'] }} --}}
+                                    {{-- {{ $file['uploaded_at']->format('Y-m-d H:i:s') }} --}}
+                                {{-- </td> --}}
+                                <td>
+                                    <button type="button" class="btn btn-danger" data-toggle="modal" data-modal-id="confirmationModal{{  $file['path'] }}" data-target="#confirmationModal{{ Str::slug(basename($file['path'] )) }}">
+                                        Remove
+                                    </button>
+                                </td>
+                            </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+                <div class="modal fade" id="confirmationModal{{ Str::slug(basename($file['path'] )) }}" tabindex="-1" role="dialog" aria-labelledby="confirmationModalLabel" aria-hidden="true">
+                  <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="confirmationModalLabel">Confirm Deletion</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        Are you sure you want to delete this file?
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal" >Cancel</button>
+                        {{-- <form method="POST" action="{{ route('formpost.deletefile', ['id' => $getRecord->id]) }}" style="display: inline;">                                                      @csrf
+                              @csrf
+                              @method('DELETE')
+                            <input type="hidden" name="file" value="{{ $file }}"> --}}
+                            <button class="btn btn-danger" data-postid="{{ $getRecord->id }}" data-filepath="{{ is_array($file) ? $file['path'] : $file }}" onclick="removeThisFile(this)">Delete</button>
+                            {{-- </form> --}}
+
+                          </div>
+                      </div>
+                  </div>
+                </div>
+            {{-- </li> --}}
+        {{-- @endforeach --}}
+      {{-- </ul> --}}
+      @else
+      <p>No files uploaded.</p>
+      @endif
                 <input class="file-input" type="file" class="form-control" id="file_data" name="file_data" accept=".pdf,.doc,.docx">
               {{-- <section class="progress-area"></section>
                 <div class="progress">

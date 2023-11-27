@@ -60,13 +60,13 @@ class FormController extends Controller
     /**
      * Store a newly created template resource in storage.
      */
-    public function store(Request $request)
-    {
+    public function store(Request $request){
         $request->validate([
             'file_name' => 'required',
             'description' => 'required',
             // 'submission_deadline' => 'required|date',
-            'file_data' => 'required|mimes:pdf,doc,docx|max:2048', // Add validation rules for the file
+            'file_data.*' => 'mimes:pdf,doc,docx', //add the columns
+            // 'file_data' => 'required|mimes:pdf,doc,docx|max:2048', // Add validation rules for the file
             'status' => 'required| in:0,1',
 
         ]);
@@ -82,26 +82,59 @@ class FormController extends Controller
         // $extension = $file->getClientOriginalExtension();
         // $mime_type = $this->getMimeType($extension);
 
+        // // FIRST TECHNIQUE
+        // $file = $request->file('file_data');
+        // $fileName = time() . '_' . $file->getClientOriginalName();
 
-        $file = $request->file('file_data');
-        $fileName = time() . '_' . $file->getClientOriginalName();
-        // $filePath = $file->storeAs('upload/templates', $fileName);
+        // // Store the file using the 'public' disk
+        // $filePath = 'upload/templates/' . $fileName;
+        // Storage::disk('public')->put($filePath, file_get_contents($file));
 
-        // Store the file using the 'public' disk
-        $filePath = 'upload/templates/' . $fileName;
-        Storage::disk('public')->put($filePath, file_get_contents($file));
+        // $extension = $file->getClientOriginalExtension();
+        // $mime_type = $this->getMimeType($extension);
+        // // END FIRST TECHNIQUE
+        // Initialize an empty array to store file paths
+        $filePaths = [];
 
-        $extension = $file->getClientOriginalExtension();
-        $mime_type = $this->getMimeType($extension);
+        // Handle file uploads and store them
+        if ($request->hasFile('file_data')) {
+            foreach ($request->file('file_data') as $file) {
+                $filename = $file->getClientOriginalName();
+                // Store the file in the public/upload/templates directory
+                // $file->storeAs('public/upload/templates', $filename);
+                // $filePaths[] = 'upload/templates/' . $filename; // Store the file path
+                $extension = $file->getClientOriginalExtension();
+                $mime_type = $this->getMimeType($extension);
 
-        // try laterr
-        $userId = Auth::user()->id;
+                // Get the current logged-in user's ID
+                $userId = auth()->user()->id;
+                // Get the current time
+                $currentTime = now();
+
+                // Format the timestamp (optional, adjust as needed)
+                $formattedTimestamp = $currentTime->format('Ymd_His');
+
+                // Append the user's ID to the file path
+                // $userFilePath = 'upload/templates/user_' . $userId;
+
+                // Append the user's ID and timestamp to the file path
+                $userFilePath = "upload/templates/user_{$userId}/{$formattedTimestamp}";
+
+                // Store the file in the public/upload/templates/user_{user_id} directory
+                $file->storeAs("public/$userFilePath", $filename);
+
+                $filePaths[] = [
+                    'path' => "$userFilePath/$filename",
+                    'uploaded_at' => $currentTime,
+                ];
+            }
+        }
 
         Template::create([
             'file_name' => $request->input('file_name'),
             'description' => $request->input('description'),
-            'file_data' => $filePath, //its actually actual path
-            'mime_type' => $mime_type, // set the MIME type
+            'file_data' => json_encode($filePaths), //its actually actual path
+            'mime_type' => 'pdf', // set the MIME type
             'lecturer_id' => Auth::id(),
             'status' => $request->input('status'),
             'section' => "form"
@@ -190,12 +223,12 @@ class FormController extends Controller
     public function update(Request $request, $id)
     {
         // Validate the incoming data
-    $request->validate([
-        'file_name' => 'required',
-        'description' => 'required',
-        'file_data' => 'required|mimes:pdf,doc,docx|max:2048', // Add validation rules for the file
-        'status' => 'required|in:0,1',
-    ]);
+        $request->validate([
+            'file_name' => 'required',
+            'description' => 'required',
+            'file_data' => 'required|mimes:pdf,doc,docx|max:2048', // Add validation rules for the file
+            'status' => 'required|in:0,1',
+        ]);
 
     // Retrieve the Template model by ID
     $template = Template::findOrFail($id);
@@ -882,7 +915,6 @@ public function removeFile(Request $request, $id)
         $data = Form_submission::select('id', 'form_title', 'description','form_files') // Include only the needed columns
         ->get();
         return response()->json($data);
-
     }
 
     // public function downloadVue($filePath)

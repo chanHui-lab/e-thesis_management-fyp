@@ -3,7 +3,9 @@
 @section('master_content')
 
 <main>
-<h1 style = "padding-top: 20px; padding-bottom:20px">Create Form Template</h1>
+<h1 style = "padding-top: 20px; padding-bottom:10px">Create Form Template</h1>
+
+<a href="{{ route('template.index') }}" class="btn btn-primary" style = "margin-bottom:20px">Back</a>
 
  {{--handle error  --}}
 @if ($errors->any())
@@ -39,26 +41,52 @@
             <label for="description">Description:</label>
             <textarea id="description" class = "form-control" style="height: 150px" name="description" rows="4" cols="50" placeholder="Details" ></textarea><br>
         </div>
-        {{-- <div class="form-group"> --}}
          <label for="file_data">Upload Document File:</label><br>
-                <div class="wrapper">
-                  <div class ="dotted">
-                    <i class="fas fa-cloud-upload-alt"></i>
-                    <p>Browse File</p>
-                  </div>
-                <input class="file-input" type="file" class = "form-control"  id="file_data" name="file_data" accept=".pdf,.doc,.docx" >
-                {{-- <section class="progress-area"></section>
-                <div class="progress">
-                    <div class="progress-bar" style="width: 0%"></div>
-                    <span class="percent">0%</span>
-
-                </div> --}}
-                <section class="uploaded-area"></section>
-            {{-- </div> --}}
+            {{-- <div class="wrapper">
+              <div class ="dotted">
+                <i class="fas fa-cloud-upload-alt"></i>
+                <p>Browse File</p>
               </div>
+            <input class="file-input" type="file" class = "form-control"  id="file_data" name="file_data" accept=".pdf,.doc,.docx" >
+
+            <section class="uploaded-area"></section>
+          </div> --}}
+
+          <div class="container">
+            <div class="row">
+                <div class="col-md-12" style="padding: 0%">
+                    {{-- <h4>File Upload</h4> --}}
+                    <div class="input-group hdtuto control-group increment">
+                        <input type="file" name="file_data[]" class="myfrm form-control">
+                        <div class="input-group-btn">
+                            <button class="btn btn-success" type="button" onclick="addFileInput(this)">
+                                <i class="fldemo glyphicon glyphicon-plus"></i>Add
+                            </button>
+                        </div>
+                    </div>
+                    <div class="clone hide">
+                        <div class="hdtuto control-group lst input-group" style="margin-top:10px">
+                            <input type="file" name="file_data[]" class="myfrm form-control">
+                            <div class="input-group-btn">
+                                <button class="btn btn-danger" type="button" onclick="removeFileInput(this)">
+                                    <i class="fldemo glyphicon glyphicon-remove"></i> Remove
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+          <div class="wrapper">
+            <div class ="dotted">
+              <i class="fas fa-cloud-upload-alt"></i>
+              <p>Browse File</p>
+            </div>
+          </div>
         <br>
         <div class="col-sm-6">
-        {{-- <div class="form-group"> --}}
             <label for="status">Status:</label>
             <select class="custom-select"  style= "display: block;
             width: 100%;
@@ -86,7 +114,7 @@
 
 </form>
 </div>
-
+</main>
 @endsection
 
 @section('scripts')

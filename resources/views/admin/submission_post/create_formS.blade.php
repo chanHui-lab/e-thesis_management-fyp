@@ -18,6 +18,8 @@
         </div>
     @endif
 
+    <a href="{{ route('template.index') }}" class="btn btn-primary">Back</a>
+
     <div class="card card-primary">
         <div class="card-header">
           <h3 class="card-title">Create</h3>
@@ -58,7 +60,6 @@
 
               <br>
 
-            {{-- <div class="form-group"> --}}
              <label for="files">Upload Document Files: (not necessary) </label><br>
                     <div class="wrapper">
                       <div class ="dotted">
@@ -127,10 +128,8 @@
 
 
                   </div>
-            </div>
             <br>
-
-          {{-- </div> --}}
+          </div>
           <!-- /.card-body -->
 
           <div class="card-footer">

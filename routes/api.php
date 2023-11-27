@@ -22,3 +22,5 @@ Route::get('/testvuedata', [App\Http\Controllers\Admin\FormController::class, 'f
 
 Route::get('/download/{filePath}', [App\Http\Controllers\Admin\FormController::class, 'downloadVue'])->where('filePath', '.*');
 
+Route::get('/student/dashreminder', [App\Http\Controllers\Admin\DashboardController::class, 'fetchReminderData']);
+

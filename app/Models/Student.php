@@ -18,7 +18,9 @@ class Student extends Model
     // specify that it is the foreign key connecting students to the "users" table.
     public function user()
     {
-        return $this->belongsTo(User::class, 'stu_id');
+        // return $this->belongsTo(User::class, 'stu_id');
+        return $this->belongsTo(User::class, 'stu_id', 'id');
+
     }
 
     public function supervisor()
