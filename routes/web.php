@@ -17,38 +17,11 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-// Route::get('/testvue', function () {
-//     return view('tesetvue');
-// });
 
 Auth::routes();
 
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 
-// testing de page
-Route::get('/testing', function(){
-    // return view ('admin.adminpage.create');
-    return view ('test');
-
-});
-
-Route::get('test', function(){
-    // return view ('admin.adminpage.create');
-    return view ('admin.presentationSchedule');
-
-});
-
-// Route::get('/calendar', [App\Http\Controllers\Admin\PresentationScheduleController::class, 'getEvents']);
-// Route::get('/calendar/events/{date}', [App\Http\Controllers\Admin\PresentationScheduleController::class, 'getDateEvents']);
-// Route::get('/calendar/{eventId}', [App\Http\Controllers\Admin\PresentationScheduleController::class, 'getEventDetails']);
-// Route::post('/calendar/update/{eventId}', [App\Http\Controllers\Admin\PresentationScheduleController::class, 'updateEvent']);
-// // Route::put('/calendar/update/{eventId}', [App\Http\Controllers\Admin\PresentationScheduleController::class, 'updateEvent']);
-// // Route::get('/fetch-updated-events', [App\Http\Controllers\Admin\PresentationScheduleController::class, 'fetchUpdatedEventSource']);
-// Route::post('/calendar/store', [App\Http\Controllers\Admin\PresentationScheduleController::class, 'store'])->name('calendar.store');
-// // Route::get('/calendar/events-by-date', [App\Http\Controllers\Admin\PresentationScheduleController::class, 'getEventsByDate']);
-// Route::post('/calendar/updateEvent/{id}', [App\Http\Controllers\Admin\PresentationScheduleController::class, 'changeEvent']);
-
-// must add a auth there!!
 Route::group(['middleware' => 'auth','isAdmin', 'prefix' => 'admin'], function(){
 
     // to get the admin dashboard
@@ -105,12 +78,9 @@ Route::group(['middleware' => 'auth','isAdmin', 'prefix' => 'admin'], function()
     // DRAGGABLE EVENTS
     Route::post('/calendar/dragevents', [App\Http\Controllers\Admin\PresentationScheduleController::class, 'storeDrag'])->name('calendarsche.storedrag');
 
-// routes/web.php
-// Route::get('/templates/download/{template}', 'TemplateController@download')->name('templates.download');
     Route::get('/thesis', [App\Http\Controllers\Admin\FormController::class, 'indexVue'])->middleware('cors');
 
 });
-// Route::delete('/admin/formsubmissionpage/{id}/deletefile/{file}', 'FormController@deleteFile')->name('formpost.deletefile');
 
 Route::group(['middleware' => 'auth','isStudent', 'prefix' => 'student'], function(){
 
@@ -126,12 +96,3 @@ Route::group(['middleware' => 'auth','isStudent', 'prefix' => 'student'], functi
     Route::get('form/submission/{id}', [App\Http\Controllers\Student\FormController::class, 'showStuFormSubmissionDetails'])->name('stuFormSubmission.details');
 
 });
-
-// Route::get('/admin/dashboard');
-
-// Route::get('/admin/dashboard',function(){
-//     return view('welcome');
-// })->where('pathMatch',".*");
-
-
-// Route::get('{view}', ApplicationController::class)-> where('view','(*)');
