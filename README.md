@@ -1,20 +1,36 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
-
 <p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
+  <a target="_blank">
+    <img src="./public/admindash/img/logoethesis.png" width="400" alt="Your Image Alt Text">
+  </a>
 </p>
 
-## About Laravel
+## PutraMas e-thesis Management System
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+PutraMas e-Thesis Management System is a web-based thesis submission and evaluation platform for Master of Information Security, Faculty of Computer Science and Information Technology,  UPM. It caters to a diverse user base, including master students, lecturers and coordinators. 
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+It is developed using:
+- HTML, CSS, Javascript,
+- front-end framework Vue.js and Vuetify,
+- back-end framework Laravel.
+
+PutraMas e-Thesis Management System not only streamlines thesis submission but also contributes to a greener and more cost-effective academic environment in UPM. It aims to achieve SDG Goal 4: Quality Education, and Goal 13: Cliate Action. 
+
+
+### System Description
+**Functionality of System:**
+- Document management
+- Submission and Review
+- Presentation Schedule Calendar
+- Thesis Repository
+- Feedback and Guidance
+- AI Powered 
+
+### System Interface
+![Dashboard](https://drive.google.com/uc?id=15wG3nSEYy-sx8hK5i2Sf5ydId_yQ8rls) 
+Dashboard page
+
+![Calendar Page](https://drive.google.com/uc?id=1EqvyxXxlwTeGJNFciL_vLEEc4Nt046NU) 
+Calendar page
+
+![Calendar Page](https://drive.google.com/uc?id=1fzw1nESRlnWafzflLc57fVgJZ3qyWNd6) 
+Document page
