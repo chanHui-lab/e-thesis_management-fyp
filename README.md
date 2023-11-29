@@ -32,5 +32,5 @@ Dashboard page
 ![Calendar Page](https://drive.google.com/uc?id=1EqvyxXxlwTeGJNFciL_vLEEc4Nt046NU) 
 Calendar page
 
-![Document Page](https://drive.google.com/1fzw1nESRlnWafzflLc57fVgJZ3qyWNd6) 
+![Calendar Page](https://drive.google.com/uc?id=1fzw1nESRlnWafzflLc57fVgJZ3qyWNd6) 
 Document page
