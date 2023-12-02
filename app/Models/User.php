@@ -53,7 +53,7 @@ class User extends Authenticatable
 
     public function supervisor()
     {
-        return $this->hasOne(Supervisor::class);
+        return $this->hasOne(Supervisor::class, 'lecturer_id', 'id');
     }
 
     public function formSubmissions()

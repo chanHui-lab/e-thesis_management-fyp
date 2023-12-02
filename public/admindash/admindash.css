@@ -71,11 +71,21 @@ body.dark {
 	--dark: #FBFBFB;
 }
 
-body {
-	background: var(--light-yellow);
+/* body {
+	margin: 0;
+	padding: 0;
+	height: 100vh;
 	overflow-x: hidden;
 	font-size: 14px;
-	/* IF want change to apple, change to 16px */
+	background: linear-gradient(#F8D700 25%, #e0e0e0 25%);
+} */
+
+/* actual one */
+body {
+	/* background: var(--light-yellow); */
+	/* background: #ededed; */
+	overflow-x: hidden;
+	font-size: 14px;
 }
 
 /* SIDEBAR */
@@ -87,12 +97,19 @@ body {
 	height: 100%;
 	background: var(--light);
 	z-index: 1000;
-	/* font-family: var(--poppins); */
 	font-family: var(--main-font), sans-serif;
+	/* border-radius: 20px; Add this line to make the sidebar more rounded */
+    box-shadow: 5px 0 10px rgba(0, 0, 0, 0.1); /* Adjust values as needed */
 
 	transition: .3s ease;
 	overflow-x: hidden;
 	scrollbar-width: none;
+
+	border-top-left-radius: 0; /* No border-radius on the top-left corner */
+	border-bottom-left-radius: 0; /* No border-radius on the bottom-left corner */
+	border-top-right-radius: 20px; /* Set the border-radius for the top-right corner */
+	border-bottom-right-radius: 20px; /* Set the border-radius for the bottom-right corner */
+
 }
 #sidebar::--webkit-scrollbar {
 	display: none;
@@ -169,8 +186,6 @@ body {
 #sidebar .sub-menu{
 	margin-left: 20px;
 }
-
-
 
 #sidebar .nav-links li.active::before {
 	content: '';
@@ -320,9 +335,10 @@ body {
 /* CONTENT */
 #content {
 	position: relative;
-	/* width: calc(100% - 280px); */
-	/* left: 280px; */
+	width: calc(100% - 260px);
+	left: 260px;
 	transition: .3s ease;
+
 }
 
 #sidebar.hide ~ #content {
@@ -333,23 +349,23 @@ body {
 
 /* NAVBAR */
 #content nav {
-	height: 70px;
+	height: 56px;
 	background: var(--light);
-	padding: 0 24px;
+	padding-left: 90px;
+	/* margin-left: 24px; */
 	display: flex;
 	align-items: center;
 	grid-gap: 24px;
 	/* font-family: var(--poppins); */
 	font-family: var(--main-font), sans-serif;
-    /* font-family: 'SanFrancisco', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; */
-
+	/* font-family: 'SanFrancisco', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; */
 	position: sticky;
 	top: 0;
-	left: 0;
+	left: 10%;
 	z-index: 1000;
 }
 
-#content nav::before {
+/* #content nav::before {
 	content: '';
 	position: absolute;
 	width: 40px;
@@ -358,7 +374,7 @@ body {
 	left: 0;
 	border-radius: 50%;
 	box-shadow: -20px -20px 0 var(--light);
-}
+} */
 #content nav a {
 	color: var(--dark);
 }
@@ -378,11 +394,13 @@ body {
 	width: 100%;
 	margin-right: auto;
 }
+
 #content nav form .form-input {
 	display: flex;
 	align-items: center;
 	height: 36px;
 }
+
 #content nav form .form-input input {
 	flex-grow: 1;
 	padding: 0 16px;
@@ -478,6 +496,7 @@ body {
 	max-height: calc(100vh - 56px);
 	overflow-y: auto;
 }
+
 #content main .head-title {
 	display: flex;
 	align-items: center;
@@ -683,37 +702,6 @@ body {
 /* CONTENT */
 
 
-
-
-
-
-
-
-
-@media screen and (max-width: 768px) {
-	#sidebar {
-		width: 200px;
-	}
-
-	#content {
-		width: calc(100% - 60px);
-		left: 200px;
-	}
-
-	#content nav .nav-link {
-		display: none;
-	}
-	/* #content main {
-        width: 100%;
-		/* Set main content width to 100% for smaller screens */
-    /* } */
-}
-
-
-
-
-
-
 @media screen and (max-width: 576px) {
 	#content nav form .form-input input {
 		display: none;
@@ -758,6 +746,26 @@ body {
 		min-width: 420px;
 	}
 }
+
+@media screen and (max-width: 768px) {
+	#sidebar {
+		width: 200px;
+	}
+
+	#content {
+		width: calc(100% - 30px);
+		left: 200px;
+	}
+
+	#content nav .nav-link {
+		display: none;
+	}
+	#content main {
+        width: 100%;
+		/* Set main content width to 100% for smaller screens */
+    }
+}
+
 
 /* from adminlte.css */
 #sidebar .main-sidebar {

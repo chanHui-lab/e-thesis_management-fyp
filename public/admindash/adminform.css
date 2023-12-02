@@ -24,10 +24,15 @@
 }
 
 .content-wrapper{
-width: 1000px;
-margin-left: 150px;
-   /* actual150 */
+	width: 2000px;
+	margin-left: 160px;
+	width: 90%;
+	padding-right: 50px;
+
+	/* it has a white space on top werdly/  */
+	/* background: linear-gradient(orange 30%, #e0e0e0 25%); */
 }
+
 .table-bordered th,
   .table-bordered td {
     border: 1px solid #b6afaf !important;
@@ -805,11 +810,16 @@ td.green-bg {
     background-color: lightgreen;
 }
 
-.v-chip {
+/* .v-chip {
     display: inline-block;
     padding: 4px 8px;
     border-radius: 12px;
     font-size: 14px;
     margin-right: 5px;
     margin-bottom: 5px;
+} */
+
+.form-control {
+    background-color: #ffffffb2;
+
 }

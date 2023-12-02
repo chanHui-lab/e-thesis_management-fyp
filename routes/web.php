@@ -122,9 +122,17 @@ Route::group(['middleware' => 'auth','isStudent', 'prefix' => 'student'], functi
     Route::get('/calendar/{eventId}', [App\Http\Controllers\Admin\PresentationScheduleController::class, 'getEventDetails']);
 
     // FORMS SECTION
-    Route::get('form',[App\Http\Controllers\Student\FormController::class, 'index']) -> name('stutemplate.index');
+    Route::get('form/submission',[App\Http\Controllers\Student\FormController::class, 'index']) -> name('stutemplate.index');
     Route::get('form/submission/{id}', [App\Http\Controllers\Student\FormController::class, 'showStuFormSubmissionDetails'])->name('stuFormSubmission.details');
-
+    Route::get('form/submission/create/{submission_post_id}',[App\Http\Controllers\Student\FormController::class, 'createFormSubmission']) -> name('stuFormSubmission.create');
+    Route::post('form/submission/create',[App\Http\Controllers\Student\FormController::class, 'storeFormSubmission']) -> name('stuFormSubmission.store');
+    Route::delete('form/submission/{formSubmissionId}', [App\Http\Controllers\Student\FormController::class, 'deleteFormSubmission'])->name('formSubmission.delete');
+    Route::get('/form/submission/edit/{formSubmissionId}/{submissionPostId}', [App\Http\Controllers\Student\FormController::class, 'editFormSubmission'])->name('formSubmission.edit');
+    Route::post('/form/submission/{formSubmissionId}', [App\Http\Controllers\Student\FormController::class, 'updateFormSubmission'])->name('formSubmission.update');
+    // Route::delete('/form/submission/remove-file/{formId}/{fileIndex}', [App\Http\Controllers\Student\FormController::class, 'removeFileForm'])->name('formSubmission.remove-file');
+    Route::delete('/form/submission/remove-file/{formSubmissionId}',  [App\Http\Controllers\Student\FormController::class, 'removeFile'])->name('formSubmission.remove-file');
+// Route::delete('/form/submission/remove-file/{fileIndex}', [App\Http\Controllers\Student\FormController::class, 'removeFileForm'])->name('formSubmission.remove-file');
+    // Route::delete('/form/submission/removeFile/{id}',[App\Http\Controllers\Student\FormController::class, 'removeFileForm']) -> name('formSubmission.deletefile');
 });
 
 // Route::get('/admin/dashboard');

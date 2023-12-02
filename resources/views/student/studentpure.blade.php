@@ -13,7 +13,8 @@
 
     {{-- FOR TOAST NOTI --}}
     <!-- jQuery -->
-    <script src="../../plugins/jquery/jquery.min.js"></script>
+    {{-- <script src="../../plugins/jquery/jquery.min.js"></script> --}}
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <!-- Bootstrap 4 -->
     <script src="../../plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
 
@@ -85,7 +86,17 @@
 
 </body>
 <style>
-    .fc-next-button {
+
+/* body {
+    margin: 0;
+    padding: 0;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    background: linear-gradient(orange 25%, #e0e0e0 25%);
+} */
+
+.fc-next-button {
   background-color: #FACD3F;
 }
 

@@ -25,6 +25,9 @@ class Form_submission extends Model
     ];
 
     // FormSubmission.php
+    static public function getSingle($id){
+        return self::find($id);
+    }
 
     public function submissionPost()
     {

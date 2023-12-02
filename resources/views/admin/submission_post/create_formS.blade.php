@@ -18,7 +18,7 @@
         </div>
     @endif
 
-    <a href="{{ route('template.index') }}" class="btn btn-primary">Back</a>
+    <a href="{{ route('template.index') }}" style = "margin-bottom:20px" class="btn btn-primary">Back</a>
 
     <div class="card card-primary">
         <div class="card-header">

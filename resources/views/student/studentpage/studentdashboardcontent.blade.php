@@ -1,11 +1,15 @@
 @extends('student.studentpure')
 @section('master_content')
 <main>
+  <h1 style="margin-top: 20px;" >Dashboard</h1>
 
 {{-- <div class="row justify-content-center"> --}}
-<h1 style="margin-top: 20px;" >Dashboard</h1>
-<h4>Hello, Welcome back {{ auth()->user()->name }}</h4>
-<p>User Role: Student</p>
+  <div class="row justify-content-center">
+    <div class="col-md-12">
+      <h4>Hello, Welcome back {{ auth()->user()->name }}</h4>
+      <p>User Role: Student</p>
+    </div>
+  </div>
 
 <div class="row">
   <div class="col-md-8">

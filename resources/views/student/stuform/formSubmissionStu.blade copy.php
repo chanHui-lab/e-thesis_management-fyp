@@ -46,72 +46,72 @@
         $deadlineTimeDiff = $submissionDeadline->diff(now());
 
     @endphp
-    @if ($formSubmission)
+    @if ($formSubmission->isEmpty())
 
         {{-- <a href="{{ route('stuFormSubmission.create') }}" class="btn btn-primary">Add Submission</a> --}}
+        <a href="{{ route('stuFormSubmission.create',['submission_post_id' =>  $submissionPost->id]) }}" class="btn btn-primary">Add Submission</a>
+    @else
+        {{-- @foreach($formSubmissions as $formSubmission) --}}
+
         <div class = "row row-buttonform" style="margin-left: 5px">
-            <a href="{{ route('formSubmission.edit', ['formSubmissionId' => $formSubmission->id,'submissionPostId' => $submissionPost->id]) }}" class="btn btn-warning">
-            {{-- <a href="{{ route('formSubmission.edit', ['formSubmissionId' => $formSubmission->id]) }}" class="btn btn-warning"> --}}
+        {{-- <button class="btn btn-warning">Edit Submission</button> --}}
+        {{-- <a class="btn btn-warning" href="{{ route('formpost.edit',$postform->id) }}"> --}}
+        <a href="{{ route('formSubmission.edit', ['formSubmissionId' => $formSubmission->id]) }}" class="btn btn-warning">
 
-            {{-- <a class="btn btn-info btn-sm" href="{{ route('formpost.edit',$postform->id) }}"> --}}
-                <i class="fas fa-pencil-alt">
-                </i>
-                Edit Submission
-            </a>
+        {{-- <a class="btn btn-info btn-sm" href="{{ route('formpost.edit',$postform->id) }}"> --}}
+            <i class="fas fa-pencil-alt">
+            </i>
+            Edit Submission
+        </a>
 
-            {{-- delete parteu --}}
-            <form action="{{ route('formSubmission.delete',$formSubmission->id) }}" method="POST">
+        {{-- delete parteu --}}
+        <form action="{{ route('formSubmission.delete',$formSubmission->id) }}" method="POST">
 
-            <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#deleteModal{{ $formSubmission->id }}">
-                <i class="fas fa-trash"></i>
-                Delete Submission
-            </button>
-            {{-- delet confirmation modal --}}
-            <div class="modal fade" id="deleteModal{{ $formSubmission->id }}" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
-                <div class="modal-dialog">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h5 class="modal-title" id="deleteModalLabel">Confirm Deletion</h5>
-                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                <span aria-hidden="true">&times;</span>
-                            </button>
-                        </div>
-                        <div class="modal-body">
-                            Are you sure you want to delete the whole form submission?
-                        </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-                                @csrf
-                                @method('DELETE')
-                            {{-- href="{{ route('formSubmission.delete', ['formSubmissionId' => $formSubmission->id]) }}" --}}
-                            {{-- <a href="{{ route('formSubmission.delete', ['formSubmissionId' => $formSubmission->id]) }}" class="btn btn-danger">Delete</a> --}}
-                            <button class="btn btn-danger">Delete</button>
-                        </div>
+        <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#deleteModal{{ $formSubmission->id }}">
+            <i class="fas fa-trash"></i>
+            Delete Submission
+        </button>
+        {{-- delet confirmation modal --}}
+        <div class="modal fade" id="deleteModal{{ $formSubmission->id }}" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="deleteModalLabel">Confirm Deletion</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        Are you sure you want to delete the whole form submission?
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                            @csrf
+                            @method('DELETE')
+                        {{-- href="{{ route('formSubmission.delete', ['formSubmissionId' => $formSubmission->id]) }}" --}}
+                        {{-- <a href="{{ route('formSubmission.delete', ['formSubmissionId' => $formSubmission->id]) }}" class="btn btn-danger">Delete</a> --}}
+                        <button class="btn btn-danger">Delete</button>
                     </div>
                 </div>
             </div>
-            {{-- @endforeach --}}
-            </form>
-            </div>
-    @else
-        {{-- @foreach($formSubmissions as $formSubmission) --}}
-        <a href="{{ route('stuFormSubmission.create',['submission_post_id' =>  $submissionPost->id]) }}" class="btn btn-primary">Add Submission</a>
-
-
+        </div>
+        {{-- @endforeach --}}
+        </form>
+        </div>
     @endif
     <table id="view1" class="custom-table generaltable table-bordered table table-striped">
 
-    {{-- @forelse($formSubmission as $formSubmissionee) --}}
-    @if ($formSubmission)
+    @forelse($formSubmission as $formSubmissionee)
+
     @php
-        $formfiles = json_decode($formSubmission->form_files, true);
+        $formfiles = json_decode($formSubmissionee->form_files, true);
         $submissionStatus = (count($formfiles) > 0) ? "Submitted" : "Pending";
 
         $submissionDeadline = \Carbon\Carbon::parse($submissionPost->submission_deadline);
         $currentTime = now();
         $deadlineTimeDiff  = $submissionDeadline->diff($currentTime);
 
-        $fileSubmissionTime = \Carbon\Carbon::parse($formSubmission->updated_at); // Assuming 'updated_at' is a timestamp
+        $fileSubmissionTime = \Carbon\Carbon::parse($formSubmissionee->updated_at); // Assuming 'updated_at' is a timestamp
         $fileTimeDiff = $fileSubmissionTime->diff($submissionDeadline);
         // Check if files exist
         $filesExist = !empty($formfiles);
@@ -198,8 +198,8 @@
             </tr>
         </tbody>
     </table>
-    {{-- @empty --}}
-    @else
+
+@empty
 
         <tbody>
             <tr>
@@ -251,9 +251,7 @@
             </tr>
         </tbody>
     </table>
-{{-- @endforelse --}}
-@endif
-
+@endforelse
 </main>
 @endsection
 

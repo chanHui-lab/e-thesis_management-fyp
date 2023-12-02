@@ -13,14 +13,17 @@ import 'vuetify/dist/vuetify.css';
 import Dashboard from './components/Dashboardtest.vue'
 import AdminDashboard from './components/AdminDash.vue'
 import '@fortawesome/fontawesome-free/css/all.css'
+import { aliases, mdi } from 'vuetify/iconsets/mdi'
 
 const vuetify = createVuetify({
-  })
-
-// createApp(app)
-//   .use(router)
-//   .use(vuetify)
-//   .mount('#app');
+  icons: {
+    defaultSet: 'mdi',
+    aliases,
+    sets: {
+      mdi,
+    },
+  },
+})
 
   const appi = createApp({
   components: {
@@ -33,6 +36,12 @@ const vuetify = createVuetify({
 // appi.use(router);
 appi.use(vuetify);
 appi.mount('#app');
+
+
+// createApp(app)
+//   .use(router)
+//   .use(vuetify)
+//   .mount('#app');
 
 // ++++++
 // const app = createApp({});

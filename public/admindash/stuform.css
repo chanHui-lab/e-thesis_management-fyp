@@ -1,24 +1,78 @@
-.templateDetails{
-    padding-left: 40px;
-    font-size: 12px;
+.template-item{
+    margin-bottom: 20px;
+}
+
+.template-description{
+    font-size: 14px;
     font-weight: 100;
     color: gray;
 }
 
-.v-chip {
-    display: inline-block;
-    padding: 4px 8px;
-    border-radius: 12px; /* Adjust the border-radius to control the roundness */
-    font-size: 14px;
-    margin-right: 5px;
-    margin-bottom: 5px;
+.template-details{
+    padding-left: 20px;
+    font-size: 12px;
+    font-weight: 100;
 }
 
-.templateItem {
-    display: flex; /* Use flexbox to align items */
-    align-items: center; /* Align items vertically in the center */
+.v-chip {
+    display: inline-block;
+    /* padding: 4px 8px; */
+    border-radius: 20px; /* Adjust the border-radius to control the roundness */
+    /* font-size: 14px; */
+    margin-left: 20px;
+    padding: 7px;
+
 }
+.v-chip-column {
+    display: inline-block;
+    /* padding: 4px 8px; */
+    border-radius: 20px; /* Adjust the border-radius to control the roundness */
+    /* font-size: 14px; */
+    padding: 7px;
+}
+
+/* .chip--label{
+    padding: 7px;
+    border-radius: 20px;
+    margin-left: 10px;
+} */
+/* .templateItem {
+    display: flex;
+    /* Use flexbox to align items
+    align-items: center; /* Align items vertically in the center
+} */
 
 .brown-link {
     color: rgb(64, 31, 1);
+}
+
+.template-title {
+    display: block; /* Ensures the title is a block-level element */
+    font-size: 16px;
+
+    /* display: flex;
+    align-items: center;
+    justify-content: space-between; */
+}
+
+.toggle-arrow {
+    display: inline-block; /* Ensures the toggle arrow is inline-block */
+    cursor: pointer;
+    size: 40;
+    transition: transform 0.3s ease; /* Add transition for smooth rotation */
+    font-size: 20px; /* Adjust the font size for icon size */
+    /* color: #4CAF50;  */
+    color:#FACD3F;
+}
+
+.rotate-down {
+    transform: rotate(90deg); /* Rotate the down arrow */
+}
+
+.labelling {
+    font-weight: 300;
+}
+
+.row-buttonform{
+    grid-gap: 20px;
 }

@@ -50,12 +50,12 @@
 rounded="lg" variant="flat" class="mb-4"
 >
 
-<v-card class="mx-2 rounded-card" max-width="400"
+<v-card class="mx-4 rounded-card" max-width="600"
 v-for="submissionPost in reminderData" :key="submissionPost.id" :style="{ borderColor: getBorderColor(submissionPost.section) }">
 
   <v-row>
 
-  <v-col cols="2">
+  <v-col cols="2" style="padding-right:10px;">
     <!-- <v-list-item>
     <v-list-item-content>
 
@@ -94,7 +94,7 @@ v-for="submissionPost in reminderData" :key="submissionPost.id" :style="{ border
           color="#FACD3F"
           prepend-icon="mdi-arrow-right-bold-circle"
           variant="flat"
-          style="height: 30px; margin-bottom: 10px; border-radius: 20px;">
+          style="height: 30px; margin-top: 20px; margin-bottom: 10px; border-radius: 20px;">
 
           Add submission
         </v-btn>
@@ -107,14 +107,14 @@ v-for="submissionPost in reminderData" :key="submissionPost.id" :style="{ border
 </v-card>
 
 <!-- </v-sheet> -->
-    <v-card
+    <!-- <v-card
       class="mx-auto"
       max-width="200"
       height="200"
       image="https://cdn.vuetifyjs.com/images/cards/docks.jpg"
       title="Card title"
       theme="dark"
-    ></v-card>
+    ></v-card> -->
 
     <!-- <template> -->
 
@@ -380,7 +380,7 @@ v-for="submissionPost in reminderData" :key="submissionPost.id" :style="{ border
 .rounded-card {
   border-radius: 20px;
   border-left: 5px solid #FACD3F;
-  margin:10px;
+  margin:20px;
 }
 .v-card-text {
   white-space: normal;
@@ -388,11 +388,11 @@ v-for="submissionPost in reminderData" :key="submissionPost.id" :style="{ border
 }
 
 .headline {
-  font-size: 14px; /* Change this to your desired font size */
+  font-size: 16px; /* Change this to your desired font size */
 }
 
 .subheading {
-  font-size: 12px; /* Change this to your desired font size */
+  font-size: 14px; /* Change this to your desired font size */
 }
 
 
@@ -402,21 +402,21 @@ v-for="submissionPost in reminderData" :key="submissionPost.id" :style="{ border
   padding-top: 2px;
 }
 
-/* Reduce the space between the elements on the right side */
-/* .v-card-title,
-.v-card-subtitle,
-.v-card-text,*/
+.custome-chip{
+  margin-left: 0px;
+}
 
 .textclass{
   /* Adjust the padding as needed */
   line-height: 0%;
-  padding-left: 7px;
+  padding-left: 9px;
   padding-bottom: 0px;
   margin-bottom: 2px;
-  margin-left: 5px;
-
+  /* margin-left: 5px; */
 }
+
 .addSubBut{
   font-size: 12px;
 }
+
 </style>

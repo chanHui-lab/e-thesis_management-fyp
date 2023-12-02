@@ -320,7 +320,8 @@
 </script>
 
 <!-- jQuery -->
-<script src="../../plugins/jquery/jquery.min.js"></script>
+{{-- <script src="../../plugins/jquery/jquery.min.js"></script> --}}
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
 <!-- Bootstrap 4 -->
 <script src="../../plugins/bootstrap/js/bootstrap.bundle.min.js"></script>

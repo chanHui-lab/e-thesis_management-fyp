@@ -25,7 +25,7 @@ class Student extends Model
 
     public function supervisor()
     {
-        return $this->belongsTo(Supervisor::class, 'supervisor_id');
+        return $this->belongsTo(Supervisor::class, 'supervisor_id', 'lecturer_id');
     }
 
     public function formSubmissions()

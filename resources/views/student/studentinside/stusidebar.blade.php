@@ -23,7 +23,8 @@
           <!-- Add icons to the links using the .nav-icon class
                with font-awesome or any other icon font library -->
           <li class="nav-item">
-            <a href="{{ url('student/form') }}" class="nav-link {{ request()->is('student/form*') ? 'active' : '' }}">
+            <a href="{{ url('student/form/submission') }}" class="nav-link {{ Str::startsWith(url()->current(), url('student/form/submission')) ? 'active' : '' }}">
+            {{-- <a href="{{ url('student/form/submission') }}" class="nav-link {{ request()->is('student/form/submission*') ? 'active' : '' }}"> --}}
               {{-- <i class="nav-icon fas fa-tachometer-alt"></i> --}}
               <i class="nav-icon bx bxs-file-doc"></i>
               <p>

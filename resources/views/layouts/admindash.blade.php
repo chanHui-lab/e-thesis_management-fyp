@@ -55,19 +55,18 @@ use Illuminate\Support\Facades\Auth;
         @include('admin.admindashinside.navbar')
 
         <!-- CONTENT -->
- 	<div class="container-fluid page-body-wrapper">
-        @if (Auth::user()->role_as == 0)
-            @include('admin.admindashinside.sidebar')
-        @elseif (Auth::user()->role_as == 2)
-            @include('student.studentinside.stusidebar')
-        @endif
+        <div class="container-fluid page-body-wrapper">
+            @if (Auth::user()->role_as == 0)
+                @include('admin.admindashinside.sidebar')
+            @elseif (Auth::user()->role_as == 2)
+                @include('student.studentinside.stusidebar')
+            @endif
 
-		<div class = "main-panel">
-			<div class = "content-wrapper">
-				@yield('content')
-            </div>
+                <div class = "content-wrapper">
+                    @yield('content')
+                </div>
+            {{-- </div> --}}
         </div>
-    </div>
     </div>
 
     <script src= "{{ asset('admindash/admindashscript.js') }}"></script>
@@ -84,6 +83,32 @@ use Illuminate\Support\Facades\Auth;
 <style>
     .container{
         font-family: 'Poppins', sans-serif;
+    }
+
+    body {
+        margin: 0;
+        padding: 0;
+        /* height: 100vh;
+        overflow-x: hidden; */
+        /* font-size: 14px; */
+        /* background: linear-gradient(#F8D700 20%, #F6F6F6 25%); */
+        background: linear-gradient(#ffd856 25%, #F6F6F6 30%);
+
+    }
+    /* e0e0e0 */
+
+    .orange-section {
+        /* Additional styles for the orange section if needed */
+    }
+
+    .grey-section {
+        /* Additional styles for the grey section if needed */
+    }
+
+    .orange-section img {
+        /* Styles for the image in the orange section */
+        max-width: 100%;
+        height: auto;
     }
     </style>
 
