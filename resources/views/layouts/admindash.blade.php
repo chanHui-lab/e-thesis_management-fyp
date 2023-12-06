@@ -16,6 +16,11 @@ use Illuminate\Support\Facades\Auth;
     <!-- Fonts -->
     <link rel="dns-prefetch" href="//fonts.bunny.net">
     <link href="https://fonts.googleapis.com/css?family=Poppins" rel="stylesheet">
+    <!-- Add this line to include Lato font from Google Fonts -->
+    <link href="https://fonts.googleapis.com/css?family=Lato:400,700&display=swap" rel="stylesheet">
+
+    <!-- Add this line to include Raleway font from Google Fonts -->
+    <link href="https://fonts.googleapis.com/css?family=Raleway:400,500,600,700&display=swap" rel="stylesheet">
 
     <!-- Scripts -->
     {{-- @vite(['resources/sass/app.scss', 'resources/js/app.js']) --}}
@@ -53,21 +58,32 @@ use Illuminate\Support\Facades\Auth;
 <body>
     <div class = "container-scroller">
         @include('admin.admindashinside.navbar')
+        <!-- Orange Section -->
+        <div class="orange-section">
+            <!-- Your image goes here -->
+            {{-- <img src='{{ asset('admindash/img/PMbg.png') }}' alt="Your Image"> --}}
 
-        <!-- CONTENT -->
-        <div class="container-fluid page-body-wrapper">
-            @if (Auth::user()->role_as == 0)
-                @include('admin.admindashinside.sidebar')
-            @elseif (Auth::user()->role_as == 2)
-                @include('student.studentinside.stusidebar')
-            @endif
+        <!-- Grey Section -->
+        <div class="grey-section">
+            <!-- CONTENT -->
+            {{-- <img src='{{ asset('admindash/img/PMbg.png') }}' alt="Your Image"> --}}
+
+            <div class="container-fluid page-body-wrapper">
+                @if (Auth::user()->role_as == 0)
+                    @include('admin.admindashinside.sidebar')
+                @elseif (Auth::user()->role_as == 2)
+                    @include('student.studentinside.stusidebar')
+                @endif
 
                 <div class = "content-wrapper">
                     @yield('content')
                 </div>
-            {{-- </div> --}}
+                </div>
+            </div>
         </div>
+
     </div>
+
 
     <script src= "{{ asset('admindash/admindashscript.js') }}"></script>
 
@@ -81,28 +97,52 @@ use Illuminate\Support\Facades\Auth;
     @livewireScripts
 </body>
 <style>
-    .container{
+    /* .container{
         font-family: 'Poppins', sans-serif;
-    }
+    } */
 
     body {
-        margin: 0;
-        padding: 0;
-        /* height: 100vh;
-        overflow-x: hidden; */
-        /* font-size: 14px; */
-        /* background: linear-gradient(#F8D700 20%, #F6F6F6 25%); */
-        background: linear-gradient(#ffd856 25%, #F6F6F6 30%);
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            /* background: linear-gradient(#f0cc55 40%, #f5f5f7 25%); */
+            background: linear-gradient(#FFE681 40%, #f5f5f7 25%);
 
-    }
+            /* background-size: 100% 25%; Adjust the size based on your needs */
+            background-repeat: no-repeat;
+            background-position: top;
+        }
     /* e0e0e0 */
-
+    .container-scroller {
+            position: relative;
+            z-index: 1;
+        }
     .orange-section {
-        /* Additional styles for the orange section if needed */
+        /* position: absolute; */
+        top: 0;
+        /* left: 280px; */
+        /* width: 40%; */
+        height: 30%;
+        /* background: url('{{ asset('admindash/img/PMbg.png') }}') repeat; Use cover to make the image cover the entire section */
+        /* background-size: 20% 30%; Adjust the size based on your needs */
+        /* background: linear-gradient(orange, orange) 0 0%, url('{{ asset('admindash/img/PMbg.png') }}') repeat; */
+        /* background: url('{{ asset('admindash/img/PMbg.png') }}') repeat; */
+
+/* use thiss */
+        /* background: url('{{ asset('admindash/img/PM.png') }}') center / cover no-repeat;; */
+
+        /* background-position: top, center; */
+        /* opacity: 0.5; Adjust the opacity value (0 to 1) as needed */
+
+        z-index: -1;
     }
 
     .grey-section {
         /* Additional styles for the grey section if needed */
+        z-index: 0;
+
     }
 
     .orange-section img {

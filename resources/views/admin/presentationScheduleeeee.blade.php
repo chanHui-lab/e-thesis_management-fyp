@@ -5,7 +5,7 @@
   <main>
 
     {{-- only from can be edited by lecturer,admin. (student only view)--}}
-  <h1 style="margin-top: 20px; margin-bottom:20px;">PutraMas Calendar Schedule</h1>
+  <h1>PutraMas Calendar Schedule</h1>
     {{-- <div class="container-fluid"> --}}
       <div class="row">
         <div class="col-md-12">

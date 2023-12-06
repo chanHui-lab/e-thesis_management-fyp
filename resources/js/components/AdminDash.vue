@@ -301,7 +301,7 @@ v-for="submissionPost in reminderData" :key="submissionPost.id" :style="{ border
     getChipColor(type) {
         switch (type) {
             case 'form':
-                return 'red';
+                return 'brown';
             case 'thesis':
                 return 'blue';
             case 'proposal':

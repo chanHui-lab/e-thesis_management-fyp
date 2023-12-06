@@ -4,7 +4,7 @@
 <main>
     <div class="row" style="margin-left: 0%">
         <div class=" titleforform">
-            <h2 style = "padding-top: 20px;">Form Section</h2>
+            <h1>Form Section</h1>
         </div>
     </div>
 
@@ -82,7 +82,8 @@
                     @foreach ($submissionDetails as $postform)
                     <div class="file-container">
                         <p class="file-link"><i class="fa fa-solid fa-file-import"  style="margin-right: 10px; color: rgb(64, 31, 1);"></i>
-                            <a class="brown-link" href="{{ route('stuFormSubmission.details', ['id' => $postform['submissionPost']->id]) }}">
+                            <a class="brown-link" href="{{ route('stuFormSubmission.details', ['submissionPostId' => $postform['submissionPost']->id]) }}">
+
                             {{ $postform['submissionPost']->title }}
                             </a>
                             <span class="v-chip chip--label {{ $postform['chipClass'] }}">{{ $postform['status'] }}</span>

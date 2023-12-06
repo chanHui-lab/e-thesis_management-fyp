@@ -2,7 +2,7 @@
 
 @section('master_content')
 <main>
-  <h1 style="margin-top:20px;margin-bottom:10px;">PutraMas Calendar Schedule</h1>
+  <h1>PutraMas Calendar Schedule</h1>
     <div class="row">
       <div class="col-md-12" style="margin-left: -15px;">
         @if ($errors->any())

@@ -1,5 +1,10 @@
 @import url('https://fonts.googleapis.com/css?family=Poppins:400,500,600,700&display=swap');
 
+@font-face {
+    font-family: 'San Francisco';
+    src: url('/font/SF-Pro-Display-Semibold.otf')format('opentype'),
+		url('/font/SF-Pro-Display-Regular.otf')format('opentype');
+}
 
 :root {
 	--poppins: 'Poppins', sans-serif;
@@ -20,14 +25,20 @@
 }
 
 * {
-	font-family: var(--poppins);
+	/* font-family: var(--poppins); */
+
+	/* font-family: 'Raleway', sans-serif; */
+
+	font-family: 'San Francisco', sans-serif;
+	font-size: 14px;
+
 }
 
 .content-wrapper{
 	width: 2000px;
 	margin-left: 160px;
 	width: 90%;
-	padding-right: 50px;
+	padding-right: 40px;
 
 	/* it has a white space on top werdly/  */
 	/* background: linear-gradient(orange 30%, #e0e0e0 25%); */
@@ -73,7 +84,7 @@
   }
 
   /* admin dropzone */
-  .card {
+  .cardie {
 	position: relative;
 	display: -ms-flexbox;
 	display: flex;
@@ -81,10 +92,11 @@
 	flex-direction: column;
 	min-width: 0;
 	word-wrap: break-word;
-	background-color: #fff;
+	background-color: #c53a3a;
 	background-clip: border-box;
 	border: 0 solid rgba(0, 0, 0, 0.125);
-	border-radius: 0.25rem;
+    border-radius: 20px !important;
+	z-index: 1000;
   }
 
   .card > hr {
@@ -822,4 +834,48 @@ td.green-bg {
 .form-control {
     background-color: #ffffffb2;
 
+}
+
+#main .direct-chat-text {
+    border-radius: .3rem;
+    background-color: #d2d6de;
+    border: 1px solid #d2d6de;
+    color: #444;
+    margin: 5px 0 0 50px;
+    padding: 5px 10px;
+    position: relative;
+}
+
+.direct-chat-text::before {
+    border-width: 6px;
+    margin-top: -6px;
+}
+
+.direct-chat-text::after, .direct-chat-text::before {
+    border: solid transparent;
+    border-right-color: #d2d6de;
+    content: " ";
+    height: 0;
+    pointer-events: none;
+    position: absolute;
+    right: 100%;
+    top: 15px;
+    width: 0;
+}
+
+.direct-chat-text::after {
+    border-width: 5px;
+    margin-top: -5px;
+}
+
+.direct-chat-text::after, .direct-chat-text::before {
+    border: solid transparent;
+    border-right-color: #d2d6de;
+    content: " ";
+    height: 0;
+    pointer-events: none;
+    position: absolute;
+    right: 100%;
+    top: 15px;
+    width: 0;
 }

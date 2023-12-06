@@ -8,6 +8,7 @@ use App\Models\Template;
 use App\Models\SubmissionPost;
 use App\Models\Student;
 use App\Models\Form_submission;
+use App\Models\Comment;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -70,46 +71,74 @@ class FormController extends Controller
         return view('student.stuform.formTemplate&Submission',compact('template','submissionDetails'));
     }
 
-    // public function indexPost()
+
+    // used this before adding comment
+    // public function showStuFormSubmissionDetails($id)
     // {
+    //     // Fetch the submission post details
+    //     // $submissionPost = SubmissionPost::getSingle($id);
+    //     $submissionPost = SubmissionPost::where('id', $id)->first();
 
-    //     // define nem of varibale then use back
-    //     // $template = Template::latest()->paginate(3);
-    //     $post = SubmissionPost::getAdminFormSP();
+    //     // $submissionPost = DB::table('submission_posts')->find(40);
 
-    //     // Calculate remaining time for each submission
-    //     // foreach ($post as $postform) {
-    //     //     $postform->remainingTime = $this->calculateRemainingTime($postform->submission_deadline);
-    //     // }
+    //     // dd($submissionPost);
 
-    //     return view('student.stuform.formTemplate&Submission',compact('post'));
+    //     if (!$submissionPost) {
+    //         abort(404); // or handle the error in another way, e.g., redirect
+    //     }
 
+    //     // Check if the current user has permission to view this submission
+    //     // You may need to implement your own logic for permission checking
+
+    //     // Fetch form submissions related to the submission post for the current student
+    //     $formSubmission = $submissionPost->formSubmissions()
+    //         ->where('student_id', Auth::id())
+    //         ->first();
+    //     // dd($formSubmission);
+
+    //     return view('student.stuform.formSubmissionStu', ['submissionPost' => $submissionPost, 'formSubmission' => $formSubmission]);
     // }
-    public function showStuFormSubmissionDetails($id)
+
+    //after adding comment
+    public function showStuFormSubmissionDetails($submissionPostId)
     {
         // Fetch the submission post details
-        // $submissionPost = SubmissionPost::getSingle($id);
-        $submissionPost = SubmissionPost::where('id', $id)->first();
-
-        // $submissionPost = DB::table('submission_posts')->find(40);
-
-        // dd($submissionPost);
+        $submissionPost = SubmissionPost::where('id', $submissionPostId)->first();
 
         if (!$submissionPost) {
-            abort(404); // or handle the error in another way, e.g., redirect
+            abort(404);
         }
-
-        // Check if the current user has permission to view this submission
-        // You may need to implement your own logic for permission checking
 
         // Fetch form submissions related to the submission post for the current student
         $formSubmission = $submissionPost->formSubmissions()
             ->where('student_id', Auth::id())
             ->first();
-        // dd($formSubmission);
 
-        return view('student.stuform.formSubmissionStu', ['submissionPost' => $submissionPost, 'formSubmission' => $formSubmission]);
+        // Call the method to get form submission details along with comments
+        return $this->showFormSubmission($formSubmission->id,$submissionPost);
     }
+
+    public function showFormSubmission($formSubmissionId,$submissionPost)
+    {
+        // $formSubmission = Form_submission::with('comments.student.user')->findOrFail($formSubmissionId);
+        $formSubmission = Form_submission::findOrFail($formSubmissionId);
+        // $comments = $formSubmission->comments;
+        $comments = Comment::where('commentable_id', $formSubmission->id)
+        ->where(function ($query) use ($formSubmission) {
+            // Include comments made by the student
+            $query->where('student_id', Auth::id())
+                // Include comments made by the lecturer who supervises the student
+                ->orWhere('lecturer_id', $formSubmission->supervisor_id);
+        })
+        ->get();
+        // dd($comments);
+        $allcomments = $formSubmission->comments;
+        // dd($allcomments);
+
+
+        return view('student.stuform.formSubmissionStu', compact('submissionPost','formSubmission', 'comments'));
+    }
+
 
     public function createFormSubmission($submissionPostId)
     {
@@ -153,7 +182,6 @@ class FormController extends Controller
         } else {
             // dd($student);
         }
-        // $supervisorId = $student->supervisor->id;
 
         Form_submission::create([
             'form_title' => $request->input('form_title'),

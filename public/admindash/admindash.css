@@ -1,13 +1,12 @@
-/* @import url('https://fonts.googleapis.com/css2?family=Lato:wght@400;700&family=Poppins:wght@400;500;600;700&display=swap'); */
-/* @import url('https://fonts.googleapis.com/css?family=Poppins:400,500,600,700&display=swap');
-@import url('https://fonts.googleapis.com/css?family=Inter:400,500,600,700&display=swap'); */
+@import url('https://fonts.googleapis.com/css2?family=Lato:wght@400;700&family=Poppins:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css?family=Poppins:400,500,600,700&display=swap');
+@import url('https://fonts.googleapis.com/css?family=Inter:400,500,600,700&display=swap');
 
 
 @font-face {
     font-family: 'San Francisco';
-    src: url('/font/SF-Pro-Text-Medium.otf')format('opentype');;
-	/* C:\xampp\htdocs\e-thesis_management\public\font\SF-Pro-Display-HeavyItalic.otf */
-    /* Add additional font weights and styles if needed */
+    src: url('/font/SF-Pro-Display-Semibold.otf')format('opentype'),
+		url('/font/SF-Pro-Display-Regular.otf')format('opentype');
 }
 /* body {
     font-family: "San Francisco", sans-serif;
@@ -39,14 +38,16 @@ li {
 
 :root {
 	--poppins: 'Poppins', sans-serif;
-	--main-font: "San Francisco";
+	--sanfran-font: 'San Francisco', sans-serif;
+	--main-font:  'Raleway', sans-serif;
+	--inter: 'Inter', sans-serif;
 
 	--light: #F9F9F9;
 	--blue: #3C91E6;
 	--light-blue: #CFE8FF;
 	--grey: #eee;
 	--dark-grey: #AAAAAA;
-	--dark: #342E37;
+	--dark: #252525;
 	--red: #DB504A;
 	/* --yellow: #FACD3F; */
 
@@ -85,7 +86,51 @@ body {
 	/* background: var(--light-yellow); */
 	/* background: #ededed; */
 	overflow-x: hidden;
-	font-size: 14px;
+	font-size: 16px;
+	/* font-family: 'Lato', sans-serif; */
+
+	font-family: 'San Francisco', -apple-system, BlinkMacSystemFont, sans-serif;
+    font-weight: 500; /* Regular */
+}
+
+h1,h2,h3{
+	font-family: 'San Francisco', -apple-system, BlinkMacSystemFont, sans-serif;;
+	/* font-family: 'Raleway', sans-serif; */
+    font-weight: 500;
+	padding-top: 50px;
+}
+
+h4{
+	font-family: 'San Francisco', -apple-system, BlinkMacSystemFont, sans-serif;
+	/* font-family: 'Raleway', sans-serif; */
+    font-weight: 350;
+}
+
+p{
+	font-family: 'San Francisco', -apple-system, BlinkMacSystemFont, sans-serif;
+    font-weight: 100;
+}
+
+.card {
+	position: relative;
+	display: -ms-flexbox;
+	display: flex;
+	-ms-flex-direction: column;
+	flex-direction: column;
+	min-width: 0;
+	word-wrap: break-word;
+	background-color: #ffffff;
+	background-clip: border-box;
+	border: 1 solid rgb(135, 33, 35);
+    border-radius: 20px !important;
+	z-index: 1000;
+  }
+
+.cardie-body {
+	-ms-flex: 1 1 auto;
+	flex: 1 1 auto;
+	min-height: 1px;
+	padding: 1.25rem;
 }
 
 /* SIDEBAR */
@@ -97,7 +142,10 @@ body {
 	height: 100%;
 	background: var(--light);
 	z-index: 1000;
-	font-family: var(--main-font), sans-serif;
+	/* font-family: var(--main-font), sans-serif; */
+	font-family: var(--sanfran-font), sans-serif;
+
+
 	/* border-radius: 20px; Add this line to make the sidebar more rounded */
     box-shadow: 5px 0 10px rgba(0, 0, 0, 0.1); /* Adjust values as needed */
 
@@ -168,6 +216,7 @@ body {
 #sidebar .nav-links li.active {
 	background: var(--grey);
 	position: relative;
+	font-weight: 500;
 }
 
 #sidebar .nav-links li.active::before {
@@ -491,7 +540,9 @@ body {
 	width: 100%;
 	padding: 36px 24px;
 	/* font-family: var(--poppins); */
-	font-family: var(--main-font), sans-serif;
+	/* font-family: var(--main-font), sans-serif; Raleway */
+
+	font-family: var(--sanfran-font), sans-serif;
 
 	max-height: calc(100vh - 56px);
 	overflow-y: auto;
@@ -1141,4 +1192,21 @@ body {
 /* logout */
 #sidebar .nav-item a.logout {
 	color: var(--red);
+}
+
+
+.studashboard{
+    margin-left: 0rem;
+	/* margin: 1rem; */
+	margin-top: 1rem;
+	margin-right: 1rem;
+	margin-bottom: 1.5rem;
+
+    padding: 1rem;
+    border-radius: 20px;
+
+	background-color: #fff;
+	/* border-radius: 10px; */
+	box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+	/* padding: 20px; */
 }

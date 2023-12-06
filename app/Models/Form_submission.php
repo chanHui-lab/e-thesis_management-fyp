@@ -79,4 +79,9 @@ class Form_submission extends Model
         return "Submission is overdue by " . $diff->format('%a days, %h hours, %i minutes');
     }
     }
+
+    public function comments()
+    {
+        return $this->morphMany(Comment::class, 'commentable');
+    }
 }
