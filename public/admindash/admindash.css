@@ -31,9 +31,53 @@ li {
     justify-content: center; /* Center horizontally */
 	margin-top: 30px;
 }
+
+.loginbrand-logo {
+    display: flex;
+    align-items: center; /* Center vertically */
+    justify-content: center; /* Center horizontally */
+}
+
 .logo-image {
-    width: 200px;
+    width: 100px;
     height: 50px;
+}
+.logodash-image {
+    width: 180px;
+    height: auto;
+}
+.dropdown-menu.dropdown-menu-lg.dropdown-menu-right.show{
+	z-index:9999;
+}
+
+.logo-login {
+	width: 50%; /* Adjust the width as needed */
+	height: auto; /* Maintain aspect ratio */
+	margin-bottom: 10px;
+}
+
+.logo-upm {
+
+	width: 100%; /* Adjust the width as needed */
+	height: auto; /* Maintain aspect ratio */
+	margin-bottom: 0px;
+}
+
+.loginBtn{
+	background-color: #FACD3F;
+	color: black;
+	border-color: #FACD3F;
+	border-radius: 20px;
+	width: 75%;
+}
+
+.btn-common{
+	border: transparent; border-radius:10px; padding:10px;
+}
+
+p.plogo{
+	align-items: center;
+	justify-content: center;
 }
 
 :root {
@@ -90,14 +134,20 @@ body {
 	/* font-family: 'Lato', sans-serif; */
 
 	font-family: 'San Francisco', -apple-system, BlinkMacSystemFont, sans-serif;
-    font-weight: 500; /* Regular */
+    font-weight: 200; /* Regular */
 }
 
-h1,h2,h3{
+h1{
 	font-family: 'San Francisco', -apple-system, BlinkMacSystemFont, sans-serif;;
 	/* font-family: 'Raleway', sans-serif; */
     font-weight: 500;
-	padding-top: 50px;
+	padding-top: 25px;
+	/* shudnt add becasue it makes the whole alyout weird */
+}
+
+h2,h3{
+	font-family: 'San Francisco', -apple-system, BlinkMacSystemFont, sans-serif;;
+    font-weight: 500;
 }
 
 h4{
@@ -111,6 +161,15 @@ p{
     font-weight: 100;
 }
 
+.studashboard {
+    background-image: url('/admindash/img/Illustration1.png'); /* Replace 'path/to/your/image.jpg' with the actual path to your background image */
+    background-size: 200px 200px; /* Replace with your preferred width and height */
+    background-position:right; /* This property centers the background image */
+	color: black; /* Set text color to white or another color that contrasts well with your background */
+	/* height: 20px; Set a fixed height for testing */
+	/* padding: 20px; Adjust padding as needed */
+  }
+
 .card {
 	position: relative;
 	display: -ms-flexbox;
@@ -121,9 +180,11 @@ p{
 	word-wrap: break-word;
 	background-color: #ffffff;
 	background-clip: border-box;
-	border: 1 solid rgb(135, 33, 35);
+	box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+
+	/* border: 1 solid rgb(135, 33, 35); */
     border-radius: 20px !important;
-	z-index: 1000;
+	z-index: 1500;
   }
 
 .cardie-body {
@@ -131,6 +192,67 @@ p{
 	flex: 1 1 auto;
 	min-height: 1px;
 	padding: 1.25rem;
+}
+
+.custom-thead {
+	background-color: #FFE681;
+}
+
+.modal-backdrop.show {
+	opacity:0.5;
+    z-index: -1;
+	/* Adjust the value accordingly */
+}
+
+.modal-dialog {
+ margin-top: 20%;
+}
+.modal-content{
+	background-color: #fff5d5;
+	box-shadow: 0 5px 4px rgba(0, 0, 0, 0.1); /* Adjust the values for the desired shadow effect */
+	border-color: wheat;
+}
+
+.modal-body{
+	border-color: #ffffff;
+}
+.dimmed-background {
+    background: rgba(0, 0, 0, 0.5); /* Adjust the alpha channel for the desired opacity */
+}
+
+.form-control {
+	box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Adjust the values for the desired shadow effect */
+	/* padding: 15px; Add padding to create space around the form fields
+	margin-bottom: 20px; Adjust the margin as needed */
+}
+input.form-control:placeholder-shown {
+	background-color: #f2f2f2; /* Light gray background color */
+}
+textarea.form-control:placeholder-shown {
+	background-color: #f2f2f2; /* Light gray background color */
+}
+
+#eventDetailsModal {
+    z-index: 2000;
+}
+
+#editEventModal{
+    z-index: 2000;
+
+}
+
+.popUpModal{
+	z-index: 2000;
+}
+
+.rounded-btn {
+    border-radius: 10px;
+	padding: 5px 10px;
+    margin-bottom: 7px;
+}
+
+.iconie{
+	margin-right: 5px;
 }
 
 /* SIDEBAR */
@@ -538,7 +660,7 @@ p{
 /* MAIN */
 #content main {
 	width: 100%;
-	padding: 36px 24px;
+	padding: 30px 50px;
 	/* font-family: var(--poppins); */
 	/* font-family: var(--main-font), sans-serif; Raleway */
 
@@ -1075,10 +1197,17 @@ p{
 /* the form become any colour u want, if inherit means its become same as the bg colour u set earlier */
 #sidebar .nav-sidebar > .nav-item > .nav-link.active {
   /* background-color: inherit; */
-  background-color: #323308;
-  border-left: 3px solid transparent;
+
+	/* actual one before changes */
+  background-color: #f4c300;
+
+  /* border-left: 10px solid;
+  border-right: 5px solid; */
+  margin-left: 10px;
+  margin-right: 10px;
+  border-radius: 20px;
   box-shadow: none;
-  align-items: center;
+  /* align-items: center; */
 }
 
 /* specifically for active */
@@ -1154,13 +1283,13 @@ p{
 
 #sidebar .nav-sidebar .nav-item > .nav-link {
 	margin-bottom: .2rem;
-  }
+}
 
-  @media (prefers-reduced-motion: reduce) {
+@media (prefers-reduced-motion: reduce) {
 	.nav-sidebar .nav-item > .nav-link .right {
-	  transition: none;
+		transition: none;
 	}
-  }
+}
 
   #sidebar .nav-sidebar > .nav-item .nav-icon.bx, .nav-sidebar > .nav-item .nav-icon.fas, .nav-sidebar > .nav-item .nav-icon.far, .nav-sidebar > .nav-item .nav-icon.fab, .nav-sidebar > .nav-item .nav-icon.fal, .nav-sidebar > .nav-item .nav-icon.fad, .nav-sidebar > .nav-item .nav-icon.svg-inline--fa, .nav-sidebar > .nav-item .nav-icon.ion {
 	/* font-size: 1.1rem; */
@@ -1207,6 +1336,6 @@ p{
 
 	background-color: #fff;
 	/* border-radius: 10px; */
-	box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+	box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
 	/* padding: 20px; */
 }

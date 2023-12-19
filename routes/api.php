@@ -3,6 +3,7 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\FormController;
+use App\Http\Controllers\Admin\DashboardController;
 
 /*
 |--------------------------------------------------------------------------
@@ -24,3 +25,4 @@ Route::get('/download/{filePath}', [App\Http\Controllers\Admin\FormController::c
 
 Route::get('/student/dashreminder', [App\Http\Controllers\Admin\DashboardController::class, 'fetchReminderData']);
 
+Route::get('/students', [App\Http\Controllers\Admin\DashboardController::class, 'indexStu']);

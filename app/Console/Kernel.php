@@ -10,9 +10,21 @@ class Kernel extends ConsoleKernel
     /**
      * Define the application's command schedule.
      */
-    protected function schedule(Schedule $schedule): void
+    // protected function schedule(Schedule $schedule): void
+    // {
+    //     // $schedule->command('inspire')->hourly();
+    // }
+
+    // FOR DEDALINE REMINDER NOTI
+
+    protected $commands = [
+        // ... Other commands
+        Commands\CheckDeadlines::class,
+    ];
+
+    protected function schedule(Schedule $schedule)
     {
-        // $schedule->command('inspire')->hourly();
+        $schedule->command('check:deadlines')->everyMinute(); // Adjust the frequency as needed
     }
 
     /**
@@ -24,4 +36,6 @@ class Kernel extends ConsoleKernel
 
         require base_path('routes/console.php');
     }
+
+
 }

@@ -1,6 +1,6 @@
 <section id="sidebar">
     <a class="navbar-brand brand-logo" href="#">
-        <img class="logo-image" src='{{ asset('admindash/img/logoethesis.png') }}' alt="logo"/>
+        <img class="logodash-image" src='{{ asset('admindash/img/logoethesis.png') }}' alt="logo"/>
     </a>
     {{-- <div class="user-panel mt-4" style="margin-left: 40px; margin-top: 20px; padding-bottom: 5px; border-bottom: 1px solid #4f5962; border-top: 1px solid #4f5962;"> --}}
     <div class="user-panel mt-3 mb-3 d-flex" style=" border-bottom: 1px solid #4f5962; border-top: 1px solid #4f5962;">
@@ -12,7 +12,7 @@
 
         <li class="nav-item">
             {{-- <a href="{{ url('dashboardfake') }}" class="nav-link"> --}}
-              <a href="{{ url('admin/adminpage/adminallthesissubmission') }}" class="nav-link {{ request()->is('admin/adminpage/adminallthesissubmission*') ? 'active' : '' }}">
+              <a href="{{ url('admin/dashboard') }}" class="nav-link {{ request()->is('admin/dashboard*') ? 'active' : '' }}">
                 <i class="nav-icon bx bxs-home"></i>
               <p>
                 Home
@@ -47,12 +47,12 @@
                   <p>Create Form Submission Post</p>
                 </a>
               </li>
-              <li class="nav-item">
+              {{-- <li class="nav-item">
                 <a href="./index3.html" class="nav-link">
                   <i class="bx bx-circle  nav-icons"></i>
                   <p>All Form Submission</p>
                 </a>
-              </li>
+              </li> --}}
             </ul>
           </li>
 
@@ -62,7 +62,7 @@
               {{-- <i class="nav-icon fas fa-tachometer-alt"></i> --}}
               <i class="nav-icon bx bxs-file"></i>
               <p>
-                Proposal
+                Report
                 {{-- <i class="right fas fa-angle-left"></i> --}}
                 <i class="bx bxs-chevron-down" style="justify-content: space-between; position: absolute; right: 0;"></i>
               </p>
@@ -72,13 +72,13 @@
               <li class="nav-item">
                 <a href="{{ url('admin/thesispage/thesistemplateupload') }}" class="nav-link {{ request()->is('admin/thesispage/thesistemplateupload*') ? 'active' : '' }}" >
                   <i class="bx bx-circle nav-icons"></i>
-                  <p>Upload Proposal Template</p>
+                  <p>Upload Report Template</p>
                 </a>
               </li>
               <li class="nav-item">
                 <a href="./index2.html" class="nav-link">
                   <i class="bx bx-circle  nav-icons"></i>
-                  <p>Create Proposal Submission Post</p>
+                  <p>Create Report Submission Post</p>
                 </a>
               </li>
               <li class="nav-item">
@@ -151,6 +151,16 @@
         </p>
       </a>
     </li>
+
+    {{-- <li class="nav-item">
+        <a href="{{ url('admin/online_eva_form') }}" class="nav-link {{ request()->is('admin/online_eva_form*') ? 'active' : '' }}">
+          <i class="nav-icon bx bxs-home"></i>
+        <p>
+          Online Evaluation Form
+        </p>
+      </a>
+  </li> --}}
+
       <br>
       <br>
       <li class="nav-item">

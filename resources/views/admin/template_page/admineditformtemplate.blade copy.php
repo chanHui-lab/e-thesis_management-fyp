@@ -157,7 +157,31 @@
       </div>
     </form>
   </div>
+  {{-- <div class="modal fade popUpModal" id="confirmationModal{{ Str::slug(basename($file['path'] )) }}" tabindex="-1" role="dialog" aria-labelledby="confirmationModalLabel" aria-hidden="true" >
+    <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+          <h5 class="modal-title" id="confirmationModalLabel">Confirm Deletion</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+          </button>
+      </div>
+      <div class="modal-body">
+          Are you sure you want to delete this file?
+      </div>
+      <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal" >Cancel</button>
+          {{-- <form method="POST" action="{{ route('formpost.deletefile', ['id' => $getRecord->id]) }}" style="display: inline;">                                                      @csrf
+                @csrf
+                @method('DELETE')
+              <input type="hidden" name="file" value="{{ $file }}"> --}}
+              <button class="btn btn-danger" data-postid="{{ $getRecord->id }}" data-filepath="{{ is_array($file) ? $file['path'] : $file }}" onclick="removeThisFile(this)">Delete</button>
+              {{-- </form> --}}
 
+            </div>
+        </div>
+    </div>
+  </div> --}}
 @endsection
 
 @section('scripts')

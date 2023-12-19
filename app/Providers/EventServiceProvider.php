@@ -18,7 +18,12 @@ class EventServiceProvider extends ServiceProvider
         Registered::class => [
             SendEmailVerificationNotification::class,
         ],
+        'App\Events\DeadlineApproachingEvent' => [
+            'App\Listeners\DeadlineApproachingListener',
+        ],
     ];
+    // app/Providers/EventServiceProvider.php
+
 
     /**
      * Register any events for your application.

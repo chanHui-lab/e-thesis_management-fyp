@@ -15,28 +15,6 @@
 </div>
 
     <h1 style="margin-top: 20px">{{ $formSubmission->submissionPost->title }}</h1>
-    {{--<table>
-        <thead>
-            <tr>
-                <th>Student Name</th>
-                <th>Form Title</th>
-                <th>Form Date</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach ($formSubmission as $submission)
-                <tr>
-                    @if ($submission)
-                        <td>{{ $student->name }}</td>
-                    @else
-                        <td>Form Submission not found</td>
-                    @endif
-                    {{-- <td>{{ $submission->form_title }}</td>
-                    <td>{{ $submission->form_date }}</td> --}}
-                {{-- </tr>
-            @endforeach
-        </tbody>
-    </table> --}}
     <p>{{ $formSubmission->submissionPost->description }} </p>
 
     <div class="card">
@@ -89,12 +67,6 @@
         // Check if files exist
         $filesExist = !empty($formfiles);
 
-        // Calculate the time passed since the last file upload
-        // if ($filesExist) {
-        //     // $lastFileUploadTime = \Carbon\Carbon::parse($formfiles[0]['uploaded_at']);
-        //     $lastFileUploadTime = \Carbon\Carbon::parse($formSubmission->updated_at);
-        //     $fileTimeDiff  = $lastFileUploadTime->diff($submissionDeadline);
-        // }
     @endphp
 
         <table id="view1" class="custom-table generaltable table-bordered table table-striped">
@@ -202,35 +174,39 @@
                     </td>
 
                 </tr>
-                <tr>
-                    @if (is_array($formfiles) && count($formfiles) > 0)
-                    @foreach ($formfiles as $file)
-                    <th><strong>File Submission</strong></th>
-                    <td>
-                    &#x2514;
-                    <a href="{{ asset('storage/' . $file['path']) }}" target="_blank" download class="downloadfile-link">
-                        @if (Str::endsWith($file['path'], '.pdf'))
-                        <i class="fa fa-file-pdf file-icon" style = "color:  rgb(255, 86, 86)"></i>
+                @if (is_array($formfiles) && count($formfiles) > 0)
 
-                        @elseif (Str::endsWith($file['path'], '.doc') || Str::endsWith($file['path'], '.docx'))
-                        <i class="fa fa-file-word file-icon" style = "color: rgb(77, 144, 250)"></i>
+                    <tr>
+                        <th><strong>File Submission</strong></th>
+                        <td>
+                            @foreach ($formfiles as $file)
+                            &#x2514;
+                            <a href="{{ asset('storage/' . $file['path']) }}" target="_blank" download class="downloadfile-link">
+                                @if (Str::endsWith($file['path'], '.pdf'))
+                                    <i class="fa fa-file-pdf file-icon" style="color: rgb(255, 86, 86)"></i>
+                                @elseif (Str::endsWith($file['path'], '.doc') || Str::endsWith($file['path'], '.docx'))
+                                    <i class="fa fa-file-word file-icon" style="color: rgb(77, 144, 250)"></i>
+                                @else
+                                    <i class="fa fa-file file-icon" style="color: rgb(77, 144, 250)"></i>
+                                @endif
+                                {{ pathinfo($file['path'])['filename'] }}
+                            </a>
+                            <span style="font-size: 80%; margin-left: 5px;">
+                                {{ \Carbon\Carbon::parse($file['uploaded_at'])->format('Y-m-d h:i A') }}
+                            </span>
+                            <br>
+                            @endforeach
+                        </td>
+                    </tr>
+                    @endif
+                    <tr>
+                        <th><strong>Submission Comment</strong></th>
+                        <td> {{ $formSubmission->form_title }}</td>
+                    </tr>
 
-                        @else
-                        <i class="fa fa-file file-icon" style = "color: rgb(77, 144, 250)"></i>
-                        @endif
-                        {{ substr($file['path'], strpos($file['path'], '_') + 1) }}
-                    </a>
-                    <span style="font-size: 80%; margin-left: 5px;">
-                        {{ \Carbon\Carbon::parse($file['uploaded_at'])->format('Y-m-d h:i A') }}
-                    </span></td>
-                </tr>
-                <tr>
-                    <th><strong>Submission Comment</strong></th>
-                    <td> {{ $formSubmission->form_title }}</td>
-                </tr>
             </tbody>
-            @endforeach
-            @endif
+            {{-- @endforeach
+            @endif --}}
 
         </table>
 

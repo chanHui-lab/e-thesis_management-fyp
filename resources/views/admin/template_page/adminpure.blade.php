@@ -66,21 +66,16 @@
     @extends('layouts.admindash')
     @section('content')
 
-    <div class="container-fluid page-body-wrapper">
-        <div class = "main-panel">
+    {{-- <div class="container-fluid page-body-wrapper">
+        <div class = "main-panel"> --}}
             <div class = "content-wrapper">
-                    @yield('master_content')
-                </main>
+                @yield('master_content')
             </div>
-        </div>
-    </div>
+        {{-- </div>
+    </div> --}}
     @endsection
 
 </body>
-<style>
-
-    </style>
-
 <!-- jQuery -->
 {{-- <script src={{ asset('./plugins/jquery/jquery.min.js') }}></script> --}}
 

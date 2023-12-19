@@ -226,7 +226,7 @@ class FormController extends Controller
         $request->validate([
             'file_name' => 'required',
             'description' => 'required',
-            'file_data' => 'required|mimes:pdf,doc,docx|max:2048', // Add validation rules for the file
+            'file_data' => 'mimes:pdf,doc,docx|max:2048', // Add validation rules for the file
             'status' => 'required|in:0,1',
         ]);
 
@@ -237,26 +237,62 @@ class FormController extends Controller
     $template->file_name = trim($request->file_name);
     $template->description = trim($request->description);
 
-    if ($request->hasFile('file_data')) {
-        // Handle file upload here, and then update the file_data attribute with the new file path
-        // For example, you can use the store() method to store the uploaded file and update the file_data attribute
-        $file = $request->file('file_data');
-        $fileName = time() . '_' . $file->getClientOriginalName();
+    // if ($request->hasFile('file_data')) {
+    //     // Handle file upload here, and then update the file_data attribute with the new file path
+    //     // For example, you can use the store() method to store the uploaded file and update the file_data attribute
+    //     $file = $request->file('file_data');
+    //     $fileName = time() . '_' . $file->getClientOriginalName();
 
-        // Store the file using the 'public' disk
-        $filePath = 'upload/templates/' . $fileName;
-        Storage::disk('public')->put($filePath, file_get_contents($file));
+    //     // Store the file using the 'public' disk
+    //     $filePath = 'upload/templates/' . $fileName;
+    //     Storage::disk('public')->put($filePath, file_get_contents($file));
 
-        $template->file_data = $filePath;
+    //     $template->file_data = $filePath;
+    // }
+    $filePaths = [];
+    // Handle file uploads and store them
+     if ($request->hasFile('file_data')) {
+        foreach ($request->file('file_data') as $file) {
+            $filename = $file->getClientOriginalName();
+            // Store the file in the public/upload/templates directory
+            // $file->storeAs('public/upload/templates', $filename);
+            // $filePaths[] = 'upload/templates/' . $filename; // Store the file path
+            $extension = $file->getClientOriginalExtension();
+            $mime_type = $this->getMimeType($extension);
+
+            // Get the current logged-in user's ID
+            $userId = auth()->user()->id;
+            // Get the current time
+            $currentTime = now();
+
+            // Format the timestamp (optional, adjust as needed)
+            $formattedTimestamp = $currentTime->format('Ymd_His');
+
+            // Append the user's ID to the file path
+            // $userFilePath = 'upload/templates/user_' . $userId;
+
+            // Append the user's ID and timestamp to the file path
+            $userFilePath = "upload/templates/user_{$userId}/{$formattedTimestamp}";
+
+            // Store the file in the public/upload/templates/user_{user_id} directory
+            $file->storeAs("public/$userFilePath", $filename);
+
+            $filePaths[] = [
+                'path' => "$userFilePath/$filename",
+                'uploaded_at' => $currentTime,
+            ];
+        }
     }
 
     // Update the status attribute with the validated status
     $template->status = $request->status;
+    $template->file_data = json_encode($filePaths); //its actually actual path
+    // dd($template);
+
     // Save the updated model to the database
     $template->save();
 
-        return redirect()->route('template.index')->with('success','Template updated successfully');
-
+    return redirect()->route('template.index')->with('success','Template updated successfully');
     }
 
 
@@ -266,15 +302,15 @@ class FormController extends Controller
 
     public function destroy($id)
     {
-        $product = Template::find($id);
+        $template = Template::find($id);
 
-        if (!$product) {
-            return redirect()->route('template.index')->with('error', 'Product not found');
+        if (!$template) {
+            return redirect()->route('template.index')->with('error', 'Template not found');
         }
 
-        $product->delete();
+        $template->delete();
 
-        return redirect()->route('template.index')->with('success', 'Product deleted successfully');
+        return redirect()->route('template.index')->with('success', 'Template deleted successfully');
     }
 
     public function downloadFile ($id){
@@ -349,18 +385,48 @@ class FormController extends Controller
         // Initialize an empty array to store file paths
         $filePaths = [];
 
+        // before on without the uplaoded_at
         // Handle file uploads and store them
+        // if ($request->hasFile('files')) {
+        //     foreach ($request->file('files') as $file) {
+        //         $filename = $file->getClientOriginalName();
+        //         // Store the file in the public/upload/templates directory
+        //         $file->storeAs('public/upload/submissionpost', $filename);
+        //         $filePaths[] = 'upload/submissionpost/' . $filename; // Store the file path
+        //     }
+        // }
         if ($request->hasFile('files')) {
             foreach ($request->file('files') as $file) {
                 $filename = $file->getClientOriginalName();
                 // Store the file in the public/upload/templates directory
-                $file->storeAs('public/upload/templates', $filename);
-                $filePaths[] = 'upload/templates/' . $filename; // Store the file path
+                // $file->storeAs('public/upload/templates', $filename);
+                // $filePaths[] = 'upload/templates/' . $filename; // Store the file path
+                $extension = $file->getClientOriginalExtension();
+                $mime_type = $this->getMimeType($extension);
+
+                // Get the current logged-in user's ID
+                $userId = auth()->user()->id;
+                // Get the current time
+                $currentTime = now();
+
+                // Format the timestamp (optional, adjust as needed)
+                $formattedTimestamp = $currentTime->format('Ymd_His');
+
+                // Append the user's ID to the file path
+                // $userFilePath = 'upload/templates/user_' . $userId;
+
+                // Append the user's ID and timestamp to the file path
+                $userFilePath = "upload/submission_post/user_{$userId}";
+
+                // Store the file in the public/upload/templates/user_{user_id} directory
+                $file->storeAs("public/$userFilePath", $filename);
+
+                $filePaths[] = [
+                    'path' => "$userFilePath/$filename",
+                    'uploaded_at' => $currentTime,
+                ];
             }
         }
-
-        // Add the file paths to the data array
-        // $data['files'] = $filePaths;
 
         SubmissionPost::create([
             'title' => $request->input('title'),
@@ -519,48 +585,69 @@ class FormController extends Controller
 
 
         // Use the validateFiles method to check for duplicate file names
-        $validation = $this->validateFiles($request->file('files'), $id);
-        if ($validation->fails()) {
-            return redirect()->back()->withErrors($validation)->withInput();
-        }
+        // $validation = $this->validateFiles($request->file('files'), $id);
+        // if ($validation->fails()) {
+        //     return redirect()->back()->withErrors($validation)->withInput();
+        // }
 
         $filePaths = [];
 
         // Handle file uploads
+        // if ($request->hasFile('files')) {
+        //     $newFiles = $request->file('files');
+        //     $existingFiles = json_decode($post->files, true) ?? [];
+        //     dd($newFiles);
+
+        //     foreach ($newFiles as $file) {
+        //         $filename = $file->getClientOriginalName();
+
+        //         // Ensure that the uploaded filenames are unique
+        //         $existingFilenames = array_map('basename', $existingFiles);
+        //         $newFilenames = array_map('basename', $filePaths);
+        //         $duplicateFilenames = array_intersect($existingFilenames, $newFilenames);
+
+        //         if (!empty($duplicateFilenames)) {
+        //             return redirect()->back()->with('error', 'Duplicate filenames found: ' . implode(', ', $duplicateFilenames));
+        //         }
+
+        //             $file->storeAs('public/upload/templates', $filename);
+        //             // $filePaths[] = 'upload/templates/' . $filename;
+        //             dd($filePaths[]);
+        //             // Store the file path and upload time in the database
+        //             $filePaths[] = [
+        //                 'path' => 'upload/templates/' . $filename,
+        //                 'uploaded_at' => now(), // Get the current time
+        //             ];
+        //         }
+        //     $existingFiles = json_decode($post->files, true) ?? [];
+        //     $existingFiles = array_merge($existingFiles, $filePaths);
+
+        //     $post->files = json_encode($existingFiles);
+        // }
+
         if ($request->hasFile('files')) {
             $newFiles = $request->file('files');
             $existingFiles = json_decode($post->files, true) ?? [];
+            // dd($newFiles);
 
             foreach ($newFiles as $file) {
-
                 $filename = $file->getClientOriginalName();
 
-                // if (in_array($filename, $existingFiles)) {
-                //     return redirect()->back()->with('error', 'A file with the same name already exists.');
-                // }
+                // Get the current logged-in user's ID
+                $userId = auth()->user()->id;
+                // Get the current time
+                $currentTime = now();
 
-                // if (Storage::exists('public/upload/templates/' . $filename)) {
-                //     // Handle the case when a file with the same name already exists
-                //     return redirect()->back()->with('errorit', 'A file with the same name already exists.');
-                // }
-
-                // Ensure that the uploaded filenames are unique
-                $existingFilenames = array_map('basename', $existingFiles);
-                $newFilenames = array_map('basename', $filePaths);
-                $duplicateFilenames = array_intersect($existingFilenames, $newFilenames);
-
-                if (!empty($duplicateFilenames)) {
-                    return redirect()->back()->with('error', 'Duplicate filenames found: ' . implode(', ', $duplicateFilenames));
-                }
-
-                    $file->storeAs('public/upload/templates', $filename);
-                    $filePaths[] = 'upload/templates/' . $filename;
-                    // Store the file path and upload time in the database
-                    // $filePaths[] = [
-                    //     'path' => 'upload/templates/' . $filename,
-                    //     'uploaded_at' => now(), // Get the current time
-                    // ];
-                }
+                $userFilePath = "upload/submission_post/user_{$userId}";
+                $file->storeAs("public/$userFilePath", $filename);
+                // $filePaths[] = 'upload/templates/' . $filename;
+                // dd($filePaths[]);
+                // Store the file path and upload time in the database
+                $filePaths[] = [
+                    'path' => "$userFilePath/$filename",
+                    'uploaded_at' => $currentTime, // Get the current time
+                ];
+            }
             $existingFiles = json_decode($post->files, true) ?? [];
             $existingFiles = array_merge($existingFiles, $filePaths);
 
@@ -576,10 +663,10 @@ class FormController extends Controller
         $post->save();
 
         // Redirect or return a response
-        return redirect()->route('formpost.index')->with('success','Template updated successfully');
+        return redirect()->route('formpost.index')->with('success','FORM submission post updated successfully');
     } catch (\Exception $e) {
                 // Handle exceptions, such as ModelNotFoundException or file storage errors
-                return redirect()->route('formpost.index')->with('error', 'An error occurred while updating the template');
+                return redirect()->route('formpost.index')->with('error', 'An error occurred while updating the FORM submission post');
         }
     }
     protected function validateFiles(array $files)
@@ -661,155 +748,97 @@ class FormController extends Controller
     //     ]);
     // }
 
+    // before de, DOENST WORK HAS INTERNAL ERRRO
+    // public function removeFile(Request $request, $id)
+    // {
+    //     $file = json_decode($request->getContent(), true)['file'];
+    //     // dd( $file);
 
-// protected function validateFiles(array $files)
-// {
-//     return Validator::make($files, [
-//         'files.*' => [
-//             'required',
-//             'file',
-//             'mimes:pdf,doc,docx',
-//             Rule::dimensions()->maxWidth(1024)->maxHeight(768), // Optional: Add image dimensions validation
-//             'max:2048', // Maximum file size in kilobytes
-//         ],
-//     ], [
-//         'files.*.required' => 'The file is required.',
-//         'files.*.file' => 'Invalid file format.',
-//         'files.*.mimes' => 'Allowed file types are pdf and docx.',
-//         'files.*.dimensions' => 'The image dimensions are too large.',
-//         'files.*.max' => 'File size cannot exceed 2MB.',
-//     ]);
-// }
+    //     try {
+    //         // Delete the file from storage
+    //         Storage::delete('public/upload/templates/' . $file);
 
-public function removeFile(Request $request, $id)
-{
-    // $response = ['message' => 'File removed successfully'];
-    // dd($response);
+    //         // Remove the file from the list of existing files
+    //         $getRecord = SubmissionPost::find($id);
+    //         $existingFiles = json_decode($getRecord->files, true) ?? [];
+    //         $existingFiles = array_diff($existingFiles, [$file]);
+    //         $getRecord->files = json_encode(array_values($existingFiles));
+    //         $getRecord->save();
 
-    $file = json_decode($request->getContent(), true)['file'];
-    // dd( $file);
+    //         return response()->json(['message' => 'File removed successfully']);
+    //         // return redirect()->back()->with('successdelete','File removed successfully');
+    //         // return redirect()->route('formpost.edit', ['id' => $id])->with('successdelete', 'Files removed successfully.');
 
-    try {
-        // Delete the file from storage
-        Storage::delete('public/upload/templates/' . $file);
+    //         // return redirect()->back()->with('success', 'File removed successfully');
+    //         // cannt put like this with json!!
+    //         // return redirect()->back();
+    //         // return redirect()->back()->with('success', 'File removed successfully');
 
-        // Remove the file from the list of existing files
-        $getRecord = SubmissionPost::find($id);
-        $existingFiles = json_decode($getRecord->files, true) ?? [];
-        $existingFiles = array_diff($existingFiles, [$file]);
-        $getRecord->files = json_encode(array_values($existingFiles));
-        $getRecord->save();
+    //     } catch (\Exception $e) {
+    //         // Handle any exceptions that may occur during file deletion or database update
+    //         return response()->json(['error' => 'An error occurred while updating the template'], 500);
+    //     }
+    //     // return redirect()->back();
+    // }
 
-        return response()->json(['message' => 'File removed successfully']);
-        // return redirect()->back()->with('successdelete','File removed successfully');
-        // return redirect()->route('formpost.edit', ['id' => $id])->with('successdelete', 'Files removed successfully.');
+    // public function removeFile(Request $request)
+    // {
+    //     $filePath = $request->input('file_path');
+    //     $file = json_decode($request->getContent(), true)['file'];
+    //     \Log::info('Attempting to remove file: ' . $file);
+    //     \Log::info('Attempting to remove file: ' . $filePath);
+    //     // Validate the file path or perform additional security checks
 
-        // return redirect()->back()->with('success', 'File removed successfully');
-        // cannt put like this with json!!
-        // return redirect()->back();
-        // return redirect()->back()->with('success', 'File removed successfully');
+    //     // Example: Use Storage facade to delete the file
+    //     try {
+    //         // Delete the file from storage
+    //         // $encodedFilePath = urlencode($filePath);
+    //         $decodedFilePath = urldecode($filePath);
 
-    } catch (\Exception $e) {
-        // Handle any exceptions that may occur during file deletion or database update
-        return response()->json(['error' => 'An error occurred while updating the template'], 500);
+    //         \Log::info('Attempting to remove file: ' . $decodedFilePath);
+    //         // Storage::delete($decodedFilePath);
+    //         Storage::delete($filePath);
+
+    //         // Update your database or storage system accordingly
+
+    //         return response()->json(['message' => 'File removed successfully']);
+    //     } catch (\Exception $e) {
+    //         \Log::error('Error removing file: ' . $e->getMessage());
+    //         // Handle the exception, e.g., log the error
+    //         return response()->json(['error' => 'Failed to remove the file'], 500);
+    //     }
+    // }
+
+    public function removeFile(Request $request, $submissionPostId)
+    {
+        // Validate the request
+        $request->validate([
+            'path' => 'required|string', // Assuming 'path' is the key sent in the AJAX request
+        ]);
+        // Find the form submission record
+        $submission_post = SubmissionPost::findOrFail($submissionPostId);
+
+        // Decode the form_files JSON
+        $formFiles = json_decode($submission_post->files, true);
+
+        // Find the index of the file to be removed
+        $indexToRemove = array_search($request->input('path'), array_column($formFiles, 'path'));
+
+        if ($indexToRemove !== false) {
+            // Remove the file from the array
+            array_splice($formFiles, $indexToRemove, 1);
+
+            // Encode the updated form_files array back to JSON
+            $submission_post->files = json_encode($formFiles);
+
+            // Save the updated form submission record
+            $submission_post->save();
+
+            return response()->json(['message' => 'File removed successfully']);
+        } else {
+            return response()->json(['error' => 'File not found'], 404);
+        }
     }
-    // return redirect()->back();
-}
-
-// // view the submision post from certain students only
-//     public function getSubmissionPostsForLecturer()
-//     {
-//         // Get the currently logged-in lecturer's user ID
-//         $lecturerId = auth()->user()->id;
-
-//         // Retrieve students supervised by the lecturer
-//         $students = Student::where('supervisor_id', $lecturerId)->get();
-
-//         // Get the submission posts associated with the students
-//         $submissionPosts = SubmissionPost::whereIn('stu_id', $students->pluck('stu_id'))->get();
-
-//         return view('admin.submission_posts.viewAll', compact('submissionPosts'));
-//     }
-
-// }
-
-// version 1 that is weird?
-    // public function getSubmissionFormForLecturer($submissionPostId){
-    //    $submissionPost = SubmissionPost::find($submissionPostId); // Fetch the desired submission post
-
-    //     $lecturer = Auth::user(); // Assuming you're using Laravel's built-in authentication
-
-    //     // Fetch the form submissions for the submission post and supervised students
-    //     $formsubmissions = $submissionPost->forms()->whereHas('student', function ($query) use ($lecturer) {
-    //         $query->where('supervisor_id', $lecturer->id);
-    //     })->get();
-
-    //     return view('admin.submission_post.viewAll', compact('submissionPost', 'formsubmissions'));
-
-    // }
-
-    // version 2 to fetch FORM SUBMISSION data from forms table for lectuere
-    // public function getSubmissionFormForLecturer()
-    // {
-    //     $lecturer = Auth::user(); // Assuming you're using Laravel's built-in authentication
-
-    //     // Retrieve the students supervised by the lecturer
-    //     $supervisedStudents = $lecturer->supervisedStudents;
-
-    //     // Retrieve the forms submitted by these supervised students
-    //     $forms = Form::whereIn('student_id', $supervisedStudents->pluck('id'))->get();
-
-    //     return view('lecturer.view', compact('forms'));
-    // }
-
-    // // version 3
-    // public function getForsdmSubmissionForLecturer($submissionPostId)
-    // {
-    //     // Retrieve the specific submission post
-    //     $submissionPost = SubmissionPost::find($submissionPostId);
-    //     $lecturer = auth()->user();
-    //     // dd($lecturer);
-    //     // $lecturer = Auth::user();
-
-    //     // Check if the logged-in user is authorized to view submissions for this post
-    //     // if (auth()->user()->id === $submissionPost->lecturer_id) {
-    //         // Retrieve the lecturer's supervised students
-    //         // $supervisedStudents = auth()->user()->student();
-
-    //         // // dd($supervisedStudents);
-    //         // // Retrieve the forms submitted for this submission post by supervised students
-    //         // $forms = Form_submission::with('supervisor')->where('submission_post_id', $submissionPostId)
-    //         //     ->whereIn('student_id', $supervisedStudents->pluck('stu_id'))
-    //         //     ->get();
-
-
-    //         // if ($submissionPost->lecturer->id === $lecturer->id) {
-    //         //     // $formSubmissions = Form_submission::where('submission_post_id', $submissionPost->id)
-    //         //     //     ->get();
-
-    //         //     $formSubmissions = $submissionPost->formSubmissions()
-    //         //         ->whereIn('stu_id', $lecturer->supervisedStudents->pluck('id'))
-    //         //         ->get();
-    //         // } else {
-    //         //     $formSubmissions = collect(); // Return an empty collection if the lecturer is not authorized
-    //         // }
-
-    //         // if ($submissionPost->lecturer->id === $lecturer->id) {
-    //         //     $formSubmissions = $lecturer->formSubmissions()->get();
-    //         // }
-    //         if ($submissionPost->lecturer_id ===  auth()->user()->id ) {
-    //             $formSubmissions = $lecturer ->formSubmissions
-    //                 ->where('submission_post_id', $submissionPost->id);
-    //         } else {
-    //             $formSubmissions = collect(); // Return an empty collection if the lecturer is not authorized
-    //         }
-
-    //         return view('admin.submission_post.viewAll', compact('formSubmissions','submissionPost'));
-    //     // } else {
-    //     //     abort(403, 'Unauthorized');
-    //     // }
-    // }
-
     //display the forms for all students, the kosong one cant be displayed
     public function TestgetFormSubmissionForLecturer($submissionPostId){
         $lecturer = auth()->user(); // Get the currently logged-in lecturer
@@ -912,7 +941,7 @@ public function removeFile(Request $request, $id)
 
     public function fetchdata()
     {
-        $data = Form_submission::select('id', 'form_title', 'description','form_files') // Include only the needed columns
+        $data = Form_submission::select('id', 'form_title', 'description','form_files','student_id') // Include only the needed columns
         ->get();
         return response()->json($data);
     }

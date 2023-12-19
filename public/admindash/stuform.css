@@ -69,9 +69,11 @@
     transform: rotate(90deg); /* Rotate the down arrow */
 }
 
-.labelling {
+/* .labelling {
     font-weight: 300;
-}
+
+} */
+
 
 .row-buttonform{
     grid-gap: 20px;

@@ -42,7 +42,7 @@
             size="24"
           ></v-icon>
           <!-- {{ reminderData.length !== undefined ? reminderData.length + ' Events' : 'Loading...' }} -->
-          Reminders
+          Upcoming Events
         </v-card-title>
       </template>
 
@@ -93,181 +93,12 @@ v-for="submissionPost in reminderData" :key="submissionPost.id"
         {{ submissionPost.remainingHours }} hours,
         {{ submissionPost.remaining_minutes }} minutes -->
       </v-card-text>
-
-      <!-- <v-divider></v-divider> -->
-      <!-- <v-btn
-          class="ml-3 me-2 text-none addSubBut"
-          color="#FACD3F"
-          prepend-icon="mdi-arrow-right-bold-circle"
-          variant="flat"
-          style="height: 30px; margin-top: 20px; margin-bottom: 10px; border-radius: 20px;">
-
-          Add submission
-        </v-btn> -->
-        <!-- <v-btn> -->
-          <a
-            class="ml-3 me-2 text-none addSubBut"
-            :href="getSubmissionRouteUrl()"
-            style="
-              display: inline-block;
-              padding: 10px 20px;
-              border-radius: 20px;
-              background-color: #FACD3F;
-              color: #060606;
-              width: 150px;
-              text-decoration: none;
-              margin-bottom: 10px;
-              margin-top: 10px;
-
-            "
-            >
-          <i class="mdi mdi-arrow-right-bold-circle" style="margin-right: 5px;"></i> Add submission
-          </a>
-        <!-- </v-btn> -->
     </v-col>
-    <!-- </v-list-item-content>
-  </v-list-item> -->
 </v-row>
 
 </v-card>
 </v-card>
 
-<!-- </v-sheet> -->
-    <!-- <v-card
-      class="mx-auto"
-      max-width="200"
-      height="200"
-      image="https://cdn.vuetifyjs.com/images/cards/docks.jpg"
-      title="Card title"
-      theme="dark"
-    ></v-card> -->
-
-    <!-- <template> -->
-
-      <!-- NO USEEEE -->
-  <!-- <v-card
-    class="mx-auto mt-4"
-    color="#404040"
-    max-width="650"
-    min-height="350"
-    theme="dark"
-    variant="flat"
-  >
-    <v-sheet color="#8AA282">
-      <v-card-item>
-        <template v-slot:prepend>
-          <v-card-title>
-            <v-icon
-              icon="mdi-calendar"
-              start
-            ></v-icon>
-            1 Event
-          </v-card-title>
-        </template>
-
-        <v-divider vertical class="mx-2"></v-divider>
-
-        <template v-slot:append>
-          <v-btn
-            icon="$close"
-            size="large"
-            variant="text"
-          ></v-btn>
-        </template>
-      </v-card-item>
-    </v-sheet>
-
-    <v-card
-      class="ma-4"
-      color="#DAA4A5"
-      rounded="lg"
-      variant="flat"
-    >
-      <v-card-item>
-        <v-card-title class="text-body-2 d-flex align-center">
-          <v-icon
-            color="#B69555"
-            icon="mdi-calendar"
-            start
-          ></v-icon>
-
-          <span class="text-medium-emphasis font-weight-bold">1 Fri Dec 16th - 9:00 PM</span>
-
-          <v-spacer></v-spacer>
-
-          <v-avatar
-            image="https://cdn.vuetifyjs.com/images/john-smirk.png"
-            size="x-small"
-          ></v-avatar>
-
-          <v-chip
-            class="ms-2 text-medium-emphasis"
-            color="grey-darken-4"
-            prepend-icon="mdi-account-multiple"
-            size="small"
-            text="81"
-            variant="flat"
-          ></v-chip>
-        </v-card-title>
-
-        <div class="py-2">
-          <div class="text-h6">Live Q&A</div>
-
-          <div class="font-weight-light text-medium-emphasis">
-            Join the Vuetify team for a live Question and Answer session.
-          </div>
-        </div>
-      </v-card-item>
-
-      <v-divider></v-divider>
-
-      <div class="pa-4 d-flex align-center">
-        <v-icon
-          color="disabled"
-          icon="mdi-broadcast"
-          start
-        ></v-icon>
-
-        <v-icon
-          color="#B69555"
-          icon="mdi-video-vintage"
-          size="x-small"
-        ></v-icon>
-
-        <span class="text-caption text-medium-emphasis ms-1 font-weight-light">
-          streaming
-        </span>
-
-        <v-spacer></v-spacer>
-
-        <v-btn
-          icon="mdi-dots-horizontal"
-          variant="text"
-        ></v-btn>
-
-        <v-btn
-          class="me-2 text-none"
-          color="#4f545c"
-          prepend-icon="mdi-export-variant"
-          variant="flat"
-        >
-          Share
-        </v-btn>
-
-        <v-btn
-          border
-          class="text-none"
-          prepend-icon="mdi-check"
-          variant="text"
-        >
-          Interested
-        </v-btn>
-      </div>
-    </v-card>
-  </v-card> -->
-
-  <!-- NO USEEE ENDDDD -->
-    <!-- </template> -->
   </div>
 
 </template>

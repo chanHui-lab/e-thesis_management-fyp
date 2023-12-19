@@ -35,10 +35,10 @@
 }
 
 .content-wrapper{
-	width: 2000px;
-	margin-left: 160px;
-	width: 90%;
-	padding-right: 40px;
+	max-width: 2000px;
+	margin-left: 330px;
+	/* width: 80%; */
+	padding-right: 50px;
 
 	/* it has a white space on top werdly/  */
 	/* background: linear-gradient(orange 30%, #e0e0e0 25%); */
@@ -667,10 +667,12 @@
   /* status tag/badge colour */
   /* Define styles for different status values */
 .status-visible {
-    background-color: green; /* Green chip for visible status */
+    background-color: #0B9D46; /* Green chip for visible status */
     color: white;
-    padding: 4px 8px;
-    border-radius: 4px;
+    padding: 5px 15px;
+    border-radius: 20px;
+	font-size: 12px;
+	margin-top: 5px;
 }
 
 .status-hidden {

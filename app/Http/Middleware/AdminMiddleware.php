@@ -18,14 +18,17 @@ class AdminMiddleware
      */
     public function handle(Request $request, Closure $next): Response
     {
-        if(!empty(Auth::check())){
-            if(!Auth::user()->role_as == '0'){
+        if (!empty(Auth::check())) {
+            if (Auth::user()->role_as == '0') { // Check for numeric value 0
                 return $next($request);
-            }
-            else{
-                // Auth::logout();
-                return redirect('/home')->with('status','Access denied. You not Admin');
+            } else {
+                // Redirect or handle unauthorized access for non-admin users
+                dd(session('status'));
+                return redirect('/')->with('status', 'Not Admin. Please log in to access this page.');
             }
         }
+
+        // Redirect or handle unauthorized access for non-authenticated users
+        return $next($request);
     }
 }

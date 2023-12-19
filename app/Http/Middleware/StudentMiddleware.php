@@ -20,9 +20,14 @@ class StudentMiddleware
                 return $next($request);
             }
             else{
+                dd(session('status'));
                 Auth::logout();
-                return redirect('/home')->with('status','Access denied. You are not Student');
+                // return redirect('/home')->with('status','Access denied. You are not Student');
+                return redirect('/')->with('status', 'Not Admin. Please log in to access this page.');
+
             }
         }
+        // return redirect('/login')->with('status', 'Please log in to access this page.');
+
     }
 }

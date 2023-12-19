@@ -39,18 +39,9 @@
         </div>
         <div class="form-group">
             <label for="description">Description:</label>
-            <textarea id="description" class = "form-control" style="height: 150px" name="description" rows="4" cols="50" placeholder="Details" ></textarea><br>
+            <textarea id="description" class = "form-control labelling" style="height: 150px" name="description" rows="4" cols="50" placeholder="Details" ></textarea><br>
         </div>
          <label for="file_data">Upload Document File:</label><br>
-            {{-- <div class="wrapper">
-              <div class ="dotted">
-                <i class="fas fa-cloud-upload-alt"></i>
-                <p>Browse File</p>
-              </div>
-            <input class="file-input" type="file" class = "form-control"  id="file_data" name="file_data" accept=".pdf,.doc,.docx" >
-
-            <section class="uploaded-area"></section>
-          </div> --}}
 
           <div class="container">
             <div class="row">
@@ -77,14 +68,6 @@
                 </div>
             </div>
         </div>
-
-
-          <div class="wrapper">
-            <div class ="dotted">
-              <i class="fas fa-cloud-upload-alt"></i>
-              <p>Browse File</p>
-            </div>
-          </div>
         <br>
         <div class="col-sm-6">
             <label for="status">Status:</label>

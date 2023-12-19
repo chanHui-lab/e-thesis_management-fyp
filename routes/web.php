@@ -14,12 +14,8 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', function () {
-    return view('welcome');
+    return view('auth.login');
 });
-
-// Route::get('/testvue', function () {
-//     return view('tesetvue');
-// });
 
 Auth::routes();
 
@@ -28,7 +24,7 @@ Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name
 // testing de page
 Route::get('/testing', function(){
     // return view ('admin.adminpage.create');
-    return view ('test');
+    return view ('admin.online_eva_form');
 
 });
 
@@ -51,10 +47,12 @@ Route::get('test', function(){
 // must add a auth there!!
 Route::group(['middleware' => 'auth','isAdmin', 'prefix' => 'admin'], function(){
 
+    Route::get('/notifications', [App\Http\Controllers\Admin\NotiController::class, 'index']);
+
     // to get the admin dashboard
     Route::get('dashboard',[App\Http\Controllers\Admin\DashboardController::class, 'index']) -> name('admin_dashboard');
 
-    Route::get('adminpage/adminallthesissubmission',[App\Http\Controllers\Admin\FormController::class, 'test2']);
+    // Route::get('adminpage/adminallthesissubmission',[App\Http\Controllers\Admin\FormController::class, 'test2']);
 
     Route::get('thesispage/thesistemplateupload',[App\Http\Controllers\Admin\FormController::class, 'testthesis']);
 
@@ -73,7 +71,8 @@ Route::group(['middleware' => 'auth','isAdmin', 'prefix' => 'admin'], function()
     Route::delete('formsubmissionpage/delete/{id}',[App\Http\Controllers\Admin\FormController::class, 'destroyPost']) -> name('formpost.destroy');
     Route::get('formsubmissionpage/edit/{id}',[App\Http\Controllers\Admin\FormController::class, 'editPost']) -> name('formpost.edit');
     Route::put('formsubmissionpage/update/{id}',[App\Http\Controllers\Admin\FormController::class, 'updatePost']) -> name('formpost.update');
-    Route::delete('formsubmissionpage/remove/{id}',[App\Http\Controllers\Admin\FormController::class, 'removeFile']) -> name('formpost.deletefile');
+    // Route::post('formsubmissionpage/remove',[App\Http\Controllers\Admin\FormController::class, 'removeFile']) -> name('formpost.deletefile');
+    Route::delete('formsubmissionpage/remove-file/{submissionPostId}',  [App\Http\Controllers\Admin\FormController::class, 'removeFile'])->name('formpost.remove-file');
 
     //view form submission post for each student
     Route::get('formsubmissionpage/viewAll/{submissionPostId}', [App\Http\Controllers\Admin\FormController::class, 'getFormSubmissionForLecturer'])->name('formpost.showAll');
@@ -114,6 +113,9 @@ Route::group(['middleware' => 'auth','isAdmin', 'prefix' => 'admin'], function()
 
 Route::group(['middleware' => 'auth','isStudent', 'prefix' => 'student'], function(){
 
+    Route::get('/notifications', [App\Http\Controllers\Admin\NotiController::class, 'indexStu']);
+    Route::post('/mark-notification-as-read/{notificationId}', [App\Http\Controllers\Admin\NotiController::class,'markNotificationAsRead']);
+
     Route::get('dashboard',[App\Http\Controllers\Admin\DashboardController::class, 'index']) -> name('student_dashboard');
     Route::get('student/studentlist',[App\Http\Controllers\Admin\DashboardController::class, 'test']);
 
@@ -123,7 +125,6 @@ Route::group(['middleware' => 'auth','isStudent', 'prefix' => 'student'], functi
 
     // FORMS SECTION
     Route::get('form/submission',[App\Http\Controllers\Student\FormController::class, 'index']) -> name('stutemplate.index');
-    // Route::get('form/submission/{id}', [App\Http\Controllers\Student\FormController::class, 'showStuFormSubmissionDetails'])->name('stuFormSubmission.details');
     Route::get('form/submission/create/{submission_post_id}',[App\Http\Controllers\Student\FormController::class, 'createFormSubmission']) -> name('stuFormSubmission.create');
     Route::post('form/submission/create',[App\Http\Controllers\Student\FormController::class, 'storeFormSubmission']) -> name('stuFormSubmission.store');
     Route::delete('form/submission/{formSubmissionId}', [App\Http\Controllers\Student\FormController::class, 'deleteFormSubmission'])->name('formSubmission.delete');

@@ -57,7 +57,13 @@ use Illuminate\Support\Facades\Auth;
 </head>
 <body>
     <div class = "container-scroller">
-        @include('admin.admindashinside.navbar')
+        @if (Auth::user()->role_as == 0)
+            @include('admin.admindashinside.navbar')
+        @elseif (Auth::user()->role_as == 2)
+            @include('student.studentinside.stunavbar')
+        @endif
+
+        {{-- @include('admin.admindashinside.navbar') --}}
         <!-- Orange Section -->
         <div class="orange-section">
             <!-- Your image goes here -->
@@ -68,17 +74,17 @@ use Illuminate\Support\Facades\Auth;
             <!-- CONTENT -->
             {{-- <img src='{{ asset('admindash/img/PMbg.png') }}' alt="Your Image"> --}}
 
-            <div class="container-fluid page-body-wrapper">
+            {{-- <div class="container-fluid page-body-wrapper"> --}}
                 @if (Auth::user()->role_as == 0)
                     @include('admin.admindashinside.sidebar')
                 @elseif (Auth::user()->role_as == 2)
                     @include('student.studentinside.stusidebar')
                 @endif
 
-                <div class = "content-wrapper">
-                    @yield('content')
-                </div>
-                </div>
+                {{-- <div class = "content-wrapper"> --}}
+                @yield('content')
+                {{-- </div> --}}
+                {{-- </div> --}}
             </div>
         </div>
 
@@ -97,9 +103,6 @@ use Illuminate\Support\Facades\Auth;
     @livewireScripts
 </body>
 <style>
-    /* .container{
-        font-family: 'Poppins', sans-serif;
-    } */
 
     body {
             margin: 0;
@@ -141,13 +144,14 @@ use Illuminate\Support\Facades\Auth;
 
     .grey-section {
         /* Additional styles for the grey section if needed */
-        z-index: 0;
+        /* z-index: 0; */
+        z-index: -1;
 
     }
 
     .orange-section img {
         /* Styles for the image in the orange section */
-        max-width: 100%;
+        /* max-width: 100%; */
         height: auto;
     }
     </style>

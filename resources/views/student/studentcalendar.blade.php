@@ -117,7 +117,7 @@
 
         {{-- DISPLAY EVENT DETAILS CONFIRMATION MODAL --}}
   <div class="modal fade" id="eventDetailsModal" tabindex="-1" role="dialog" aria-labelledby="eventDetailsModal" aria-hidden="true">
-    <div class="modal-dialog" role="document">
+    <div class="modal-dialog zmodal" role="document">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="eventDetailsModal">Event Details</h5>
@@ -140,7 +140,7 @@
             </div>
             <div class="modal-footer" id="eventModalFooter">
               {{-- <button class="btn btn-primary" id="editEventButton">Edit</button> --}}
-              {{-- <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button> --}}
+              <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
             </div>
         </div>
     </div>
@@ -301,6 +301,8 @@ $(document).ready(function () {
 
     // Show the modal
     $('#eventDetailsModal').modal('show');
+    $('.modal-backdrop').remove();
+
   }
 
   // Define the updateEventList function
@@ -329,7 +331,7 @@ function updateEventList(clickedDate, info) {
             events.forEach(function (event) {
                 var eventItem = $('<li class="event-item" style="font-size: 12px;"></li>');
                 eventItem.append('<div class="event-title">' + event.title + '</div>');
-                eventItem.append('<div class="event-detail"><strong>Student:</strong> ' + event.description + '</div>');
+                eventItem.append('<div class="event-detail"><strong>Description:</strong> ' + event.description + '</div>');
                 // Check the event type
                 if (event.type === 'presentation') {
                   eventItem.css('background-color', '#FFFFCC');

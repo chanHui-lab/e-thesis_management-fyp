@@ -3,11 +3,11 @@
 @section('master_content')
 
 <main>
-    <h1 style = "padding-top: 20px; padding-bottom:20px">Edit Form Template</h1>
+    <h1 style = "padding-top: 20px; padding-bottom:20px">Edit Form Submission</h1>
     {{-- @php
                 dd($submissionPostId);
     @endphp --}}
-    <a style = "margin-bottom: 20px;" class="btn btn-primary" href="{{ route('stuFormSubmission.details', ['id' => $submissionPostId]) }}"> Back</a>
+    <a style = "margin-bottom: 20px;" class="btn btn-primary" href="{{ route('stuFormSubmission.details', ['submissionPostId' => $submissionPostId]) }}"> Back</a>
     @if ($errors->any())
         <div class="alert alert-danger">
             <strong>Whoops!</strong> There are some problem with input <br><br>
@@ -159,7 +159,7 @@
             console.log(filePath);
 
             $.ajax({
-                url: '{{ route("formSubmission.remove-file", $getRecord->id) }}',
+                url: '{{ route("formpost.remove-file", $getRecord->id) }}',
                 type: 'DELETE',
                 headers: {
                     'X-CSRF-TOKEN': '{{ csrf_token() }}'

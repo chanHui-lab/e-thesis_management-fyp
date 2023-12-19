@@ -12,6 +12,8 @@ import '@mdi/font/css/materialdesignicons.css'; // Ensure you are using css-load
 import 'vuetify/dist/vuetify.css';
 import Dashboard from './components/Dashboardtest.vue'
 import AdminDashboard from './components/AdminDash.vue'
+import AdminEvents from './components/AdminEvents.vue'
+
 import '@fortawesome/fontawesome-free/css/all.css'
 import { aliases, mdi } from 'vuetify/iconsets/mdi'
 
@@ -29,7 +31,7 @@ const vuetify = createVuetify({
   components: {
     'component-a': Dashboard,
     'component-b': AdminDashboard,
-    // 'component-c': ComponentC,
+    'component-c': AdminEvents,
   },
 });
 

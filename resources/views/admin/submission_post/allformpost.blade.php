@@ -9,7 +9,8 @@
                 <h6>(Total: {{ $post -> total() }})</h6>
             </div>
             <div class="float-right" style = "padding-bottom: 10px;">
-                <a class="btn btn-success" href="{{ route('formpost.create') }}"><i class="fa fa-upload" style="margin-right: 5px;"></i> Upload New Form Submission Post</a>
+                <a class="btn btn-success rounded-btn" href="{{ route('formpost.create') }}">
+                    <i class="fa fa-upload" style="margin-right: 5px;"></i> Upload New Form Submission Post</a>
                 {{-- <a class="btn btn-success" href="{{url("admin/adminpage/createform") }}"> Upload New Form Template</a> --}}
                 {{-- the url will not show this, instead of the one in web.php --}}
 
@@ -35,7 +36,7 @@
 
                 <div class="card-body">
                     <table id="example1" class="table table-bordered table-striped">
-                        <thead>
+                        <thead class="custom-thead">
                     <tr>
                         <th>No.</th> <!-- Numbering column -->
                         <th>Title</th>
@@ -70,28 +71,28 @@
                         <td>
                             <form action="{{ route('formpost.destroy',$postform->id) }}" method="POST">
 
-                                <a class="btn btn-primary btn-sm" href="{{ route('template.show',$postform->id) }}">
+                                {{-- <a class="btn btn-primary btn-sm rounded-btn" href="{{ route('template.show',$postform->id) }}">
                                     <i class="fas fa-folder">
                                     </i>
                                     Show
-                                </a>
+                                </a> --}}
 
                                 {{-- <a href="{{ route('submission-post.view-submissions', ['submissionPostId' => $submissionPost->id]) }}" class="btn btn-primary">View All Submissions</a> --}}
-                                <a class="btn btn-primary btn-sm" href="{{ route('formpost.showAll', ['submissionPostId' => $postform->id]) }}">
+                                <a class="btn btn-primary btn-sm rounded-btn" href="{{ route('formpost.showAll', ['submissionPostId' => $postform->id]) }}">
                                 {{-- <a class="btn btn-primary btn-sm" href="{{ route('formpost.showAll',$postform->id) }}"> --}}
                                     <i class="fas fa-folder">
                                     </i>
                                     View All Submission
                                 </a>
 
-                                <a class="btn btn-info btn-sm" href="{{ route('formpost.edit',$postform->id) }}">
+                                <a class="btn btn-info btn-sm rounded-btn" href="{{ route('formpost.edit',$postform->id) }}">
                                     <i class="fas fa-pencil-alt">
                                     </i>
                                     Edit
                                 </a>
 
                                 {{-- delete parteu --}}
-                                <button type="button" class="btn btn-danger btn-sm" data-toggle="modal" data-target="#deleteModal{{ $postform->id }}">
+                                <button type="button" class="btn btn-danger btn-sm rounded-btn" data-toggle="modal" data-target="#deleteModal{{ $postform->id }}">
                                     <i class="fas fa-trash"></i> Delete
                                 </button>
 
@@ -108,10 +109,10 @@
                                                 Are you sure you want to delete this submission post?
                                             </div>
                                             <div class="modal-footer">
-                                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                                                <button type="button" class="btn btn-secondary rounded-btn" data-dismiss="modal">Cancel</button>
                                                     @csrf
                                                     @method('DELETE')
-                                                <button type="submit" class="btn btn-danger">Confirm Delete</button>
+                                                <button type="submit" class="btn btn-danger rounded-btn">Confirm Delete</button>
                                             </div>
                                         </div>
                                     </div>
@@ -140,6 +141,7 @@
     td.green-bg {
         background-color: lightgreen !important;
     }
+
 </style>
 
 <script>

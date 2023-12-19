@@ -6,6 +6,8 @@ use App\Http\Controllers\Controller;
 use App\Providers\RouteServiceProvider;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Http\Request;
+use Illuminate\Validation\ValidationException;
 
 class LoginController extends Controller
 {
@@ -44,15 +46,13 @@ class LoginController extends Controller
     //             return route('home');
     //     }
     // }
-
-    // protected function redirectTo()
-    // {
-    //     if (auth()->user()->is_admin) {
-    //         return route('admin_dashboard');
-    //     } else {
-    //         return route('student_dashboard');
-    //     }
-    // }
+    protected function sendFailedLoginResponse(Request $request)
+    {
+        throw ValidationException::withMessages([
+            $this->username() => [trans('auth.failed')],
+            'status' => 'Invalid credentials or role. Please try again.',
+        ])->redirectTo('/');
+    }
 
     protected function authenticated(){
         if(Auth::user()->role_as == '0'){
@@ -67,6 +67,10 @@ class LoginController extends Controller
         else{
             return redirect('/home')->with('status','Logged in Successfully');
         }
+    }
+    protected function credentials(Request $request)
+    {
+        return array_merge($request->only($this->username(), 'password'), ['role_as' => $request->input('role')]);
     }
 
     /**

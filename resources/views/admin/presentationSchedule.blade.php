@@ -78,7 +78,7 @@
           </div>
 
         <!-- Confirmation DELETE file Modal -->
-        <div class="modal fade" id="confirmationModal{{ $template->id }}" tabindex="-1" role="dialog" aria-labelledby="confirmationModalLabel" aria-hidden="true">
+        <div style= "z-index:9999;" class="modal fade" id="confirmationModal{{ $template->id }}" tabindex="-1" role="dialog" aria-labelledby="confirmationModalLabel" aria-hidden="true">
           <div class="modal-dialog" role="document">
               <div class="modal-content">
                   <div class="modal-header">
@@ -245,7 +245,7 @@
   {{-- calendar, create event, event-list row end --}}
 
   {{-- Presentation Sche Upload File Modal starts --}}
-  <div class="modal fade" id="uploadModal" tabindex="-1" role="dialog" aria-labelledby="uploadModalLabel" aria-hidden="true">
+  <div class="modal fade" style= "z-index:9999;" id="uploadModal" tabindex="-1" role="dialog" aria-labelledby="uploadModalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
@@ -846,6 +846,8 @@
 
       // Show the modal
       $('#eventDetailsModal').modal('show');
+      $('.modal-backdrop').remove();
+
     }
 
 
@@ -869,6 +871,7 @@
               // Close the confirmation modal
               $('#confirmDeleteCountdownEventModal').modal('hide');
               $('#eventDetailsModal').modal('hide');
+              $('.modal-backdrop').remove();
 
           }
       }, 1000);
@@ -1016,6 +1019,7 @@
           calendar.refetchEvents();
 
           $('#editEventModal').modal('hide');
+          $('.modal-backdrop').remove();
           updateEventList(formattedDate);
 
       }
@@ -1058,6 +1062,8 @@
 
     // $('#editEventButton').click(function() {
       function clickingEditButton(event){
+        $('.modal-backdrop').remove();
+
         // You can use window.location.href to navigate to the edit page/modal
         // var eventId = getEventId(); // Implement a function to get the event ID
         // window.location.href = '/edit-event/' + eventId; // Redirect to the edit page/modal
@@ -1074,6 +1080,8 @@
 
         // Show the edit modal
         $('#editEventModal').modal('show');
+        $('.modal-backdrop').remove();
+
         }
       }
     // });
@@ -1356,6 +1364,33 @@
 
 
 <style>
+
+
+/* body {
+    margin: 0;
+    padding: 0;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    background: linear-gradient(orange 25%, #e0e0e0 25%);
+} */
+
+.fc-next-button {
+  background-color: #FACD3F;
+  border: #FACD3F
+}
+
+/* Previous button */
+.fc-prev-button {
+  background-color: #FACD3F;
+  border: #FACD3F
+
+}
+
+/* Today button */
+.fc-today-button {
+  background-color: #FACD3F;
+}
 
 </style>
 @endsection

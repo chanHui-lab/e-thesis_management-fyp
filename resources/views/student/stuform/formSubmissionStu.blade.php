@@ -183,7 +183,9 @@
                                 @else
                                     <i class="fa fa-file file-icon" style="color: rgb(77, 144, 250)"></i>
                                 @endif
-                                    {{ substr($filee['path'], strpos($filee['path'], '_') + 1) }}
+                                {{ pathinfo($file['path'])['filename'] }}
+
+                                {{-- {{ substr($file['path'], strpos($file['path'], '/') + 1) }} --}}
                             </a>
                             <span style="font-size: 80%; margin-left: 5px;">
                                 {{ \Carbon\Carbon::parse($file['uploaded_at'])->format('Y-m-d h:i A') }}

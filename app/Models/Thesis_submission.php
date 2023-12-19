@@ -4,27 +4,23 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Carbon\Carbon;
-use Illuminate\Support\Facades\DB;
 
-class Form_submission extends Model
+class Thesis_submission extends Model
 {
     use HasFactory;
-
     protected $fillable = [
-        'form_id',
+        'thesis_id',
         'submission_post_id',
-        'form_title',
-        'form_description',
-        // 'form_date',
+        'thesis_title',
+        'thesis_abstract',
         'student_id',
         'supervisor_id',
-        'form_files',
-        'form_year',
-        'form_versionNumber',
+        'thesis_file',
+        'thesis_status',
+        'thesis_type','sem_id'
     ];
 
-    // FormSubmission.php
+    // Thesis Submission.php
     static public function getSingle($id){
         return self::find($id);
     }

@@ -3,9 +3,21 @@
 @section('content')
 <div class="container">
     <div class="row justify-content-center">
-        <div class="col-md-8">
+        <div class="col-md-7">
+            <a class="navbar-brand loginbrand-logo" href="#">
+                <img class="logo-login" src='{{ asset('admindash/img/logoethesis.png') }}' alt="logo"/>
+            </a>
+            <div style="display: flex; align-items: center; justify-content: center;">
+                <img class="logo-upm" src='{{ asset('admindash/img/UPMLOGO.png') }}' alt="logo"/>
+                <p class = "plogo">Powered by University Putra Malaysia</p>
+            </div>
+            <div style="display: flex; align-items: center; justify-content: center; margin-bottom:16px;">
+                <hr style="flex-grow: 1; margin-right: 10px;">
+                <h2 data-id="page-title">{{ __('Register') }}</h2>
+                <hr style="flex-grow: 1; margin-left: 10px;">
+            </div>
             <div class="card">
-                <div class="card-header">{{ __('Register') }}</div>
+                {{-- <div class="card-header">{{ __('Register') }}</div> --}}
 
                 <div class="card-body">
                     <form method="POST" action="{{ route('register') }}">
@@ -63,7 +75,11 @@
 
                         <div class="row mb-0">
                             <div class="col-md-6 offset-md-4">
-                                <button type="submit" class="btn btn-primary">
+                                <button type="submit" class="btn btn-primary loginBtn" style="background-color: #FACD3F;
+                                color: black;
+                                border-color: #FACD3F;
+                                border-radius: 20px;
+                                width: 100%;">
                                     {{ __('Register') }}
                                 </button>
                             </div>

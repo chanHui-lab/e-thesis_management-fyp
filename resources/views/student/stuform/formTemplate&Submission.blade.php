@@ -12,7 +12,7 @@
         <div class="col-md-12">
             <div class="card"  style="margin-top:20px; margin-left: -15px; margin-bottom:10px;">
                 <div class="card-header d-flex justify-content-between align-items-center">
-                    <h5>Form Template</h5>
+                    <h3>Form Template</h3>
                 </div>
                 {{-- end card header --}}
 
@@ -74,20 +74,20 @@
         <div class="col-md-12">
             <div class="card"  style="margin-top:5px; padding:0px; margin-left: -15px; margin-bottom:10px;">
                 <div class="card-header d-flex justify-content-between align-items-center">
-                    <h5>Form Submission</h5>
+                    <h3>Form Submission</h3>
                 </div>
                 {{-- end card header --}}
 
                 <div class="card-body">
                     @foreach ($submissionDetails as $postform)
                     <div class="file-container">
-                        <p class="file-link"><i class="fa fa-solid fa-file-import"  style="margin-right: 10px; color: rgb(64, 31, 1);"></i>
-                            <a class="brown-link" href="{{ route('stuFormSubmission.details', ['submissionPostId' => $postform['submissionPost']->id]) }}">
+                        <h2 class="file-link"><i class="fa fa-solid fa-file-import"  style="margin-right: 10px; color: rgb(64, 31, 1);"></i>
+                            <a class="brown-link" style="font-size: 14px" href="{{ route('stuFormSubmission.details', ['submissionPostId' => $postform['submissionPost']->id]) }}">
 
                             {{ $postform['submissionPost']->title }}
                             </a>
                             <span class="v-chip chip--label {{ $postform['chipClass'] }}">{{ $postform['status'] }}</span>
-                        </p>
+                        </h2>
                     </div>
                     {{-- <p class = "templateDetails">{{$postform['submissionPost']->description}}</p> --}}
 

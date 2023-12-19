@@ -38,7 +38,7 @@ class SubmissionPost extends Model
         })
         ->select('submission_posts.*')
         // ->get();
-        ->paginate(2);
+        ->paginate(5);
     }
 
     static public function getStuFormSP(){

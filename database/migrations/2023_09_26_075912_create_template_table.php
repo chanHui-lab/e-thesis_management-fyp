@@ -19,7 +19,7 @@ return new class extends Migration
             $table->string('file_name');
             $table->text('description')->nullable(); // Description for students
             // $table->binary('file_data'); //store the file in pdf,image,or docs
-            $table->string('file_data'); //store the file in pdf,image,or docs
+            $table->json('file_data'); //store the file in pdf,image,or docs
             $table->string('mime_type');
             $table->string('semester');//foreign key from semester table
             $table->string('status');// 'hidden' or 'active'

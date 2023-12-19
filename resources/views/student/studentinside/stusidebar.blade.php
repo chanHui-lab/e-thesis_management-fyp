@@ -7,17 +7,16 @@
       {{-- <h6 class="info" style="margin-left: 40px; margin-top: 10px;" >Hello, {{ auth()->user()->name }}</h6> --}}
     </div>
 
-    <nav class="mt-2">
         <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
 
         <li class="nav-item">
             {{-- <a href="{{ url('dashboardfake') }}" class="nav-link"> --}}
               <a href="{{ url('student/dashboard') }}" class="nav-link {{ request()->is('student/dashboard*') ? 'active' : '' }}">
                 <i class="nav-icon bx bxs-home"></i>
-              <p>
-                Home
-              </p>
-            </a>
+                <p>
+                  Home
+                </p>
+              </a>
         </li>
 
           <!-- Add icons to the links using the .nav-icon class
@@ -61,7 +60,7 @@
               {{-- <i class="nav-icon fas fa-tachometer-alt"></i> --}}
               <i class="nav-icon bx bxs-file"></i>
               <p>
-                Proposal
+                Report
                 {{-- <i class="right fas fa-angle-left"></i> --}}
                 <i class="bx bxs-chevron-down" style="justify-content: space-between; position: absolute; right: 0;"></i>
               </p>
@@ -141,15 +140,6 @@
         </a>
       </li>
 
-
-      <li class="nav-item">
-        <a href="{{ url('admin/advisor-assignment/create') }}" class="nav-link {{ request()->is('admin/advisor-assignment/create*') ? 'active' : '' }}">
-          <i class="nav-icon bx bx-id-card"></i>
-        <p>
-          Assign Student-Supervisor
-        </p>
-      </a>
-    </li>
       <br>
       <br>
       <li class="nav-item">
@@ -166,5 +156,4 @@
 
 
         </ul>
-    </nav>
 </section>

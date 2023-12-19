@@ -113,9 +113,22 @@ class FormController extends Controller
         $formSubmission = $submissionPost->formSubmissions()
             ->where('student_id', Auth::id())
             ->first();
-
+        // dd($formSubmission);
         // Call the method to get form submission details along with comments
-        return $this->showFormSubmission($formSubmission->id,$submissionPost);
+        // return $this->showFormSubmission($formSubmission->id,$submissionPost);
+        // return $this->showFormSubmission(optional($formSubmission)->id, $submissionPost);
+        // Check if $formSubmission is not null
+        if ($formSubmission) {
+            // Use the obtained formSubmission in your logic
+            return $this->showFormSubmission($formSubmission->id, $submissionPost);
+        } else {
+            // Redirect to a blade view or perform any other action as needed
+            return view('student.stuform.formSubmissionStu',
+            ['submissionPost' => $submissionPost ,
+                 'formSubmission' => $formSubmission,
+        ]);
+            // return redirect()->route('stuFormSubmission.details', ['submissionPostId' => $submissionPost->id]);
+        }
     }
 
     public function showFormSubmission($formSubmissionId,$submissionPost)

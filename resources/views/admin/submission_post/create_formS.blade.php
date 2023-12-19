@@ -39,7 +39,7 @@
             </div>
             <div class="form-group">
                 <label for="submission_deadline">Submission Deadline:</label>
-                <input type="datetime-local" id="submission_deadline" name="submission_deadline" class="form-control datetimepicker" placeholder="Submission Deadline" ><br><br>
+                <input type="datetime-local" id="submission_deadline" name="submission_deadline" class="form-control datetimepicker" placeholder="Submission Deadline" >
             </div>
 
               {{-- <div class="form-group"> --}}
@@ -62,10 +62,10 @@
 
              <label for="files">Upload Document Files: (not necessary) </label><br>
                     <div class="wrapper">
-                      <div class ="dotted">
+                      {{-- <div class ="dotted">
                         <i class="fas fa-cloud-upload-alt"></i>
                         <p>Browse File</p>
-                      </div>
+                      </div> --}}
                       {{-- <input type="file" name="files[]" id="files" multiple>
                       <ul id="selected-files"></ul> <!-- This is where we'll display the selected file names --> --}}
 

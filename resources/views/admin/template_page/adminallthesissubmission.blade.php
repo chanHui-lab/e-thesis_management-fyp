@@ -6,9 +6,8 @@
     <div id = "app">
         <hello-world></hello-world>
     </div>
-    <h1>Create Products....</h1>
-    <section class="content">
-        <div class="container-fluid">
+    {{-- <h1>Create Products....</h1> --}}
+        {{-- <div class="container-fluid">
           <div class="row">
             <div class="col-12">
               <div class="card">
@@ -894,7 +893,7 @@
             <!-- /.col -->
           </div>
           <!-- /.row -->
-        </div>
+        </div> --}}
         <!-- /.container-fluid -->
       </section>
 </main>
@@ -951,12 +950,5 @@
       }
     }
 </script>
-
-<style>
-main{
-  font-family: var(--poppins);
-}
-</style>
-
 
 @endsection

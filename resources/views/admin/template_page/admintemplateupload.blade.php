@@ -5,11 +5,14 @@
     <div class="row">
         <div class="col-lg-12">
             <div class=" titleforform">
-                <h2>Form Templates</h2>
-                <h6>(Total: {{ $template -> total() }})</h6>
+                <h1><i style="font-size: 30px;margin-right:20px" class="fas fa-clipboard"></i>Form Templates</h1>
+                <h5>(Total: {{ $template -> total() }})</h5>
             </div>
             <div class="float-right">
-                <a class="btn btn-success" href="{{ route('template.create') }}"><i class="fa fa-upload" style="margin-right: 5px;"></i> Upload New Form Template</a>
+                <a style="margin-bottom: 10px;" class="btn btn-success btn-common" href="{{ route('template.create') }}">
+                    <i class="fa fa-upload iconie"></i>
+                    Upload New Form Template
+                </a>
                 {{-- <a class="btn btn-success" href="{{url("admin/adminpage/createform") }}"> Upload New Form Template</a> --}}
                 {{-- the url will not show this, instead of the one in web.php --}}
 
@@ -23,117 +26,6 @@
         </div>
     @endif
 
-    <table class="table table-bordered">
-        <tr>
-            <th>No.</th> <!-- Numbering column -->
-            <th>Template Name</th>
-            <th>Description for Students</th>
-            <th>File Data</th>
-            <th>Status</th>
-            {{-- <th>Template file</th> --}}
-            {{-- <th>Submission Deadline</th> --}}
-            <th width="300px">Action</th>
-        </tr>
-        {{-- we can access the template table --}}
-        @php
-            $counter = 1; // Initialize a counter variable
-        @endphp
-
-        @foreach ($template as $templateform)
-        <tr>
-            <td>{{ $counter++ }}</td> <!-- Increment and display the counter -->
-            <td>{{ $templateform->file_name }}</td>
-            <td>{{  $templateform->description  }}</td>
-            <td><a href="{{ asset('storage/' . $templateform->file_data) }}" download>
-                {{ str_replace('upload/templates/', '', $templateform->file_data) }}
-            </a></td>
-            <td>
-                @if ($templateform->status == '1')
-                    <span class="status-visible">Visible</span>
-                @else
-                    <span class="status-hidden">Hidden</span>
-                @endif
-            </td>
-
-            <td>
-                <form action="{{ route('template.destroy',$templateform->id) }}" method="POST">
-
-                    <a class="btn btn-info" href="{{ route('template.show',$templateform->id) }}">Show</a>
-                    {{-- <a class="btn btn-primary" href="{{url('/view',$templateform->id)}}"">View</a> --}}
-
-                    {{-- i wrong liap i store dao the file path in this variable --}}
-                    {{-- <a class="btn btn-primary" href="{{route('file.download', $templateform->pdf_file_for_students)}}" target="_blank">Download</a> --}}
-
-                    {{-- <a href="{{url('/download',$templateform->pdf_file_for_students)}}">Download</a> --}}
-                    {{-- <a href="{{ asset('storage/' . $templateform->pdf_file_for_students) }}" target="_blank">Download File</a> --}}
-
-                    {{-- <a href="{{ route('products.downloadFile', $templateform->pdf_file_for_students) }}">Download PDF</a> --}}
-
-                    {{-- 3rd --}}
-                    {{-- <a href="{{ route('products.downloadFile', $templateform->id) }}">Download</a> --}}
-
-                    {{-- <a href="{{ route('products.download', $templateform->pdf_file_for_students) }}" target="_blank">Download File</a> --}}
-
-                    {{-- <a href="{{ route('products.downloadFile', $templateform->id) }}" target="_blank">Download File</a> --}}
-
-                    <a class="btn btn-primary" href="{{ route('template.edit',$templateform->id) }}">Edit</a>
-
-                    {{-- delete parteu --}}
-                    <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#deleteModal{{ $templateform->id }}">Delete</button>
-
-                    <div class="modal fade" id="deleteModal{{ $templateform->id }}" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
-                        <div class="modal-dialog">
-                            <div class="modal-content">
-                                <div class="modal-header">
-                                    <h5 class="modal-title" id="deleteModalLabel">Confirm Deletion</h5>
-                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                        <span aria-hidden="true">&times;</span>
-                                    </button>
-                                </div>
-                                <div class="modal-body">
-                                    Are you sure you want to delete this template?
-                                </div>
-                                <div class="modal-footer">
-                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-                                        @csrf
-                                        @method('DELETE')
-                                    <button type="submit" class="btn btn-danger">Delete</button>                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                    {{-- @csrf
-                    @method('DELETE')
-                    <button type="submit" class="btn btn-danger" data-toggle="modal" data-target="#deleteModal{{ $templateform->id }}">Delete</button> --}}
-
-                    {{-- <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
-                        <div class="modal-dialog">
-                            <div class="modal-content">
-                                <div class="modal-header">
-                                    <h5 class="modal-title" id="deleteModal{{ $templateform->id }}">Confirm Deletion</h5>
-                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                        <span aria-hidden="true">&times;</span>
-                                    </button>
-                                </div>
-                                <div class="modal-body">
-                                    Are you sure you want to delete this template?
-                                </div>
-                                <div class="modal-footer">
-                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-                                    <a href="{{ route('template.destroy', $templateform->id) }}" class="btn btn-danger">Delete</a>
-                                </div>
-                            </div>
-                        </div>
-                    </div> --}}
-                </form>
-            </td>
-        </tr>
-        <!-- Delete Confirmation Modal -->
-
-        @endforeach
-    </table>
-
     {{-- <section class="content"> --}}
         {{-- <div class="container-fluid"> --}}
           <div class="row">
@@ -145,7 +37,7 @@
                 <!-- /.card-header -->
                 <div class="card-body">
                     <table id="example1" class="table table-bordered table-striped">
-                        <thead>
+                        <thead class="custom-thead">
                     <tr>
                       <th>No.	</th>
                       <th>Template Name</th>
@@ -166,13 +58,11 @@
                         <td>{{ $templateform->file_name }}</td>
                         <td>{{  $templateform->description  }}</td>
                         <td>
-                            {{-- <a href="{{ asset('storage/' . $templateform->file_data) }}" download>
-                            {{ str_replace('upload/templates/', '', $templateform->file_data) }}
-                            </a> --}}
                             @php
                                 $files = json_decode($templateform->file_data, true);
                             @endphp
                             @foreach ($files as $file)
+                            &#x2514;
                                 @if (Str::endsWith($file['path'], '.pdf'))
                                     <a href="{{ asset('storage/' . $file['path']) }}" target="_blank" download class="downloadfile-link">
                                         <i class="fa fa-file-pdf file-template" style = "color: rgb(255, 86, 86)"></i>
@@ -207,11 +97,12 @@
                         <td>
                             <form action="{{ route('template.destroy',$templateform->id) }}" method="POST">
 
-                                <a class="btn btn-primary btn-sm" href="{{ route('template.show',$templateform->id) }}">
+                                {{-- <a class="btn btn-primary btn-sm rounded-btn" href="{{ route('template.show',$templateform->id) }}">
                                     <i class="fas fa-folder">
                                     </i>
                                     View
-                                </a>
+                                </a> --}}
+
                                 {{-- <a class="btn btn-info" href="{{ route('template.show',$templateform->id) }}">Show</a> --}}
 
 
@@ -233,17 +124,17 @@
                                 {{-- <a href="{{ route('products.downloadFile', $templateform->id) }}" target="_blank">Download File</a> --}}
 
                                 {{-- <a class="btn btn-primary" href="{{ route('template.edit',$templateform->id) }}">Edit</a> --}}
-                                <a class="btn btn-info btn-sm" href="{{ route('template.edit',$templateform->id) }}">
+                                <a class="btn btn-info btn-sm rounded-btn" href="{{ route('template.edit',$templateform->id) }}">
                                     <i class="fas fa-pencil-alt">
                                     </i>
                                     Edit
                                 </a>
                                 {{-- delete parteu --}}
-                                <button type="button" class="btn btn-danger btn-sm" data-toggle="modal" data-target="#deleteModal{{ $templateform->id }}">
+                                <button type="button" class="btn btn-danger btn-delete btn-sm rounded-btn" data-toggle="modal" data-target="#deleteModal{{ $templateform->id }}">
                                     <i class="fas fa-trash"></i> Delete
                                 </button>
 
-                                <div class="modal fade" id="deleteModal{{ $templateform->id }}" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
+                                <div class="modal popUpModal" id="deleteModal{{ $templateform->id }}" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
                                     <div class="modal-dialog">
                                         <div class="modal-content">
                                             <div class="modal-header">
@@ -256,10 +147,11 @@
                                                 Are you sure you want to delete this template?
                                             </div>
                                             <div class="modal-footer">
-                                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-                                                    @csrf
+                                                <button type="button" class="btn btn-secondary rounded-btn" onclick="closeModal()">
+                                                    Cancel</button>
+                                                @csrf
                                                     @method('DELETE')
-                                                <button type="submit" class="btn btn-danger">Delete</button>                                </div>
+                                                <button type="submit" class="btn btn-danger rounded-btn">Delete</button>                                </div>
                                         </div>
                                     </div>
                                 </div>
@@ -302,19 +194,11 @@
         <!-- /.card -->
     {{ $template->links() }}
 <script>
-    document.addEventListener('DOMContentLoaded', function () {
-        const deleteLinks = document.querySelectorAll('.delete-link');
-
-        deleteLinks.forEach(link => {
-            link.addEventListener('click', function (e) {
-                e.preventDefault();
-
-                const confirmDelete = window.confirm('Are you sure you want to delete this template?');
-
-                if (confirmDelete) {
-                    window.location.href = link.getAttribute('href');
-                }
-            });
+    $(document).ready(function () {
+        // Attach a click event to the delete button
+        $('.btn-delete').on('click', function () {
+            // Hide the modal backdrop
+            $('.modal-backdrop').hide();
         });
     });
 </script>
@@ -354,9 +238,9 @@
       "responsive": true, "lengthChange": false, "autoWidth": false,
       "buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"],
       columnDefs: [
-            { width: '5px', targets: [0] }, // Adjust the width of the first column (index 0)
-            { width: '10px', targets: [1] }, // Adjust the width of the first column (index 0)
-            { width: '15px', targets: [2] },
+            { width: '0px', targets: [0] }, // Adjust the width of the first column (index 0)
+            { width: '5px', targets: [1] }, // Adjust the width of the first column (index 0)
+            { width: '5px', targets: [2] },
             { width: '10px', targets: [3] }
             { width: '5px', targets: [4] }
             { width: '20px', targets: [5] }
@@ -378,4 +262,5 @@
   });
 
 </script>
+
 @endsection

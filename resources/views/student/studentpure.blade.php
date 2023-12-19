@@ -74,14 +74,14 @@
     @extends('layouts.admindash')
     @section('content')
 
-    <div class="container-fluid page-body-wrapper">
-        <div class = "main-panel">
-            <div class = "content-wrapper">
-                    @yield('master_content')
-                </main>
-            </div>
-        </div>
-    </div>
+    {{-- <div class="container-fluid page-body-wrapper"> --}}
+        {{-- <div class = "main-panel"> --}}
+            {{-- <div class = "content-wrapper"> --}}
+    @yield('master_content')
+                {{-- </main> --}}
+            {{-- </div> --}}
+        {{-- </div> --}}
+    {{-- </div> --}}
     @endsection
 
 </body>

@@ -281,7 +281,7 @@ color: black;
 
 /* delete event */
 .dimmed-modal {
-  z-index: 1050; /* Adjust the z-index as needed */
+  /* z-index: 1050; Adjust the z-index as needed */
 }
 
 .dimmed-modal .modal-dialog {
@@ -289,7 +289,7 @@ color: black;
 }
 
 .dimmed-overlay {
-  background: rgba(0, 0, 0, 0.5); /* Adjust the opacity as needed */
+  /* background: rgba(0, 0, 0, 0.5); Adjust the opacity as needed */
 }
 #toast-container > .toast {
   width: 500px;

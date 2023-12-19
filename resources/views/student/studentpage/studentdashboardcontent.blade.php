@@ -10,6 +10,8 @@
         {{-- <div class="card-body"> --}}
           <h4>Hello, Welcome back {{ auth()->user()->name }}</h4>
           <p>User Role: Student</p>
+
+          <button>Discover thesis resources</button>
         {{-- </div> --}}
       </div>
     </div>
@@ -18,7 +20,19 @@
 <div class="row">
   <div class="col-md-8">
     <div class="card card-primary">
-        <div class="card-body p-0">
+        <div class="card-header" style=" background-color: rgb(255, 242, 198); border:transparent">
+          <div class="row align-items-center">
+            <div class="col-auto">
+                <!-- Calendar Icon -->
+                <i class="fas fa-calendar" style="font-size: 20px"></i>
+            </div>
+            <div class="col" >
+                <h4 class="card-title" style="margin-bottom: 0%">My Calendar</h4>
+            </div>
+        </div>
+          </div>
+          <div class="card-body p-0">
+
           <!-- THE CALENDAR -->
           <div id="calendar" style="padding: 10px;overflow: auto;">
           </div>
