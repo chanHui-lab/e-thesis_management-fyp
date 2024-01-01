@@ -66,7 +66,6 @@
                                 @if (Str::endsWith($file['path'], '.pdf'))
                                     <a href="{{ asset('storage/' . $file['path']) }}" target="_blank" download class="downloadfile-link">
                                         <i class="fa fa-file-pdf file-template" style = "color: rgb(255, 86, 86)"></i>
-                                        {{-- {{ substr($file['path'], strpos($file['path'], '_') + 1) }} --}}
                                         {{ basename($file['path']) }}
                                     </a>
                                 @elseif (Str::endsWith($file['path'], '.doc') || Str::endsWith($file['path'], '.docx'))
@@ -97,38 +96,11 @@
                         <td>
                             <form action="{{ route('template.destroy',$templateform->id) }}" method="POST">
 
-                                {{-- <a class="btn btn-primary btn-sm rounded-btn" href="{{ route('template.show',$templateform->id) }}">
-                                    <i class="fas fa-folder">
-                                    </i>
-                                    View
-                                </a> --}}
-
-                                {{-- <a class="btn btn-info" href="{{ route('template.show',$templateform->id) }}">Show</a> --}}
-
-
-                                {{-- <a class="btn btn-primary" href="{{url('/view',$templateform->id)}}"">View</a> --}}
-
-                                {{-- i wrong liap i store dao the file path in this variable --}}
-                                {{-- <a class="btn btn-primary" href="{{route('file.download', $templateform->pdf_file_for_students)}}" target="_blank">Download</a> --}}
-
-                                {{-- <a href="{{url('/download',$templateform->pdf_file_for_students)}}">Download</a> --}}
-                                {{-- <a href="{{ asset('storage/' . $templateform->pdf_file_for_students) }}" target="_blank">Download File</a> --}}
-
-                                {{-- <a href="{{ route('products.downloadFile', $templateform->pdf_file_for_students) }}">Download PDF</a> --}}
-
-                                {{-- 3rd --}}
-                                {{-- <a href="{{ route('products.downloadFile', $templateform->id) }}">Download</a> --}}
-
-                                {{-- <a href="{{ route('products.download', $templateform->pdf_file_for_students) }}" target="_blank">Download File</a> --}}
-
-                                {{-- <a href="{{ route('products.downloadFile', $templateform->id) }}" target="_blank">Download File</a> --}}
-
-                                {{-- <a class="btn btn-primary" href="{{ route('template.edit',$templateform->id) }}">Edit</a> --}}
-                                <a class="btn btn-info btn-sm rounded-btn" href="{{ route('template.edit',$templateform->id) }}">
-                                    <i class="fas fa-pencil-alt">
-                                    </i>
-                                    Edit
-                                </a>
+                                @if ($templateform->lecturer_id == Auth::id())
+                                    <a class="btn btn-info btn-sm rounded-btn" href="{{ route('template.edit', $templateform->id) }}">
+                                        <i class="fas fa-pencil-alt"></i>
+                                        Edit
+                                    </a>
                                 {{-- delete parteu --}}
                                 <button type="button" class="btn btn-danger btn-delete btn-sm rounded-btn" data-toggle="modal" data-target="#deleteModal{{ $templateform->id }}">
                                     <i class="fas fa-trash"></i> Delete
@@ -180,6 +152,7 @@
                                         </div>
                                     </div>
                                 </div> --}}
+                                @endif
                             </form>
                         </td>
                     </tr>
@@ -189,10 +162,10 @@
                 </table>
           </div>
           <!-- /.card-body -->
-        </div>
-            </div></div></div></section></main>
+        {{ $template->links() }}</div>
+            </div></div></div></main>
         <!-- /.card -->
-    {{ $template->links() }}
+
 <script>
     $(document).ready(function () {
         // Attach a click event to the delete button
@@ -247,6 +220,8 @@
 
         ]
     }).buttons().container().appendTo('#example1_wrapper .col-md-6:eq(0)');
+    $('.dt-buttons button').css('color', '#212529');
+    console.log("buttons");
 
 
 
@@ -263,4 +238,18 @@
 
 </script>
 
+<style>
+.modal {
+    display: none;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    padding: 20px;
+    width: 100%;
+    height: 100%;
+    background-color: hsla(0, 0%, 82%, 0.729);
+    z-index: 1005; /* Ensure it's above the overlay */
+}
+</style>
 @endsection

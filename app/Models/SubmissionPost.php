@@ -41,6 +41,39 @@ class SubmissionPost extends Model
         ->paginate(5);
     }
 
+    static public function getAdminThesisSP(){
+        return self::where('section', 'thesis')
+        ->whereHas('lecturer', function ($query) {
+            $query->where('role_as', 0) // Admin role
+                  ->orWhere('role_as', 1); // Lecturer role
+        })
+        ->select('submission_posts.*')
+        // ->get();
+        ->paginate(5);
+    }
+
+    static public function getAdminProposalSP(){
+        return self::where('section', 'proposal')
+        ->whereHas('lecturer', function ($query) {
+            $query->where('role_as', 0) // Admin role
+                  ->orWhere('role_as', 1); // Lecturer role
+        })
+        ->select('submission_posts.*')
+        // ->get();
+        ->paginate(5);
+    }
+
+    static public function getAdminSlidesSP(){
+        return self::where('section', 'slide')
+        ->whereHas('lecturer', function ($query) {
+            $query->where('role_as', 0) // Admin role
+                  ->orWhere('role_as', 1); // Lecturer role
+        })
+        ->select('submission_posts.*')
+        // ->get();
+        ->paginate(5);
+    }
+
     static public function getStuFormSP(){
         $user = Auth::user();
 
@@ -54,6 +87,25 @@ class SubmissionPost extends Model
             ->where('section', 'form')
             ->get();
     }
+
+    static public function getStuProposalSP(){
+        $user = Auth::user();
+
+        return DB::table('submission_posts')
+            ->join('users', 'users.id', '=', 'submission_posts.lecturer_id')
+            ->leftJoin('supervisors', 'supervisors.lecturer_id', '=', 'users.id')
+            ->where(function ($query) use ($user) {
+                $query->where('users.role_as', 0)
+                      ->orWhere('supervisors.lecturer_id', '=', $user->supervisor_id);
+            })
+            ->where('section', 'form')
+            ->get();
+    }
+
+    // public function thesisSubmissions()
+    // {
+    //     return $this->hasMany(Thesis_submission::class, 'submission_post_id')->where('student_id', Auth::id());
+    // }
     // // get the current post from current id -  not yet do.
     // public function getStudentSubmissionPost()
     // {
@@ -77,6 +129,18 @@ class SubmissionPost extends Model
     public function formSubmissions()
     {
         return $this->hasMany(Form_submission::class, 'submission_post_id');
+    }
+    public function thesisSubmissions()
+    {
+        return $this->hasMany(Thesis_submission::class, 'submission_post_id');
+    }
+    public function proposalSubmissions()
+    {
+        return $this->hasMany(Proposal_submission::class, 'submission_post_id');
+    }
+    public function slideSubmissions()
+    {
+        return $this->hasMany(Slide_submission::class, 'submission_post_id');
     }
 
     //to display certain student post!

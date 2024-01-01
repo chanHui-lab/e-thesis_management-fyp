@@ -39,7 +39,7 @@
         <div class="card-header d-flex justify-content-between align-items-center">
           <h5>Presentation Schedule Template</h5>
             <div class="float-right" style = " color:white;">
-              <a class="btn btn-success" data-toggle="modal" data-target="#uploadModal"><i class="fa fa-upload" style="margin-right: 5px;"></i>
+              <a class="btn btn-success btn-common" data-toggle="modal" data-target="#uploadModal"><i class="fa fa-upload" style="margin-right: 5px;"></i>
                 Upload New Presentation Sche File
                 </a>
             </div>
@@ -72,7 +72,7 @@
               </a>
               @endif
             </p>
-            <button type="button" class="btn btn-danger btn-sm" data-toggle="modal" data-modal-id="confirmationModal{{ $template->file_data }}" data-target="#confirmationModal{{ $template->id }}">
+            <button type="button" style="margin-bottom:5px;" class="btn btn-danger btn-sm btn-common" data-toggle="modal" data-modal-id="confirmationModal{{ $template->file_data }}" data-target="#confirmationModal{{ $template->id }}">
               <i class="fa fa-trash remove-icon" style="margin-right: 5px;"></i>Remove
             </button>
           </div>
@@ -113,7 +113,7 @@
 
   {{-- display calendar, create event, event-list START --}}
   <div class="row">
-    <div class="col-md-3" style="padding:0px">
+    <div class="col-md-3" style="padding:0px;z-index:100;">
       <div class="sticky-top mb-3">
         {{-- start card event list --}}
         <div class="card">
@@ -191,7 +191,7 @@
                     <input type="text" class="form-control" id="location" name="location">
                 </div>
               <div class="input-group-append">
-                <button id="add-event-button" type="button" class="btn btn-primary">Create</button>
+                <button id="add-event-button" type="button" class="btn btn-primary btn-common" style="background-color: #FACD3F">Create</button>
               </div>
             </form>
               <!-- /btn-group -->
@@ -206,7 +206,7 @@
 
       </div>
 
-    <div class="col-md-9">
+    <div class="col-md-9" style="z-index: 1;">
       <div class="card card-primary">
         <div class="card-body p-0">
           <!-- THE CALENDAR -->
@@ -225,7 +225,9 @@
             <div id="external-drag">
               <div class="external-event bg-success">Seminar</div>
               <div class="external-event bg-warning">FYP Workshop</div>
-              <div class="external-event bg-info">FYP Final Presentation and Demo</div>
+              <div class="external-event bg-info">FYP Final Project Presentation and Demo</div>
+              <div class="external-event" style="background-color: #FACD3F">FYP Final Proposal Presentation and Demo</div>
+
             </div>
             <div class="checkbox">
               <label for="drop-remove">
@@ -245,9 +247,9 @@
   {{-- calendar, create event, event-list row end --}}
 
   {{-- Presentation Sche Upload File Modal starts --}}
-  <div class="modal fade" style= "z-index:9999;" id="uploadModal" tabindex="-1" role="dialog" aria-labelledby="uploadModalLabel" aria-hidden="true">
+  <div class="modal fade"  id="uploadModal" tabindex="-1" role="dialog" aria-labelledby="uploadModalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
-        <div class="modal-content">
+        <div class="modal-content" style= "z-index:10000;">
             <div class="modal-header">
                 <h5 class="modal-title" id="uploadModalLabel">Upload New Presentation Schedule File</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
@@ -369,9 +371,36 @@
           </div>
       </div>
   </div>
-</main>
 
+  {{-- <div id="overlay"></div> --}}
+
+</main>
+<style>
+  #overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5); /* Adjust the opacity as needed */
+    z-index: 1001; /* Ensure it's above your content */
+}
+.modal {
+    display: none;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    padding: 20px;
+    width: 100%;
+    height: 100%;
+    background-color: hsla(0, 0%, 82%, 0.729);
+    z-index: 1005; /* Ensure it's above the overlay */
+}
+  </style>
 <script src={{ asset('./plugins/bootstrap/js/bootstrap.bundle.min.js') }}></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment-timezone/0.5.33/moment-timezone.min.js"></script>
 
   <!-- Bootstrap 4 -->
   {{-- <script src="../../plugins/bootstrap/js/bootstrap.bundle.min.js"></script> --}}
@@ -449,7 +478,6 @@
       // // initialize the external events
       // // -----------------------------------------------------------------
 
-      console.log("ndraggeble estardts");
       new Draggable(containerEl, {
         itemSelector: '.external-event',
         eventData: function(eventEl) {
@@ -461,9 +489,9 @@
           };
         },
         eventConstraint: 'body', // Try adding this line
-        eventDragStop: function () {
-          console.log("hereeeeeeeeeeeee");
-          console.log('Stop callback triggered');
+        eventDragStop: function (event, jsEvent, ui, view) {
+          console.log("eventdragstop");
+          event.setProp('backgroundColor', ui.helper.css('background-color'));
 
           // Send the event title to the Laravel backend
           $.ajax({
@@ -474,6 +502,9 @@
               },
               success: function (data) {
                   console.log('Event saved:', data);
+                  // $('#calendar').fullCalendar('refetchEvents');
+                  location.reload(true); // Pass true to force a reload from the server
+
               },
               error: function (error) {
                   console.error('Error saving event:', error);
@@ -605,17 +636,24 @@
         updateEventList(clickedDate, info);
       },
       eventDrop:function (info) {
+        // sense the submissionPost table.
         changeEvent(info.event);
         console.log("eventdrope", info.event);
         const clickedDate = info.date;
+        // pass the colour?
         updateEventList(clickedDate);
       },
       eventClassNames: function (arg) {
         // Add classes based on event type
-        if (arg.event.extendedProps.type === 'presentation') {
-            return ['presentation-event'];
-        } else if (arg.event.extendedProps.type === 'forms') {
+        // if (arg.event.extendedProps.type === 'presentation') {
+        //     return ['presentation-event'];
+        // }
+        if (arg.event.extendedProps.type === 'forms') {
             return ['thesis-event'];
+          } else if (arg.event.title.includes('Project Presentation')) {
+            return ['FYP-Proj-event'];
+          } else if (arg.event.title.includes('Proposal Presentation')) {
+            return ['FYP-Prop-event'];
         }
         return [];
       },
@@ -732,21 +770,85 @@
     //     // detailsModalFooter.append(viewAllButton);
     // }
 
+
+    // WORKS BUT DIFF TIMEZONE
+    // function changeEvent(event) {
+    //   console.log("changeEvent");
+
+    //       const updatedEvent = {
+    //       id: event.id, // Assuming your event object has an 'id' property
+    //       start: event.start.toISOString().slice(0, 19).replace("T", " "), // Format as 'Y-m-d H:i:s'
+    //       end: event.end.toISOString().slice(0, 19).replace("T", " "), // Format as 'Y-m-d H:i:s'
+    //       // start: event.start, // Format as 'Y-m-d H:i:s'
+    //       // end: event.end, // Format as 'Y-m-d H:i:s'
+    //       title: event.title,
+    //       location: event.extendedProps.location,
+    //       description: event.extendedProps.description,
+
+    //       // description: event.description,
+    //       // Include any other properties you want to update
+    //   };
+    //   console.log('before update success: ', updatedEvent);
+
+    //   // Make an AJAX request to update the event in the databases
+    //   $.ajax({
+    //       url: '/admin/calendar/updateEvent/' + updatedEvent.id,
+    //       type: 'POST', // Adjust the HTTP method as needed
+    //       data: updatedEvent,
+    //       success: function (response) {
+    //           console.log('Event updated successfully');
+    //           calendar.refetchEvents();
+
+    //       },
+    //       error: function (xhr, status, error) {
+    //           console.log('Errordddd updating event:', error);
+    //           // Handle errors as needed
+    //           console.log(xhr.responseText);  // Log the full response for more details
+
+    //       }
+    //   });
+    // }
+
     function changeEvent(event) {
-          const updatedEvent = {
+      console.log("changeEvent");
+
+      // // Assuming 'Asia/Kuala_Lumpur' is the time zone for Malaysia
+      // const timeZone = 'Asia/Kuala_Lumpur';
+
+      // // Convert the event start and end times to the desired time zone
+      // const start = moment(event.start).tz(timeZone).toISOString();
+      // const end = moment(event.end).tz(timeZone).toISOString();
+
+      // Assuming 'Asia/Kuala_Lumpur' is the time zone for Malaysia
+      const timeZone = 'Asia/Kuala_Lumpur';
+
+      // Function to format date in the desired time zone
+      const formatInTimeZone = (date) => {
+          const options = { timeZone: timeZone, year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false };
+          const formattedDate = new Intl.DateTimeFormat('en-US', options).format(date);
+
+          // Convert formattedDate to MySQL-compatible datetime format
+          const mysqlDateTime = formattedDate.replace(/(\d{2})\/(\d{2})\/(\d{4}), (\d{2}):(\d{2}):(\d{2})/, '$3-$1-$2 $4:$5:$6');
+          return mysqlDateTime.replace('24:00:00', '00:00:00');
+      };
+
+      // Convert the event start and end times to the desired time zone
+      const start = formatInTimeZone(new Date(event.start));
+      const end = formatInTimeZone(new Date(event.end));
+
+      const updatedEvent = {
           id: event.id, // Assuming your event object has an 'id' property
-          start: event.start.toISOString().slice(0, 19).replace("T", " "), // Format as 'Y-m-d H:i:s'
-          end: event.end.toISOString().slice(0, 19).replace("T", " "), // Format as 'Y-m-d H:i:s'
+          start: start,
+          end: end,
           title: event.title,
           location: event.extendedProps.location,
           description: event.extendedProps.description,
-
-          // description: event.description,
           // Include any other properties you want to update
       };
-      console.log('before update: ', updatedEvent);
 
-      // Make an AJAX request to update the event in the databases
+      console.log('before update success:', updatedEvent);
+
+      // Make an AJAX request to update the event in the database
       $.ajax({
           url: '/admin/calendar/updateEvent/' + updatedEvent.id,
           type: 'POST', // Adjust the HTTP method as needed
@@ -754,21 +856,47 @@
           success: function (response) {
               console.log('Event updated successfully');
               calendar.refetchEvents();
-
           },
           error: function (xhr, status, error) {
-              console.log('Errordddd updating event:', error);
+              console.log('Error updating event:', error);
               // Handle errors as needed
               console.log(xhr.responseText);  // Log the full response for more details
-
           }
       });
-    }
+  }
 
+
+    // Update the database after dragged
+    function updateEventDatabase(event) {
+        // Make an AJAX request to update the event in the database
+        $.ajax({
+            url: '/admin/calendar/updatedrag-event',
+            type: 'POST',
+            data: {
+                id: event.id,
+                start: event.start.toLocaleString(),
+                end: event.end.toLocaleString(),
+            },
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            },
+            success: function(response) {
+                // Handle success
+                console.log('Event updated successfully');
+            },
+            error: function(error) {
+                // Handle error
+                console.error('Error updating event', error);
+                // You might want to handle the error or revert the event if needed
+            }
+        });
+    }
     // function to display evnent details in modal
     function displayEventDetails(event) {
       detailsModalFooter.empty();
       calendar.refetchEvents();
+      // $('#overlay').fadeIn();
+      $('#eventDetailsModal').fadeIn();
 
       console.log("displayEventDetails",event);
       // Replace these lines with your own code to display the event details.
@@ -793,6 +921,7 @@
         detailsModalFooter.append(deleteButton);
 
         deleteButton.on('click', function () {
+          $('#eventDetailsModal').modal('hide');
 
           $('#confirmDeleteCountdownEventModal').modal('show');
           // $('#eventDetailsModal').modal('hide'); // Hide the event details modal
@@ -804,6 +933,7 @@
 
           // Bind click event handler for the confirm delete button
           $('#confirmDeleteButton').on('click', function () {
+
               // Stop the countdown
               clearInterval(countdownInterval);
 
@@ -947,7 +1077,7 @@
               events.forEach(function (event) {
                   var eventItem = $('<li class="event-item" style="font-size: 12px;"></li>');
                   eventItem.append('<div class="event-title">' + event.title + '</div>');
-                  eventItem.append('<div class="event-detail"><strong>Student:</strong> ' + event.description + '</div>');
+                  eventItem.append('<div class="event-detail"><strong>Description:</strong> ' + event.description + '</div>');
                   // Check the event type
                   if (event.type === 'presentation') {
                     eventItem.css('background-color', '#FFFFCC');
@@ -991,6 +1121,7 @@
         $('#eventDetailsModal').modal('hide');
     });
 
+    // AFTER EDIT
     $('#saveEventChanges').on('click', function () {
         // var formData = $('#editEventForm').serialize();
         const editedEvent = {
@@ -1104,6 +1235,7 @@
   }
 
 
+  // add new event
   $('#add-event-button').click(function () {
         var title = $('#title').val();
         var description = $('#description').val();

@@ -110,11 +110,11 @@ v-for="submissionPost in reminderData" :key="submissionPost.id"
             :href="getSubmissionRouteUrl()"
             style="
               display: inline-block;
-              padding: 10px 20px;
+              padding: 5px 10px;
               border-radius: 20px;
               background-color: #FACD3F;
               color: #060606;
-              width: 150px;
+              width: 140px;
               text-decoration: none;
               margin-bottom: 10px;
               margin-top: 10px;

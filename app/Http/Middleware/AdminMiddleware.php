@@ -23,7 +23,7 @@ class AdminMiddleware
                 return $next($request);
             } else {
                 // Redirect or handle unauthorized access for non-admin users
-                dd(session('status'));
+                // dd(session('status'));
                 return redirect('/')->with('status', 'Not Admin. Please log in to access this page.');
             }
         }

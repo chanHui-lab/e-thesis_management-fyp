@@ -59,6 +59,7 @@ use Illuminate\Support\Facades\Auth;
     <div class = "container-scroller">
         @if (Auth::user()->role_as == 0)
             @include('admin.admindashinside.navbar')
+
         @elseif (Auth::user()->role_as == 2)
             @include('student.studentinside.stunavbar')
         @endif
@@ -77,6 +78,8 @@ use Illuminate\Support\Facades\Auth;
             {{-- <div class="container-fluid page-body-wrapper"> --}}
                 @if (Auth::user()->role_as == 0)
                     @include('admin.admindashinside.sidebar')
+                @elseif (Auth::user()->role_as == 1)
+                    @include('lecturer.lectdashinside.sidebar')
                 @elseif (Auth::user()->role_as == 2)
                     @include('student.studentinside.stusidebar')
                 @endif

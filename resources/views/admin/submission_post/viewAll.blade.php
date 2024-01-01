@@ -8,6 +8,22 @@
 
             <div class=" titleforform">
                 <h2 style = "padding-top: 10px;"  >{{ $submissionPost->title }}</h2>
+                <h5 style="padding-top: 10px;">
+                    Submission Deadline:
+                    {{ \Carbon\Carbon::parse($submissionPost->submission_deadline)->format('d F Y, h:i A') }}
+                </h5>
+                @php
+                    $deadlineExceeded = $submissionPost->submission_deadline <= now();
+                @endphp
+
+                @if (!$deadlineExceeded)
+                <span class="badge badge-success" style="font-size: 100%; margin: 15px;">
+                    Deadline not Exceeded
+                </span>
+                @else
+                <span class="badge badge-danger" style="font-size: 100%; margin-bottom: 15px;">Deadline Exceeded</span>
+                @endif
+
                 <h6>(Total: {{ $formSubmissions -> count() }})</h6>
             </div>
         </div>
@@ -30,17 +46,23 @@
                 <!-- /.card-header -->
 
                 <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <button id="downloadAllButton" class="btn btn-primary">Download All Files as ZIP</button>
+                        </div>
+                    </div>
                     <table id="example1" class="table table-bordered table-striped">
                         <thead>
                     <tr>
                         <th>No.</th>
-                        <th>Student </th>
+                        {{-- <th>Student </th> --}}
                         <th>Student name</th>
                         <th>Matric Number </th>
-                        <th>Form Title </th>
+                        {{-- <th>Form Title </th> --}}
+                        <th>Files</th>
                         <th>Status</th> <!-- Add the status column -->
-                        <th>Deadline</th>
-                        <th width="300px">Action</th>
+                        {{-- <th>Deadline</th> --}}
+                        <th width="200px">Action</th>
                     </tr>
                     </thead>
                     <tbody>
@@ -57,19 +79,88 @@
                         <td>{{ $submission->form_title  }}</td> --}}
 
                         <td>{{ $counter++ }}</td>
-                        <td>{{ $submission->stu_id }}</td>
+                        {{-- <td>{{ $submission->stu_id }}</td> --}}
                         <td>{{ $submission->student_name }}</td>
                         <td>{{ $submission->matric_number }}</td>
                         @php
-                            $formSubmission = $formSubmissions->where('student_id', $submission->stu_id)->first();
+                            // $formSubmission = $formSubmissions->where('student_id', $submission->stu_id)->first();
+                            // $formfiles = $formSubmission ? json_decode($formSubmission->form_files, true) : null;
+                            // $submissionStatus = ($formfiles && count($formfiles) > 0) ? "Submitted" : "Pending";
+
+                            // // Check if files exist
+                            // $filesExist = !empty($formfiles);
+                            // $deadlineExceeded = $submissionPost->submission_deadline <= now();
+
+                            if ($formSubmissions) {
+                                $formSubmission = $formSubmissions->where('student_id', $submission->stu_id)->first();
+
+                                if ($formSubmission) {
+                                    $formfiles = json_decode($formSubmission->form_files, true);
+
+                                    $submissionStatus = ($formfiles && count($formfiles) > 0) ? "Submitted" : "Pending";
+
+                                    // Check if files exist
+                                    $filesExist = !empty($formfiles);
+
+                                    $deadlineExceeded = $submissionPost->submission_deadline <= now();
+                                } else {
+                                    // Handle the case when $slideSubmission is null
+                                    $formfiles = null; // Initialize $formfiles
+                                    $submissionStatus = "Pending";
+                                    $filesExist = false;
+                                    $deadlineExceeded = false;
+                                }
+                            } else {
+                                // Handle the case when $slideSubmissions is null
+                                $formfiles = null; // Initialize $formfiles
+                                $submissionStatus = "Pending";
+                                $filesExist = false;
+                                $deadlineExceeded = false;
+                            }
+
                         @endphp
-                        <td>{{ $formSubmission ? $formSubmission->form_title : 'N/A' }}</td>
+                        {{-- <td>{{ $formSubmission ? $formSubmission->form_title : 'N/A' }}</td> --}}
+
                         <td>
-                            @if ($formSubmission)
+                            @if (is_array($formfiles) && count($formfiles) > 0)
+                                @foreach ($formfiles as $file)
+                                    &#x2514;
+                                    <a href="{{ asset('storage/' . $file['path']) }}" target="_blank" download class="downloadfile-link">
+                                        @if (Str::endsWith($file['path'], '.pdf'))
+                                            <i class="fa fa-file-pdf file-icon" style="color: rgb(255, 86, 86)"></i>
+                                        @elseif (Str::endsWith($file['path'], '.doc') || Str::endsWith($file['path'], '.docx'))
+                                            <i class="fa fa-file-word file-icon" style="color: rgb(77, 144, 250)"></i>
+                                        @else
+                                            <i class="fa fa-file file-icon" style="color: rgb(77, 144, 250)"></i>
+                                        @endif
+                                        {{ pathinfo($file['path'])['filename'] }}
+                                    </a>
+                                    <span style="font-size: 80%; margin-left: 5px;">
+                                        {{ \Carbon\Carbon::parse($file['uploaded_at'])->format('Y-m-d h:i A') }}
+                                    </span>
+                                    <br>
+                                @endforeach
+                            @else
+                                N/A
+                            @endif
+                        </td>
+
+                        <td>
+                        {{-- <td class="submission-status {{ $submissionStatus == 'Submitted' ? 'submitted' : 'pending' }}"> --}}
+                            {{-- @if ($formSubmission)
                                 Submitted
                             @else
                                 Pending
+                            @endif --}}
+                            @if ($submissionStatus == 'Submitted')
+                                <span class="status-visible">Submitted</span>
+                            @else
+                                <span class="status-hidden">Pending</span>
                             @endif
+
+                            {{-- <span class="{{ $submissionStatus == 'Submitted' ? 'v-chip-column bg-light-green text-white' : 'v-chip-column bg-light-red text-white' }}">
+                                {{ $submissionStatus == 'Submitted' ? 'Submitted' : 'Pending' }}
+                            </span> --}}
                         </td>
                         {{-- <td>
                             @php
@@ -83,13 +174,23 @@
                             @endif
                         </td> --}}
 
-                        <td>
-                            @if ($submissionPost->submission_deadline <= now())
+                        {{-- <td>
+
+                            @if ($filesExist && !$deadlineExceeded)
+                                @foreach ($formfiles as $file)
+                                    <!-- Your file rendering logic here -->
+                                @endforeach
+                                <span style="font-size: 80%; margin-left: 5px;">
+                                    Submitted at: {{ \Carbon\Carbon::parse($formSubmission->created_at)->format('Y-m-d h:i A') }}
+                                </span>
+                            @elseif ($filesExist && $deadlineExceeded)
                                 Deadline Exceeded
+                            @elseif (!$filesExist && $deadlineExceeded)
+                                Deadline Exceeded (No Files)
                             @else
                                 Deadline Not Exceeded
                             @endif
-                        </td>
+                        </td> --}}
 
                         {{-- <td class="{{ $postform->remainingTime->invert === 1 ? "red-bg" : "green-bg" }}">
                             {{ $postform->remainingTime->invert === 1 ? 'Deadline passed' : $postform->remainingTime->format('%d days, %h hours, %i minutes') }}
@@ -109,7 +210,7 @@
                                 <i class="fas fa-folder"></i> Show
                             </a>
 
-</td>
+                        </td>
                 </tr>
                 @endforeach
             </tbody>
@@ -136,12 +237,47 @@
         background-color: grey; /* You can customize the background color */
         cursor: not-allowed; /* Change the cursor style to indicate it's not clickable */
     }
+
 </style>
 
 <script>
     document.addEventListener('DOMContentLoaded', function () {
         const deleteLinks = document.querySelectorAll('.delete-link');
 
+        $(document).ready(function () {
+            // Handle the download button click
+            $.ajaxSetup({
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                }
+            });
+            console.log(@json($formSubmissions));
+            var submissionId = {!! $submissionPost->id !!};
+            console.log(submissionId);
+
+            $('#downloadAllButton').on('click', function () {
+
+                // var formfiles = {!! json_encode($formfiles) !!};
+                // Use AJAX to send the file information to the server
+                $.ajax({
+                    url: '/admin/formsubmissionpage/viewAll/download-all-files',
+                    method: 'POST',
+                    data: {
+                        submissionId: submissionId,
+                        files: {!! json_encode($formSubmissions) !!}
+                    },
+                    success: function (response) {
+                        // Redirect to the generated ZIP file
+                        // window.location.href = response.zipUrl;
+                        console.error('can');
+
+                    },
+                    error: function (error) {
+                        console.error('Error:', error);
+                    }
+                });
+            });
+        });
         deleteLinks.forEach(link => {
             link.addEventListener('click', function (e) {
                 e.preventDefault();
@@ -186,13 +322,14 @@
       "responsive": true, "lengthChange": false, "autoWidth": false,
       "buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"],
       columnDefs: [
-            { width: '10px', targets: [0] }, // Adjust the width of the first column (index 0)
-            { width: '10px', targets: [1] }, // Adjust the width of the first column (index 0)
-            { width: '50px', targets: [2] },
-            { width: '50px', targets: [3] },
-            { width: '50px', targets: [4] }
+        { width: '5%', targets: [0] }, // 10% width for the first column (index 0)
+        { width: '10%', targets: [1] }, // 10% width for the second column (index 1)
+        { width: '5%', targets: [2] }, // 30% width for the third column (index 2)
+        { width: '30%', targets: [3] },
+        { width: '10%', targets: [4] },
+        { width: '5%', targets: [5] },
 
-        ]
+    ]
     }).buttons().container().appendTo('#example1_wrapper .col-md-6:eq(0)');
 
     $('#example2').DataTable({

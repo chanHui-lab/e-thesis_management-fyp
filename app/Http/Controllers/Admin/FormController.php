@@ -2,11 +2,17 @@
 
 namespace App\Http\Controllers\Admin;
 
+use ZipArchive;
+// use Storage;
+
 use App\Http\Controllers\Controller;
 use App\Models\Template;
 use App\Models\SubmissionPost;
 use App\Models\Student;
 use App\Models\Form_submission;
+use App\Models\Comment;
+use App\Models\Thesis_submission;
+use Illuminate\Support\Facades\Log;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -27,13 +33,15 @@ class FormController extends Controller
      */
     public function index()
     {
+        $loggedInUser = Auth::user();
 
-        // define nem of varibale then use back
-        // $template = Template::latest()->paginate(3);
-        $template = Template::getAdminFormTemplate();
+        if ($loggedInUser->role_as == 0) {
+            $template = Template::getAdminFormTemplate();
+        } else {
+            $template = Template::getLecturerFormTemplates();
+        }
 
-        return view('admin.template_page.admintemplateupload',compact('template'));
-
+        return view('admin.template_page.admintemplateupload', compact('template'));
     }
 
     public function test2()
@@ -53,7 +61,7 @@ class FormController extends Controller
     public function create()
     {
         // return view('admin.adminpage.createform');
-        return view('admin.template_page.newcreatetets');
+        return view('admin.template_page.createFormTemplate');
 
     }
 
@@ -64,11 +72,8 @@ class FormController extends Controller
         $request->validate([
             'file_name' => 'required',
             'description' => 'required',
-            // 'submission_deadline' => 'required|date',
-            'file_data.*' => 'mimes:pdf,doc,docx', //add the columns
-            // 'file_data' => 'required|mimes:pdf,doc,docx|max:2048', // Add validation rules for the file
+            'file_data.*' => 'required|mimes:pdf,doc,docx', //add the columns
             'status' => 'required| in:0,1',
-
         ]);
 
         // 3rd
@@ -100,9 +105,7 @@ class FormController extends Controller
         if ($request->hasFile('file_data')) {
             foreach ($request->file('file_data') as $file) {
                 $filename = $file->getClientOriginalName();
-                // Store the file in the public/upload/templates directory
-                // $file->storeAs('public/upload/templates', $filename);
-                // $filePaths[] = 'upload/templates/' . $filename; // Store the file path
+
                 $extension = $file->getClientOriginalExtension();
                 $mime_type = $this->getMimeType($extension);
 
@@ -114,8 +117,6 @@ class FormController extends Controller
                 // Format the timestamp (optional, adjust as needed)
                 $formattedTimestamp = $currentTime->format('Ymd_His');
 
-                // Append the user's ID to the file path
-                // $userFilePath = 'upload/templates/user_' . $userId;
 
                 // Append the user's ID and timestamp to the file path
                 $userFilePath = "upload/templates/user_{$userId}/{$formattedTimestamp}";
@@ -129,6 +130,7 @@ class FormController extends Controller
                 ];
             }
         }
+        $section = $request->input('section');
 
         Template::create([
             'file_name' => $request->input('file_name'),
@@ -137,13 +139,42 @@ class FormController extends Controller
             'mime_type' => 'pdf', // set the MIME type
             'lecturer_id' => Auth::id(),
             'status' => $request->input('status'),
-            'section' => "form"
+            'section' => $section
         ]);
 
-        //redirect user and send friendly message
-        return redirect()->route('template.index')->with('success','Form Template created successfully');
-        //appear in the if parttt success messages //'success' is the variable name
+        // Determine the route and success message based on the "section" input
+        switch ($section) {
+            case 'thesis':
+                $redirectRoute = 'thesistemplate.index';
+                $successMessage = 'Thesis Template created successfully';
+                break;
+            case 'form':
+                $redirectRoute = 'formtemplate.index';
+                $successMessage = 'Form Template created successfully';
+                break;
+            case 'proposal':
+                $redirectRoute = 'proptemplate.index';
+                $successMessage = 'Proposal Template created successfully';
+                break;
+            case 'slide':
+                $redirectRoute = 'slidestemplate.index';
+                $successMessage = 'Slide Template created successfully';
+                break;
+            default:
+                $redirectRoute = 'thesistemplate.index'; // Replace with your default route
+                $successMessage = 'Template created successfully';
+                break;
         }
+
+        // Return a response or redirect to the appropriate route with a dynamic success message
+        return redirect()->route($redirectRoute)->with('success', $successMessage);
+        }
+
+        //redirect user and send friendly message
+        // return redirect()->route('template.index')->with('success','Form Template created successfully');
+        //appear in the if parttt success messages //'success' is the variable name
+        // }
+
         private function getMimeType($extension)
         {
             // Map file extensions to MIME types as needed
@@ -190,7 +221,6 @@ class FormController extends Controller
         else{
             abort(404);
         }
-        // return view('admin.adminpage.admineditformtemplate', compact('template'));
     }
 
     /**
@@ -222,78 +252,117 @@ class FormController extends Controller
     // }
     public function update(Request $request, $id)
     {
-        // Validate the incoming data
-        $request->validate([
-            'file_name' => 'required',
-            'description' => 'required',
-            'file_data' => 'mimes:pdf,doc,docx|max:2048', // Add validation rules for the file
-            'status' => 'required|in:0,1',
-        ]);
+        try{
+            // Validate the incoming data
+            $request->validate([
+                'file_name' => 'required',
+                'description' => 'required',
+                'status' => 'required|in:0,1',
+                'file_data.*' => [
+                    'file',
+                    'mimes:pdf,doc,docx',
+                    'max:2048',
+                ],
+            ], [
+                'file_data.*.file' => 'Invalid file format.',
+                'file_data.*.mimes' => 'Allowed file types are pdf, doc, and docx.',
+                'file_data.*.unique' => 'A file with the same name already exists.',
+            ]);
 
-    // Retrieve the Template model by ID
-    $template = Template::findOrFail($id);
 
-    // Update the model with the validated data
-    $template->file_name = trim($request->file_name);
-    $template->description = trim($request->description);
+        // Retrieve the Template model by ID
+        $template = Template::findOrFail($id);
 
-    // if ($request->hasFile('file_data')) {
-    //     // Handle file upload here, and then update the file_data attribute with the new file path
-    //     // For example, you can use the store() method to store the uploaded file and update the file_data attribute
-    //     $file = $request->file('file_data');
-    //     $fileName = time() . '_' . $file->getClientOriginalName();
+        // Update the model with the validated data
+        $template->file_name = trim($request->file_name);
+        $template->description = trim($request->description);
+        $section = $template->section;
 
-    //     // Store the file using the 'public' disk
-    //     $filePath = 'upload/templates/' . $fileName;
-    //     Storage::disk('public')->put($filePath, file_get_contents($file));
+        // $newFiles = $request->file('file_data');
+        // dd($newFiles);
 
-    //     $template->file_data = $filePath;
-    // }
-    $filePaths = [];
-    // Handle file uploads and store them
-     if ($request->hasFile('file_data')) {
-        foreach ($request->file('file_data') as $file) {
-            $filename = $file->getClientOriginalName();
-            // Store the file in the public/upload/templates directory
-            // $file->storeAs('public/upload/templates', $filename);
-            // $filePaths[] = 'upload/templates/' . $filename; // Store the file path
-            $extension = $file->getClientOriginalExtension();
-            $mime_type = $this->getMimeType($extension);
+        $filePaths = [];
+        // Handle file uploads and store them
+        if ($request->hasFile('file_data')) {
+            $newFiles = $request->file('file_data');
+            $existingFiles = json_decode($template->file_data, true) ?? [];
+            // dd($newFiles);
+            foreach ($request->file('file_data') as $file) {
+                $filename = $file->getClientOriginalName();
+                $extension = $file->getClientOriginalExtension();
+                $mime_type = $this->getMimeType($extension);
 
-            // Get the current logged-in user's ID
-            $userId = auth()->user()->id;
-            // Get the current time
-            $currentTime = now();
+                // Get the current logged-in user's ID
+                $userId = auth()->user()->id;
+                // Get the current time
+                $currentTime = now();
 
-            // Format the timestamp (optional, adjust as needed)
-            $formattedTimestamp = $currentTime->format('Ymd_His');
+                // Format the timestamp (optional, adjust as needed)
+                $formattedTimestamp = $currentTime->format('Ymd_His');
 
-            // Append the user's ID to the file path
-            // $userFilePath = 'upload/templates/user_' . $userId;
+                // Append the user's ID to the file path
+                // $userFilePath = 'upload/templates/user_' . $userId;
 
-            // Append the user's ID and timestamp to the file path
-            $userFilePath = "upload/templates/user_{$userId}/{$formattedTimestamp}";
+                // Append the user's ID and timestamp to the file path
+                $userFilePath = "upload/templates/user_{$userId}/{$formattedTimestamp}";
 
-            // Store the file in the public/upload/templates/user_{user_id} directory
-            $file->storeAs("public/$userFilePath", $filename);
+                // Store the file in the public/upload/templates/user_{user_id} directory
+                $file->storeAs("public/$userFilePath", $filename);
 
-            $filePaths[] = [
-                'path' => "$userFilePath/$filename",
-                'uploaded_at' => $currentTime,
-            ];
+                $filePaths[] = [
+                    'path' => "$userFilePath/$filename",
+                    'uploaded_at' => $currentTime,
+                ];
+            }
+            $existingFiles = json_decode($template->file_data, true) ?? [];
+            $existingFiles = array_merge($existingFiles, $filePaths);
+
+            $template->file_data = json_encode($existingFiles);
         }
+
+        // Update the status attribute with the validated status
+        $template->status = $request->status;
+        // $template->file_data = json_encode($filePaths); //its actually actual path
+        // dd($template);
+
+        // Save the updated model to the database
+        $template->save();
+
+        // Determine the route and success message based on the "section" input
+        switch ($section) {
+            case 'thesis':
+                $redirectRoute = 'thesistemplate.index';
+                $successMessage = 'Thesis Template updated successfully';
+                break;
+            case 'form':
+                $redirectRoute = 'formtemplate.index';
+                $successMessage = 'Form Template updated successfully';
+                break;
+            case 'proposal':
+                $redirectRoute = 'proptemplate.index';
+                $successMessage = 'Proposal Template updated successfully';
+                break;
+            case 'slide':
+                $redirectRoute = 'slidestemplate.index';
+                $successMessage = 'Slide Template updated successfully';
+                break;
+            default:
+                $redirectRoute = 'thesistemplate.index'; // Replace with your default route
+                $successMessage = 'Template updated successfully';
+                break;
+        }
+
+        // Return a response or redirect to the appropriate route with a dynamic success message
+        return redirect()->route($redirectRoute)->with('success', $successMessage);
+
+        // return redirect()->route('template.index')->with('success','Template updated successfully');
     }
-
-    // Update the status attribute with the validated status
-    $template->status = $request->status;
-    $template->file_data = json_encode($filePaths); //its actually actual path
-    // dd($template);
-
-    // Save the updated model to the database
-    $template->save();
-
-    return redirect()->route('template.index')->with('success','Template updated successfully');
+    catch (\Exception $e) {
+        // Handle exceptions, such as ModelNotFoundException or file storage errors
+        return redirect()->route('formtemplate.index')->with('error', 'An error occurred while updating the FORM template');
     }
+}
+
 
 
     /**
@@ -305,13 +374,39 @@ class FormController extends Controller
         $template = Template::find($id);
 
         if (!$template) {
-            return redirect()->route('template.index')->with('error', 'Template not found');
+            return redirect()->route('formtemplate.index')->with('error', 'Template not found');
         }
-
+        $section = $template->section;
         $template->delete();
 
-        return redirect()->route('template.index')->with('success', 'Template deleted successfully');
-    }
+        switch ($section) {
+            case 'thesis':
+                $redirectRoute = 'thesistemplate.index';
+                $successMessage = 'Thesis Template deleted successfully';
+                break;
+            case 'form':
+                $redirectRoute = 'formtemplate.index';
+                $successMessage = 'Form Template deleted successfully';
+                break;
+            case 'proposal':
+                $redirectRoute = 'proptemplate.index';
+                $successMessage = 'Proposal Template deleted successfully';
+                break;
+            case 'slide':
+                $redirectRoute = 'slidetemplate.index';
+                $successMessage = 'Slide Template deleted successfully';
+                break;
+            default:
+                $redirectRoute = 'thesistemplate.index'; // Replace with your default route
+                $successMessage = 'Template deleted successfully';
+                break;
+        }
+
+        // Return a response or redirect to the appropriate route with a dynamic success message
+        return redirect()->route($redirectRoute)->with('success', $successMessage);
+        }
+        // return redirect()->route('template.index')->with('success', 'Template deleted successfully');
+
 
     public function downloadFile ($id){
 
@@ -321,16 +416,35 @@ class FormController extends Controller
         return response()->download($path, $file->file_name);
     }
 
-    public function testthesis()
+    public function removeTemplateFile(Request $request, $id)
     {
+        // Validate the request
+        $request->validate([
+            'path' => 'required|string', // Assuming 'path' is the key sent in the AJAX request
+        ]);
+        // Find the form submission record
+        $template = Template::findOrFail($id);
 
-    // define nem of varibale then use back
-    // $template = Template::latest()->paginate(3);
+        // Decode the form_files JSON
+        $formFiles = json_decode($template->file_data, true);
 
-    // return view('admin.adminpage.admintemplateupload',compact('template'))-> with(request()->input('page'));
-    // return view('admin.thesispage.thesistemplateupload');
-    return view('admin.calendar_page.edit_calendar');
+        // Find the index of the file to be removed
+        $indexToRemove = array_search($request->input('path'), array_column($formFiles, 'path'));
 
+        if ($indexToRemove !== false) {
+            // Remove the file from the array
+            array_splice($formFiles, $indexToRemove, 1);
+
+            // Encode the updated form_files array back to JSON
+            $template->file_data = json_encode($formFiles);
+
+            // Save the updated form submission record
+            $template->save();
+
+            return response()->json(['message' => 'File removed successfully']);
+        } else {
+            return response()->json(['error' => 'File not found'], 404);
+        }
     }
 
     //****************************************************************************************************************************** */
@@ -376,25 +490,8 @@ class FormController extends Controller
             'visibility_status' => 'required|in:0,1',
         ]);
 
-        // $filePaths = [];
-        // foreach ($request->file('files') as $file) {
-        //     $path = $file->store('pdfs');
-        //     $filePaths[] = $path;
-        // }
-
-        // Initialize an empty array to store file paths
         $filePaths = [];
 
-        // before on without the uplaoded_at
-        // Handle file uploads and store them
-        // if ($request->hasFile('files')) {
-        //     foreach ($request->file('files') as $file) {
-        //         $filename = $file->getClientOriginalName();
-        //         // Store the file in the public/upload/templates directory
-        //         $file->storeAs('public/upload/submissionpost', $filename);
-        //         $filePaths[] = 'upload/submissionpost/' . $filename; // Store the file path
-        //     }
-        // }
         if ($request->hasFile('files')) {
             foreach ($request->file('files') as $file) {
                 $filename = $file->getClientOriginalName();
@@ -427,6 +524,7 @@ class FormController extends Controller
                 ];
             }
         }
+        $section = $request->input('section');
 
         SubmissionPost::create([
             'title' => $request->input('title'),
@@ -435,15 +533,40 @@ class FormController extends Controller
             'files' => json_encode($filePaths),
             'visibility_status' => $request->input('visibility_status'),
             'lecturer_id' => Auth::id(),
-            'section' => "form",
+            'section' => $section,
         ]);
 
         // $post = SubmissionPost::create($data);
 
         //redirect user and send friendly message
-        return redirect()->route('formpost.index')->with('success','Submission post created successfully');
-        //appear in the if parttt success messages //'success' is the variable name
+        switch ($section) {
+            case 'thesis':
+                $redirectRoute = 'thesispost.index';
+                $successMessage = 'Thesis Submission Post created successfully';
+                break;
+            case 'form':
+                $redirectRoute = 'formpost.index';
+                $successMessage = 'Form Submission Post created successfully';
+                break;
+            case 'proposal':
+                $redirectRoute = 'proposalpost.index';
+                $successMessage = 'Proposal Submission Post created successfully';
+                break;
+            case 'slide':
+                $redirectRoute = 'slidespost.index';
+                $successMessage = 'Slide Submission Post created successfully';
+                break;
+            default:
+                $redirectRoute = 'thesispost.index'; // Replace with your default route
+                $successMessage = 'Submission Post created successfully';
+                break;
         }
+
+        // Return a response or redirect to the appropriate route with a dynamic success message
+        return redirect()->route($redirectRoute)->with('success', $successMessage);
+
+        //appear in the if parttt success messages //'success' is the variable name
+    }
 
     public function download(SubmissionPost $post, $filename)
     {
@@ -464,12 +587,37 @@ class FormController extends Controller
         $postform = SubmissionPost::find($id);
 
         if (!$postform) {
-            return redirect()->route('formpost.index')->with('error', 'Product not found');
+            return redirect()->route('formpost.index')->with('error', 'Submission post not found');
         }
+        $section = $postform->section;
 
         $postform->delete();
 
-        return redirect()->route('formpost.index')->with('success', 'Product deleted successfully');
+        switch ($section) {
+            case 'thesis':
+                $redirectRoute = 'thesispost.index';
+                $successMessage = 'Thesis Submission Post deleted successfully';
+                break;
+            case 'form':
+                $redirectRoute = 'formpost.index';
+                $successMessage = 'Form Submission Post deleted successfully';
+                break;
+            case 'proposal':
+                $redirectRoute = 'proposalpost.index';
+                $successMessage = 'Proposal Submission Post deleted successfully';
+                break;
+            case 'slide':
+                $redirectRoute = 'slidespost.index';
+                $successMessage = 'Slide Submission Post deleted successfully';
+                break;
+            default:
+                $redirectRoute = 'thesispost.index'; // Replace with your default route
+                $successMessage = 'Submission Post deleted successfully';
+                break;
+        }
+
+        // Return a response or redirect to the appropriate route with a dynamic success message
+        return redirect()->route($redirectRoute)->with('success', $successMessage);
     }
 
      /**
@@ -662,11 +810,39 @@ class FormController extends Controller
         // Save the updated record
         $post->save();
 
+        $section = $post->section;
+
         // Redirect or return a response
-        return redirect()->route('formpost.index')->with('success','FORM submission post updated successfully');
-    } catch (\Exception $e) {
-                // Handle exceptions, such as ModelNotFoundException or file storage errors
-                return redirect()->route('formpost.index')->with('error', 'An error occurred while updating the FORM submission post');
+        // Determine the route and success message based on the "section" input
+        switch ($section) {
+            case 'thesis':
+                $redirectRoute = 'thesispost.index';
+                $successMessage = 'Thesis Submission Post  updated successfully';
+                break;
+            case 'form':
+                $redirectRoute = 'formpost.index';
+                $successMessage = 'Form Submission Post updated successfully';
+                break;
+            case 'proposal':
+                $redirectRoute = 'proposalpost.index';
+                $successMessage = 'Proposal Submission Post updated successfully';
+                break;
+            case 'slide':
+                $redirectRoute = 'slidespost.index';
+                $successMessage = 'Slide Submission Post updated successfully';
+                break;
+            default:
+                $redirectRoute = 'thesispost.index'; // Replace with your default route
+                $successMessage = 'Submission Post updated successfully';
+                break;
+        }
+
+        // Return a response or redirect to the appropriate route with a dynamic success message
+        return redirect()->route($redirectRoute)->with('success', $successMessage);
+        }
+        catch (\Exception $e) {
+            // Handle exceptions, such as ModelNotFoundException or file storage errors
+            return redirect()->route('formpost.index')->with('error', 'An error occurred while updating the FORM submission post');
         }
     }
     protected function validateFiles(array $files)
@@ -858,11 +1034,28 @@ class FormController extends Controller
         $lecturer = auth()->user(); // Get the currently logged-in lecturer
         // $submissionPost = SubmissionPost::find($submissionPostId);
         $submissionPost = SubmissionPost::with('lecturer')->find($submissionPostId);
-
-        // if ($submissionPost->lecturer->id === $lecturer->id) {
+        // dd($submissionPost);
 
         // added accesible for admin role
-        if (($submissionPost && $submissionPost->lecturer && $submissionPost->lecturer->id === $lecturer->id)) {
+        if (auth()->user()->role_as == 0) {
+
+            // dd($submissionPost);
+
+            $formSubmissions = Form_submission::where('submission_post_id', $submissionPost->id)
+            ->get();
+            // dd($formSubmissions);
+
+            $students = DB::table('students')
+            ->select('students.stu_id', 'users.name AS student_name', 'students.matric_number', 'form_submissions.*')
+            ->leftJoin('users', 'students.stu_id', '=', 'users.id')
+            ->leftJoin('form_submissions', 'students.stu_id', '=', 'form_submissions.student_id')
+            ->get();
+            // dd( $students);
+            return view('admin.submission_post.viewAll', compact('formSubmissions','students','submissionPost'));
+
+        }
+        elseif(auth()->user()->role_as == 1){
+            if (($submissionPost && $submissionPost->lecturer && $submissionPost->lecturer->id === $lecturer->id)) {
 
             // Fetch form submissions for the given submission post
             // $formSubmissions = Form_submission::where('submission_post_id', $submissionPost->id)
@@ -873,19 +1066,114 @@ class FormController extends Controller
             $formSubmissions = $lecturer->formSubmissions()
             ->where('submission_post_id', $submissionPost->id)
             ->get();
+            // dd($formSubmissions);
 
+            // THIS IS FOR ADMIN INTERFACES!!
             // Fetch students supervised by the lecturer along with their submission statuses
+            // $students = DB::table('students')
+            // ->select('students.stu_id', 'users.name AS student_name', 'students.matric_number')
+            // ->leftJoin('users', 'students.stu_id', '=', 'users.id')
+            // ->leftJoin('form_submissions', function ($join) use ($lecturer, $submissionPost) {
+            //         $join->on('students.stu_id', '=', 'form_submissions.student_id')
+            //             ->where('form_submissions.supervisor_id', $lecturer->id)
+            //             ->where('form_submissions.submission_post_id', $submissionPost->id);
+            //     })
+            //     ->get();
+
+            // ADMIN
+            // $students = DB::table('students')
+            // ->select('students.stu_id', 'users.name AS student_name', 'students.matric_number', 'form_submissions.*')
+            // ->leftJoin('users', 'students.stu_id', '=', 'users.id')
+            // ->leftJoin('form_submissions', 'students.stu_id', '=', 'form_submissions.student_id')
+            // ->get();
+            // dd($students);
+
+            // THIS IS FOR LECTURER INTERFACE!! ONLY SUPERVISED STUDENTS
             $students = DB::table('students')
             ->select('students.stu_id', 'users.name AS student_name', 'students.matric_number')
             ->leftJoin('users', 'students.stu_id', '=', 'users.id')
             ->leftJoin('form_submissions', function ($join) use ($lecturer, $submissionPost) {
-                    $join->on('students.stu_id', '=', 'form_submissions.student_id')
-                        ->where('form_submissions.supervisor_id', $lecturer->id)
-                        ->where('form_submissions.submission_post_id', $submissionPost->id);
-                })
-                ->get();
+                $join->on('students.stu_id', '=', 'form_submissions.student_id')
+                    ->where('form_submissions.submission_post_id', $submissionPost->id);
+            })
+            ->where(function ($query) use ($lecturer) {
+                $query->where('students.supervisor_id', $lecturer->id)
+                    ->orWhereNull('form_submissions.student_id');
+            })
+            ->get();
+
+            return view('admin.submission_post.viewAll', compact('formSubmissions','students','submissionPost'));
+
         // dd($formSubmissions);
-        return view('admin.submission_post.viewAll', compact('formSubmissions','students','submissionPost'));
+        }
+        // if (auth()->user()->role_as == 1){
+        //     if (($submissionPost && $submissionPost->lecturer && $submissionPost->lecturer->id === $lecturer->id)) {
+
+        //     // Fetch form submissions for the given submission post
+        //     // $formSubmissions = Form_submission::where('submission_post_id', $submissionPost->id)
+        //     // ->where('supervisor_id', $lecturer->id)
+        //     // ->get();
+
+        //     // NEED TO ADD ONE PART, if lecture role is admin, access all student instead of joinging.
+        //     $formSubmissions = $lecturer->formSubmissions()
+        //     ->where('submission_post_id', $submissionPost->id)
+        //     ->get();
+        //     // dd($formSubmissions);
+
+        //     // THIS IS FOR ADMIN INTERFACES!!
+        //     // Fetch students supervised by the lecturer along with their submission statuses
+        //     // $students = DB::table('students')
+        //     // ->select('students.stu_id', 'users.name AS student_name', 'students.matric_number')
+        //     // ->leftJoin('users', 'students.stu_id', '=', 'users.id')
+        //     // ->leftJoin('form_submissions', function ($join) use ($lecturer, $submissionPost) {
+        //     //         $join->on('students.stu_id', '=', 'form_submissions.student_id')
+        //     //             ->where('form_submissions.supervisor_id', $lecturer->id)
+        //     //             ->where('form_submissions.submission_post_id', $submissionPost->id);
+        //     //     })
+        //     //     ->get();
+
+        //     // ADMIN
+        //     // $students = DB::table('students')
+        //     // ->select('students.stu_id', 'users.name AS student_name', 'students.matric_number', 'form_submissions.*')
+        //     // ->leftJoin('users', 'students.stu_id', '=', 'users.id')
+        //     // ->leftJoin('form_submissions', 'students.stu_id', '=', 'form_submissions.student_id')
+        //     // ->get();
+        //     // dd($students);
+
+        //     // THIS IS FOR LECTURER INTERFACE!! ONLY SUPERVISED STUDENTS
+        //     $students = DB::table('students')
+        //     ->select('students.stu_id', 'users.name AS student_name', 'students.matric_number')
+        //     ->leftJoin('users', 'students.stu_id', '=', 'users.id')
+        //     ->leftJoin('form_submissions', function ($join) use ($lecturer, $submissionPost) {
+        //         $join->on('students.stu_id', '=', 'form_submissions.student_id')
+        //             ->where('form_submissions.submission_post_id', $submissionPost->id);
+        //     })
+        //     ->where(function ($query) use ($lecturer) {
+        //         $query->where('students.supervisor_id', $lecturer->id)
+        //             ->orWhereNull('form_submissions.student_id');
+        //     })
+        //     ->get();
+        // // dd($formSubmissions);
+        // }
+        // elseif(auth()->user()->role_as == 0){
+        //     dd('Inside admin block');  // Add this line
+
+        //     // $formSubmissions = $lecturer->formSubmissions()
+        //     // ->where('submission_post_id', $submissionPost->id)
+        //     // ->get();
+        //     dd($submissionPost);
+
+        //     $formSubmissions = FormSubmission::where('submission_post_id', $submissionPost->id)
+        //     ->get();
+        //     dd( $formSubmissions);
+
+        //     $students = DB::table('students')
+        //     ->select('students.stu_id', 'users.name AS student_name', 'students.matric_number', 'form_submissions.*')
+        //     ->leftJoin('users', 'students.stu_id', '=', 'users.id')
+        //     ->leftJoin('form_submissions', 'students.stu_id', '=', 'form_submissions.student_id')
+        //     ->get();
+        // }
+
         }
     }
 
@@ -906,8 +1194,17 @@ class FormController extends Controller
         $formSubmission = Form_submission::findOrFail($formSubmissionId);
         // $student = Student::findOrFail($studentId);
         $submissionPostId = $formSubmission->submissionPost->id;
+        $comments = Comment::where('commentable_id', $formSubmissionId)
+        ->where(function ($query) use ($formSubmission) {
+            // Include comments made by the student
+            $query->where('lecturer_id', Auth::id())
+                // Include comments made by the lecturer who supervises the student
+                ->orWhere('student_id', $formSubmission->student_id);
+        })
+        ->get();
+        $allcomments = $formSubmission->comments;
 
-        return view('admin.submission_post.viewOne', compact( 'formSubmission','submissionPostId'));
+        return view('admin.submission_post.viewOne', compact( 'formSubmission','submissionPostId', 'comments'));
     }
 
     // test for vue part
@@ -930,7 +1227,7 @@ class FormController extends Controller
         // return view('tesetvue', ['dashboardData' => $dashboardData]);
         // return response()->json($dashboardData);
 
-        // $data = Form_submission::select('id', 'form_title', 'description') // Include only the needed columns
+        // $data = Thesis_submission::select('id', 'thesis_title', 'thesis_abstract') // Include only the needed columns
         // ->get();
         // return view('tesetvue', compact('data'));
         // return response()->json($data);
@@ -941,35 +1238,15 @@ class FormController extends Controller
 
     public function fetchdata()
     {
-        $data = Form_submission::select('id', 'form_title', 'description','form_files','student_id') // Include only the needed columns
+        // $data = Form_submission::select('id', 'form_title', 'description','form_files','student_id') // Include only the needed columns
+        // ->get();
+        // return response()->json($data);
+
+        $data = Thesis_submission::select('id', 'thesis_title', 'thesis_abstract','thesis_file','thesis_type','student_id') // Include only the needed columns
+        ->where('thesis_status', 'approved') // Add this condition
         ->get();
         return response()->json($data);
     }
-
-    // public function downloadVue($filePath)
-    // {
-    //     // Check if the file exists
-    // if (Storage::disk('public')->exists($filePath)) {
-    //     // Get the full path to the file
-    //     // $filePath = Storage::disk('public')->path($filePath);
-    //     $filePathh = storage_path('app/' . $filePath);
-
-    //     // Extract the filename from the path
-    //     $fileName = pathinfo($filePathh, PATHINFO_BASENAME);
-
-    //     // Set the headers for the response
-    //     $headers = [
-    //         'Content-Type' => 'application/octet-stream',
-    //         'Content-Disposition' => 'attachment; filename="' . $fileName . '"',
-    //     ];
-
-    //     // Use Laravel's response()->download() method
-    //     return response()->download($filePathh, $fileName, $headers);
-    //     } else {
-    //         // Handle the case when the file does not exist
-    //         abort(404, 'File not found');
-    //     }
-    // }
 
     public function downloadVue($filePath) {
         // return Storage::disk('public')->download($filePath);
@@ -985,4 +1262,114 @@ class FormController extends Controller
 
     }
 
+    // public function downloadAllFiles(Request $request)
+    // {
+    //     // Get the selected files from the request
+    //     $selectedFiles = $request->input('files', []);
+
+    //     // Create a temporary directory to store the files
+    //     $tempDir = public_path('storage/temp_zip');
+    //     Storage::makeDirectory('temp_zip');
+
+    //     // Add each selected file to the temporary directory
+    //     foreach ($selectedFiles as $file) {
+    //         $filePath = public_path('storage/' . $file['path']);
+    //         $fileName = pathinfo($filePath)['filename'];
+
+    //         // Use Storage facade to copy files
+    //         Storage::copy('public/' . $file['path'], 'temp_zip/'.$fileName);
+    //     }
+
+    //     // Create a zip archive
+    //     $zipFileName = 'all_files.zip';
+    //     $zipFilePath = storage_path("app/{$zipFileName}");
+
+    //     $zip = new ZipArchive;
+    //     $zip->open($zipFilePath, ZipArchive::CREATE);
+
+    //     // Add files to the zip archive
+    //     $tempFiles = Storage::files('temp_zip');
+    //     foreach ($tempFiles as $tempFile) {
+    //         $zip->addFile(storage_path('app/'.$tempFile), basename($tempFile));
+    //     }
+
+    //     $zip->close();
+
+    //     // Clean up: remove temporary directory and files
+    //     Storage::deleteDirectory('temp_zip');
+
+    //     // Return the ZIP file as a download response
+    //     return response()->download($zipFilePath, $zipFileName);
+    // }
+    public function downloadAllFiles(Request $request)
+{
+    Log::info('Download all files method reached.');
+    $submissionId = $request->input('submissionId');
+
+    $form = $request->input('files', []);
+    Log::info($form);
+
+    // Check if $formSubmissions is not null
+    if ($form) {
+        $formFiles = [];
+
+        foreach ($form as $formSubmission) {
+            // Decode the JSON string to get an array of files
+            $files = json_decode($formSubmission['form_files'], true);
+
+            if ($files) {
+                // Merge files into the main array
+                $formFiles = array_merge($formFiles, $files);
+            }
+        }
+        Log::info($formFiles);
+
+        // Create a temporary directory for the zip file
+        $tempZipPath = storage_path('app/temp_zip');
+        if (!file_exists($tempZipPath)) {
+            mkdir($tempZipPath, 0755, true);
+        }
+
+        // Create a unique zip file
+        $zipFilename = 'all_files_formsubmissions' . now()->format('Ymd_His') . '.zip';
+        $zipFilePath = $tempZipPath . DIRECTORY_SEPARATOR . $zipFilename;
+
+        // Create a new ZipArchive instance
+        $zip = new ZipArchive;
+        if ($zip->open($zipFilePath, ZipArchive::CREATE) === true) {
+            foreach ($formFiles as $file) {
+                // Add each file to the zip archive
+                $filePath = storage_path('app/' . str_replace('\\', '/', $file['path']));
+                Log::info('filePath in ziparchive', ['path' => $filePath]);
+
+                if (file_exists($filePath)) {
+                    $zip->addFile($filePath, $file['path']);  // Change here to use the relative path in the ZIP file
+                } else {
+                    Log::error('File does not exist:', ['path' => $filePath]);
+                }
+            }
+
+            // Close the zip archive
+            $zip->close();
+        } else {
+            Log::error('Failed to open ZIP file:', ['path' => $zipFilePath]);
+        }
+
+        // Check if the ZIP file was created successfully
+        if (file_exists($zipFilePath)) {
+            // Provide the zip file for download
+            $headers = [
+                'Content-Type' => 'application/zip',
+            ];
+
+            Log::info('ZIP file created:', ['path' => $zipFilePath]);
+
+            return response()->download($zipFilePath, $zipFilename, $headers)->deleteFileAfterSend(true);
+        } else {
+            Log::error('ZIP file does not exist:', ['path' => $zipFilePath]);
+        }
     }
+}
+
+
+}

@@ -71,6 +71,9 @@ class Kernel extends HttpKernel
 
         // for admin auth
         'isAdmin' => \App\Http\Middleware\AdminMiddleware::class,
+        // for lectuer auth
+        'isLecturer' => \App\Http\Middleware\LecturerMiddleware::class,
+
         // for student auth
         'isStudent' => \App\Http\Middleware\StudentMiddleware::class,
     ];

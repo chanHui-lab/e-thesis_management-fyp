@@ -5,7 +5,7 @@
 <main>
 <h1 style = "padding-top: 20px; padding-bottom:20px">Edit Form Template</h1>
 <div class="pull-right">
-  <a class="btn btn-primary" href="{{ route('template.index') }}" style = "margin-bottom:20px"> Back</a>
+  <a class="btn btn-primary" href="{{ route('formtemplate.index') }}" style = "margin-bottom:20px"> Back</a>
 </div>
  {{--handle error  --}}
 @if ($errors->any())
@@ -29,9 +29,10 @@
     <!-- form start -->
 
     {{-- <form method="post" action="{{ url ('admin/adminpage/admintemplateupload')}}" enctype="multipart/form-data"> --}}
-    <form method="post" action="" enctype="multipart/form-data">
+    <form method="post" action="{{ route('template.updatew', ['id' => $getRecord->id]) }}" enctype="multipart/form-data">
 
         @csrf
+        @method('PUT')
 
         <div class="card-body">
         <div class="form-group">
@@ -43,84 +44,96 @@
             <textarea id="description" class="form-control" style="height: 150px" name="description" rows="4" cols="50" placeholder="description">{{ $getRecord->description }}</textarea><br>
           </div>
 
-                {{-- <div class="wrapper">
-                  <div class ="dotted">
-                    <i class="fas fa-cloud-upload-alt"></i>
-                    <p>Browse File</p>
-                  </div> --}}
-                  <p>Current File:</p>
+        <p>Current File:</p>
 
-                  @php
-                      $files = json_decode($getRecord->file_data, true);
-                  @endphp
-                @if (is_array($files) && count($files) > 0)
-                <table class="table table-bordered" style = "width: 900px; margin-bottom: 2rem;" >
-                    <thead>
-                        <tr>
-                            <th class="wider-column">File Name</th>
-                            {{-- <th>Uploaded Time</th> --}}
-                            <th style = "width: 100px;">Action</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach ($files as $file)
-                            <tr>
-                                <td>
+        @php
+            $files = json_decode($getRecord->file_data, true);
+        @endphp
+    @if (is_array($files) && count($files) > 0)
+    <table class="table table-bordered" style = "width: 900px; margin-bottom: 2rem;" >
+        <thead>
+            <tr>
+                <th class="wider-column">File Name</th>
+                {{-- <th>Uploaded Time</th> --}}
+                <th style = "width: 100px;">Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach ($files as $file)
+                <tr>
+                    <td>
 
-                                    @if (Str::endsWith($file['path'], '.pdf'))
-                                        <a href="{{ asset('storage/' . $file['path']) }}" target="_blank" download class="downloadfile-link">
-                                            <i class="fa fa-file-pdf file-icon" style = "color: rgb(255, 86, 86)"></i>
-                                            {{ substr($file['path'], strpos($file['path'], '_') + 1) }}
-                                        </a>
-                                    @elseif (Str::endsWith($file['path'], '.doc') || Str::endsWith($file['path'], '.docx'))
-                                        <a href="{{ asset('storage/' . $file['path']) }}" target="_blank" download class="downloadfile-link">
-                                            <i class="fa fa-file-word file-icon" style = "color: rgb(77, 144, 250)"></i>
-                                            {{ substr($file['path'], strpos($file['path'], '_') + 1) }}
-                                        </a>
-                                    @else
-                                        <a href="{{ asset('storage/' . $file['path']) }}" target="_blank" download class="downloadfile-link">
-                                            <i class="fa fa-file file-icon" style = "color: rgb(77, 144, 250)"></i>
-                                            {{-- {{ basename($file) }} --}}
-                                            {{ substr($file['path'], strpos($file['path'], '_') + 1) }}
-                                        </a>
-                                    @endif
-                                </td>
-                                {{-- <td> --}}
-                                    {{-- {{ \Carbon\Carbon::parse(\Storage::lastModified($file))->toDateTimeString() }} --}}
-                                    {{-- {{ $file['uploaded_at'] }} --}}
-                                    {{-- {{ $file['uploaded_at']->format('Y-m-d H:i:s') }} --}}
-                                {{-- </td> --}}
-                                <td>
-                                    <button type="button" class="btn btn-danger" data-toggle="modal" data-modal-id="confirmationModal{{  $file['path'] }}" data-target="#confirmationModal{{ Str::slug(basename($file['path'] )) }}">
-                                        Remove
-                                    </button>
-                                </td>
-                            </tr>
-                        @endforeach
-                    </tbody>
-                </table>
+                        @if (Str::endsWith($file['path'], '.pdf'))
+                            <a href="{{ asset('storage/' . $file['path']) }}" target="_blank" download class="downloadfile-link">
+                                <i class="fa fa-file-pdf file-icon" style = "color: rgb(255, 86, 86)"></i>
+                                {{ basename($file['path']) }}
+                            </a>
+                        @elseif (Str::endsWith($file['path'], '.doc') || Str::endsWith($file['path'], '.docx'))
+                            <a href="{{ asset('storage/' . $file['path']) }}" target="_blank" download class="downloadfile-link">
+                                <i class="fa fa-file-word file-icon" style = "color: rgb(77, 144, 250)"></i>
+                                {{ basename($file['path']) }}
+                            </a>
+                        @else
+                            <a href="{{ asset('storage/' . $file['path']) }}" target="_blank" download class="downloadfile-link">
+                                <i class="fa fa-file file-icon" style = "color: rgb(77, 144, 250)"></i>
+                                {{ basename($file['path']) }}
+                            </a>
 
-            {{-- </li> --}}
-        {{-- @endforeach --}}
-      {{-- </ul> --}}
+                        @endif
+                    </td>
+                    {{-- <td> --}}
+                        {{-- {{ \Carbon\Carbon::parse(\Storage::lastModified($file))->toDateTimeString() }} --}}
+                        {{-- {{ $file['uploaded_at'] }} --}}
+                        {{-- {{ $file['uploaded_at']->format('Y-m-d H:i:s') }} --}}
+                    {{-- </td> --}}
+                    <td>
+                        <button type="button" class="btn btn-danger removeFileBtn" data-path="{{ $file['path'] }}">Remove</button>
+                        {{-- <button type="button" class="btn btn-danger" data-toggle="modal" data-modal-id="confirmationModal{{  $file['path'] }}" data-target="#confirmationModal{{ Str::slug(basename($file['path'] )) }}">
+                            Remove
+                        </button> --}}
+                    </td>
+                </tr>
+            @endforeach
+        </tbody>
+    </table>
+    <!-- Confirm Remove File Modal -->
+    <div class="modal fade" id="confirmRemoveFileModal" tabindex="-1" role="dialog" aria-labelledby="confirmRemoveFileModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="confirmRemoveFileModalLabel">Confirm Remove File</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    Are you sure you want to remove this file ?
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-danger" id="removeFileBtn">Remove</button>
+                </div>
+            </div>
+        </div>
+    </div>
       @else
       <p>No files uploaded.</p>
       @endif
       <div class="wrapper">
 
-        <label for="files">Upload Document File:</label>
+        <label for="file_data">Upload Document File:</label>
 
         <div class="input-group hdtuto control-group increment" style="width: 90%;">
-          <input type="file" name="files[]" class="myfrm form-control">
-          <div class="input-group-btn">
-              <button class="btn btn-success" type="button" onclick="addFileInput(this)">
+            <input type="file" name="file_data[]" class="myfrm form-control">
+            <div class="input-group-btn">
+              <button class="btn btn-success add-file" type="button" onclick="addFileInput(this)">
                   <i class="fldemo glyphicon glyphicon-plus"></i>Add
               </button>
           </div>
       </div>
       <div class="clone hide">
           <div class="hdtuto control-group lst input-group" style="margin-top:15px;width: 90%;">
-              <input type="file" name="files[]" class="myfrm form-control">
+              <input type="file" name="file_data[]" class="myfrm form-control">
               <div class="input-group-btn">
                   <button class="btn btn-danger" type="button" onclick="removeFileInput(this)">
                       <i class="fldemo glyphicon glyphicon-remove"></i> Remove
@@ -157,10 +170,6 @@
       </div>
     </form>
   </div>
-
-@endsection
-
-@section('scripts')
 
 <script>
     flatpickr(".datetimepicker", {
@@ -235,7 +244,7 @@ console.log('JavaScript file loaded');
             console.log(filePath);
 
             $.ajax({
-                url: '{{ route("formpost.remove-file", $getRecord->id) }}',
+                url: '{{ route("template.remove-file", $getRecord->id) }}',
                 type: 'DELETE',
                 headers: {
                     'X-CSRF-TOKEN': '{{ csrf_token() }}'
@@ -257,17 +266,24 @@ console.log('JavaScript file loaded');
                 }
             });
         });
-
     });
     const form = document.querySelector("form"),
       fileInput = document.querySelector(".file-input"),
       progressArea = document.querySelector(".progress-area"),
       uploadedArea = document.querySelector(".uploaded-area");
 
-form.addEventListener("click", () => {
-  fileInput.click();
-});
-
+      function addFileInput(element) {
+        var clone = $(element).closest('.increment').clone();
+        clone.find('input').val('');
+        clone.insertAfter($(element).closest('.increment'));
+        clone.find('.btn-success').html('<i class="fldemo glyphicon glyphicon-remove"></i> Remove').removeClass('btn-success').addClass('btn-danger').attr('onclick', 'removeFileInput(this)');
+        clone.css('margin-top', '10px'); // Add margin to the new row
+    }
+    function removeFileInput(button) {
+        // const parent = button.closest('.increment');
+        // parent.remove();
+        $(button).closest('.increment').remove();
+    }
 fileInput.onchange = ({ target }) => {
   let file = target.files[0];
   if (file) {
@@ -310,8 +326,3 @@ function uploadFile(file, name) {
 </script>
 
 @endsection
-
-
-
-
-

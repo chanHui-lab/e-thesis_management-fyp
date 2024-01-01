@@ -62,6 +62,10 @@ class User extends Authenticatable
     {
         return $this->hasManyThrough(Form_submission::class, Student::class, 'supervisor_id', 'student_id');    }
 
+    public function thesisSubmissions()
+    {
+        return $this->hasManyThrough(Form_submission::class, Student::class, 'supervisor_id', 'student_id');    }
+
     // public function advisor()
     // {
     //     return $this->hasOne(Advisor::class);

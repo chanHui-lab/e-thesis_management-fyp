@@ -354,6 +354,7 @@ div.dt-buttons div.btn-group {
 div.dt-btn-split-wrapper:active:not(.disabled) button, div.dt-btn-split-wrapper.active:not(.disabled) button {
   background-color: #5a6268;
   border-color: #545b62;
+  color: #eaeaea;
 }
 div.dt-btn-split-wrapper:active:not(.disabled) button.dt-btn-split-drop, div.dt-btn-split-wrapper.active:not(.disabled) button.dt-btn-split-drop {
   box-shadow: none;

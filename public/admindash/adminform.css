@@ -36,7 +36,7 @@
 
 .content-wrapper{
 	max-width: 2000px;
-	margin-left: 330px;
+	margin-left: 300px;
 	/* width: 80%; */
 	padding-right: 50px;
 
@@ -678,8 +678,25 @@
 .status-hidden {
     background-color: red; /* Red chip for hidden status */
     color: white;
-    padding: 4px 8px;
-    border-radius: 4px;
+    /* padding: 4px 8px;
+    border-radius: 4px; */
+	padding: 5px 15px;
+    border-radius: 20px;
+    font-size: 12px;
+    margin-top: 5px;
+}
+
+.status-pending {
+    background-color: rgb(254, 143, 143); /* Red chip for hidden status */
+    color: white;
+	/* color: rgb(12, 4, 4); */
+
+    /* padding: 4px 8px;
+    border-radius: 4px; */
+	padding: 5px 15px;
+    border-radius: 20px;
+    font-size: 12px;
+    margin-top: 5px;
 }
 
 /* doesnt workkk */
@@ -759,7 +776,7 @@ td.green-bg {
 }
 
 .generaltable{
-	margin-top: 40px;
+	margin-top: 20px;
 }
 .submission-tab {
 	margin-top: 20px;
@@ -792,38 +809,37 @@ td.green-bg {
     padding: 0;
 }
 
-.submission-status {
-    /* display: inline-block;
-    padding: 5px 10px;
-    border-radius: 5px;
-    color: #fff;
-    font-weight: bold;
-    text-align: center; */
-}
-
 .submitted {
     background-color: lightgreen;
 }
 
 .pending {
-    background-color: red;
+    background-color: rgb(255, 187, 187);
 }
 
 /* for the viewOne timereamining part */
 .text-red {
     color: red;
 }
+/* .fc-prev-button, .fc-next-button, .fc-today-button, .fc-dayGridMonth-button , .fc-timeGridWeek-button , .fc-timeGridDay-button{
+	background-color: #FACD3F;
+	border: transparent;
+} */
 
 .bg-light-red {
     /* background-color: rgb(53, 39, 39); */
-	background-color: rgb(199, 123, 123);
-
+	/* background-color: #FACD; */
+	background-color: rgba(255, 81, 79, 0.867);
+	color:whitesmoke;
 }
 
 .bg-light-green {
     background-color: lightgreen;
 }
 
+.eachSubRow{
+	margin-bottom: 10px;
+}
 /* .v-chip {
     display: inline-block;
     padding: 4px 8px;

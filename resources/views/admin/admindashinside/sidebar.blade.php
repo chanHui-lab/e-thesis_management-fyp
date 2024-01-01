@@ -37,14 +37,14 @@
               <li class="nav-item">
                 <a href="{{ url('admin/formpage/admintemplateupload') }}" class="nav-link {{ request()->is('admin/template_page/admintemplateupload*') ? 'active' : '' }}">
                   <i class="bx bx-circle nav-icons"></i>
-                  <p>Upload Form Template</p>
+                  <p>Form Template</p>
                 </a>
               </li>
               <li class="nav-item">
                 {{-- <a href="{{ url('admin/formsubmissionpage/allpost') }}" class="nav-link {{ request()->is('admin/template_page/admintemplateupload*') ? 'active' : '' }}"> --}}
                 <a href="{{ url('admin/formsubmissionpage/allpost') }}" class="nav-link">
                     <i class="bx bx-circle  nav-icons"></i>
-                  <p>Create Form Submission Post</p>
+                  <p>Form Submission Post</p>
                 </a>
               </li>
               {{-- <li class="nav-item">
@@ -58,7 +58,7 @@
 
           {{-- thesis section --}}
           <li class="nav-item">
-            <a href="#" class="nav-link">
+            <a href="#" class="nav-link {{ request()->is('admin/thesissubmissionpage/*') ? 'active' : '' }}" >
               {{-- <i class="nav-icon fas fa-tachometer-alt"></i> --}}
               <i class="nav-icon bx bxs-file"></i>
               <p>
@@ -70,21 +70,27 @@
 
             <ul class="nav nav-treeview" style="background-color: #fafaeb">
               <li class="nav-item">
-                <a href="{{ url('admin/thesispage/thesistemplateupload') }}" class="nav-link {{ request()->is('admin/thesispage/thesistemplateupload*') ? 'active' : '' }}" >
+                <a href="{{ url('admin/proposalsubmissionpage/admintemplatelist') }}" class="nav-link {{ request()->is('admin/proposalsubmissionpage/admintemplatelist*') ? 'active' : '' }}" >
                   <i class="bx bx-circle nav-icons"></i>
-                  <p>Upload Report Template</p>
+                  <p>Proposal Template</p>
                 </a>
               </li>
               <li class="nav-item">
-                <a href="./index2.html" class="nav-link">
+                <a href="{{ url('admin/proposalsubmissionpage/allpost') }}" class="nav-link {{ request()->is('admin/proposalsubmissionpage/allpost*') ? 'active' : '' }}" >
                   <i class="bx bx-circle  nav-icons"></i>
-                  <p>Create Report Submission Post</p>
+                  <p>Proposal Submission Post</p>
                 </a>
               </li>
               <li class="nav-item">
-                <a href="./index3.html" class="nav-link">
+                <a href="{{ url('admin/thesispage/admintemplatelist') }}" class="nav-link">
                   <i class="bx bx-circle  nav-icons"></i>
-                  <p>All Proposal Submission</p>
+                  <p>Thesis Template</p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="{{ url('admin/thesissubmissionpage/allpost') }}" class="nav-link">
+                  <i class="bx bx-circle  nav-icons"></i>
+                  <p>Thesis Submission Post</p>
                 </a>
               </li>
             </ul>
@@ -104,23 +110,19 @@
 
           <ul class="nav nav-treeview" style="background-color: #fafaeb">
             <li class="nav-item">
-              <a href="{{ url('admin/thesispage/thesistemplateupload') }}" class="nav-link {{ request()->is('admin/thesispage/thesistemplateupload*') ? 'active' : '' }}" >
+              <a href="{{ url('admin/slidessubmissionpage/admintemplatelist') }}" class="nav-link {{ request()->is('admin/slidessubmissionpage/admintemplatelist*') ? 'active' : '' }}" >
                 <i class="bx bx-circle nav-icons"></i>
-                <p>Upload Slides Template</p>
+                <p>Slides Template</p>
               </a>
             </li>
             <li class="nav-item">
-              <a href="./index2.html" class="nav-link">
+
+              <a href="{{ url('admin/slidessubmissionpage/allpost') }}" class="nav-link {{ request()->is('admin/slidessubmissionpage/allpost*') ? 'active' : '' }}" >
                 <i class="bx bx-circle  nav-icons"></i>
-                <p>Create Slides Submission Post</p>
+                <p>Slides Submission Post</p>
               </a>
             </li>
-            <li class="nav-item">
-              <a href="./index3.html" class="nav-link">
-                <i class="bx bx-circle  nav-icons"></i>
-                <p>All Slides Submission</p>
-              </a>
-            </li>
+
           </ul>
         </li>
 

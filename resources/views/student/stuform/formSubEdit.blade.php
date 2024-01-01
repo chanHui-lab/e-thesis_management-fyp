@@ -3,8 +3,9 @@
 @section('master_content')
 
 <main>
-    <h1 style = "padding-top: 20px; padding-bottom:20px">Edit Form Submission</h1>
-    {{-- @php
+    <h1 style = "padding-top: 20px; padding-bottom:20px"><i class="fas fa-pencil-alt" style="font-size:40px;margin-right:10px">
+    </i>Edit Form Submission</h1>
+        {{-- @php
                 dd($submissionPostId);
     @endphp --}}
     <a style = "margin-bottom: 20px;" class="btn btn-primary" href="{{ route('stuFormSubmission.details', ['submissionPostId' => $submissionPostId]) }}"> Back</a>
@@ -159,7 +160,7 @@
             console.log(filePath);
 
             $.ajax({
-                url: '{{ route("formpost.remove-file", $getRecord->id) }}',
+                url: '{{ route("formSubmission.remove-file", $getRecord->id) }}',
                 type: 'DELETE',
                 headers: {
                     'X-CSRF-TOKEN': '{{ csrf_token() }}'

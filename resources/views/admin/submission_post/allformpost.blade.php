@@ -5,11 +5,15 @@
     <div class="row">
         <div class="col-lg-12">
             <div class=" titleforform">
-                <h2 style = "padding-top: 20px;">Form Submission Post</h2>
+                {{-- <h1><i style="font-size: 30px;margin-right:20px" class="fas fa-clipboard"></i>Form Templates</h1> --}}
+
+                <h1 style = "padding-top: 20px;">
+                    <i style="font-size: 30px;margin-right:20px" class="fas fa-upload"></i>
+                    Form Submission Post</h1>
                 <h6>(Total: {{ $post -> total() }})</h6>
             </div>
             <div class="float-right" style = "padding-bottom: 10px;">
-                <a class="btn btn-success rounded-btn" href="{{ route('formpost.create') }}">
+                <a class="btn btn-success rounded-btn btn-common" href="{{ route('formpost.create') }}">
                     <i class="fa fa-upload" style="margin-right: 5px;"></i> Upload New Form Submission Post</a>
                 {{-- <a class="btn btn-success" href="{{url("admin/adminpage/createform") }}"> Upload New Form Template</a> --}}
                 {{-- the url will not show this, instead of the one in web.php --}}
@@ -29,23 +33,19 @@
           <div class="row">
             <div class="col-12" style="padding: 10px; float: right;">
               <div class="card">
-                {{-- <div class="card-header">
-                  <h3 class="card-title">All Form Templates</h3>
-                </div> --}}
-                <!-- /.card-header -->
 
                 <div class="card-body">
                     <table id="example1" class="table table-bordered table-striped">
-                        <thead class="custom-thead">
-                    <tr>
-                        <th>No.</th> <!-- Numbering column -->
-                        <th>Title</th>
-                        <th>Description for Students</th>
-                        <th>Submission Deadline</th>
-                        <th>Remaining Time</th>
-                        {{-- <th>No of Students Submitted</th> --}}
-                        <th width="300px">Action</th>
-                    </tr>
+                    <thead class="custom-thead">
+                        <tr>
+                            <th>No.</th> <!-- Numbering column -->
+                            <th>Title</th>
+                            <th>Description for Students</th>
+                            <th>Submission Deadline</th>
+                            <th>Remaining Time</th>
+                            {{-- <th>No of Students Submitted</th> --}}
+                            <th width="300px">Action</th>
+                        </tr>
                     </thead>
                     <tbody>
                         @php
@@ -63,9 +63,13 @@
                         </a></td> --}}
                         {{-- <td>{{ $submission->remainingTime->format('%d days, %h hours, %i minutes') }}</td> --}}
 
-                        {{-- <td>{{ $postform->remainingTime->format('%d days, %h hours, %i minutes')}}</td> --}}
-                        <td class="{{ $postform->remainingTime->invert === 1 ? "red-bg" : "green-bg" }}">
+                        {{-- actual one --}}
+                        {{-- <td class="{{ $postform->remainingTime->invert === 1 ? "red-bg" : "green-bg" }}">
                             {{ $postform->remainingTime->invert === 1 ? 'Deadline passed' : $postform->remainingTime->format('%d days, %h hours, %i minutes') }}
+                        </td> --}}
+
+                        <td  style="margin: 5px;" class="{{ $postform->remainingTime->invert === 1 ? 'badge badge-pink' : 'bg-light-green' }}">
+                            {{ $postform->remainingTime->invert === 1 ? 'Deadline passed' : $postform->remainingTime->format('%d days, %h hours, %i minutes left') }}
                         </td>
 
                         <td>
@@ -128,7 +132,9 @@
           <!-- /.card-body -->
             {{ $post->links() }}
         </div>
-            </div></div></div></section></main>
+            </div></div></div>
+        {{-- </section> --}}
+    </main>
         <!-- /.card -->
 
 <style>

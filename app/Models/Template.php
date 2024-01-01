@@ -26,7 +26,22 @@ class Template extends Model
         return $this->belongsTo(User::class, 'lecturer_id');
     }
 
-    static public function getAdminFormTemplate(){
+    public static function getLecturerFormTemplates()
+    {
+        $loggedInUser = Auth::user(); // Assuming you are using Laravel's default authentication
+
+        return self::where('section', 'form')
+            ->where(function ($query) use ($loggedInUser) {
+                $query->where('lecturer_id', $loggedInUser->id) // Templates uploaded by the lecturer
+                    ->orWhereHas('lecturer', function ($query) use ($loggedInUser) {
+                        $query->where('role_as', 0); // Admin role
+                    });
+            })
+            ->select('templates.*')
+            ->paginate(5);
+    }
+
+    static public function getLectFormTemplate(){
         return self::where('section', 'form')
         ->whereHas('lecturer', function ($query) {
             $query->where('role_as', 0) // Admin role
@@ -34,7 +49,18 @@ class Template extends Model
         })
         ->select('templates.*')
         // ->get();
-        ->paginate(2);
+        ->paginate(5);
+    }
+
+    static public function getAdminThesisTemplate(){
+        return self::where('section', 'thesis')
+        ->whereHas('lecturer', function ($query) {
+            $query->where('role_as', 0) // Admin role
+                  ->orWhere('role_as', 1); // Lecturer role
+        })
+        ->select('templates.*')
+        // ->get();
+        ->paginate(5);
     }
 
     // static public function getStuFormTemplate(){
@@ -64,18 +90,78 @@ class Template extends Model
             ->get();
     }
 
-
     static public function getSingle($id){
         return self::find($id);
     }
 
     static public function getCalendarTemplate(){
-        return self::where('section', 'form')
+        return self::where('section', 'calendarsche')
         ->whereHas('lecturer', function ($query) {
             $query->where('role_as', 0) // Admin role
                   ->orWhere('role_as', 1); // Lecturer role
         })
         ->select('templates.*')
         ->get();
+    }
+
+    static public function getProposalTemplate(){
+        return self::where('section', 'proposal')
+        ->whereHas('lecturer', function ($query) {
+            $query->where('role_as', 0) // Admin role
+                  ->orWhere('role_as', 1); // Lecturer role
+        })
+        ->select('templates.*')
+        ->paginate(5);
+    }
+
+    static public function getSlideTemplate(){
+        return self::where('section', 'slide')
+        ->whereHas('lecturer', function ($query) {
+            $query->where('role_as', 0) // Admin role
+                  ->orWhere('role_as', 1); // Lecturer role
+        })
+        ->select('templates.*')
+        ->paginate(5);
+    }
+    static public function getStuThesisTemplate(){
+        $user = Auth::user();
+
+        return DB::table('templates')
+            ->join('users', 'users.id', '=', 'templates.lecturer_id')
+            ->leftJoin('supervisors', 'supervisors.lecturer_id', '=', 'users.id')
+            ->where(function ($query) use ($user) {
+                $query->where('users.role_as', 0)
+                      ->orWhere('supervisors.lecturer_id', '=', $user->supervisor_id);
+            })
+            ->where('templates.section', 'thesis')  // Added condition for the 'section' column
+            ->paginate(5);
+    }
+
+    static public function getStuProposalTemplate(){
+        $user = Auth::user();
+
+        return DB::table('templates')
+            ->join('users', 'users.id', '=', 'templates.lecturer_id')
+            ->leftJoin('supervisors', 'supervisors.lecturer_id', '=', 'users.id')
+            ->where(function ($query) use ($user) {
+                $query->where('users.role_as', 0)
+                        ->orWhere('supervisors.lecturer_id', '=', $user->supervisor_id);
+            })
+            ->where('templates.section', 'proposal')  // Added condition for the 'section' column
+            ->paginate(5);
+    }
+
+    static public function getStuSlideTemplate(){
+        $user = Auth::user();
+
+        return DB::table('templates')
+            ->join('users', 'users.id', '=', 'templates.lecturer_id')
+            ->leftJoin('supervisors', 'supervisors.lecturer_id', '=', 'users.id')
+            ->where(function ($query) use ($user) {
+                $query->where('users.role_as', 0)
+                        ->orWhere('supervisors.lecturer_id', '=', $user->supervisor_id);
+            })
+            ->where('templates.section', 'slide')  // Added condition for the 'section' column
+            ->paginate(5);
     }
 }

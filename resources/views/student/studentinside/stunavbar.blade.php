@@ -50,7 +50,7 @@
             <i class="bx bxs-bell"></i>
             <span class="badge badge-warning navbar-badge" id="notification-count">{{ auth()->user()->unreadNotifications->count() }}</span>
         </a>
-        <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right show" style=" left: inherit; right: 0px;z-index:9999;">
+        <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right show" style="z-index:9999;">
             <span class="dropdown-item dropdown-header" id="notification-header">{{ auth()->user()->unreadNotifications->count() }} Notifications</span>
             <div class="dropdown-divider"></div>
             <ul id="notification-list">

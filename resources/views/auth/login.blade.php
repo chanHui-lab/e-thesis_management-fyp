@@ -32,11 +32,11 @@
                 <div class="card-body">
                     <form method="POST" action="{{ route('login') }}">
                         @csrf
-                        @if (session('status'))
+                        {{-- @if (session('status'))
                             <div class="alert alert-danger" role="alert">
                                 {{ session('status') }}
                             </div>
-                        @endif
+                        @endif --}}
 
                         <div class="row mb-3">
                             <label for="email" class="col-md-4 col-form-label text-md-end">{{ __('Email Address') }}</label>
@@ -72,17 +72,17 @@
                         </div>
 
                         <div class="form-group row">
-                            <label for="role" class="col-md-4 col-form-label text-md-end">{{ __('Role') }}</label>
+                            <label for="role_as" class="col-md-4 col-form-label text-md-end">{{ __('Role') }}</label>
 
                             <div class="col-md-6">
-                                <select id="role" class="form-control @error('role') is-invalid @enderror" name="role" required>
+                                <select id="role_as" class="form-control @error('role_as') is-invalid @enderror" name="role_as" required>
                                     <option value="0">Admin</option>
                                     <option value="1">Supervisor</option>
                                     <option value="2">Student</option>
                                     <!-- Add more role options as needed -->
                                 </select>
 
-                                @error('role')
+                                @error('role_as')
                                     <span style="display:flex" class="invalid-feedback" role="alert">
                                         <strong>{{ $message }}</strong>
                                     </span>

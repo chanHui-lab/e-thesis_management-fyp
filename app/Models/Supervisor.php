@@ -41,5 +41,15 @@ class Supervisor extends Model
             ->where('form_submissions.submission_post_id', $submissionPost->id);
     }
 
+    public function thesisSubmissions()
+    {
+        return $this->hasManyThrough(Thesis_Submission::class, Student::class, 'supervisor_id', 'stu_id')
+            ->where('thesis_submissions.submission_post_id', $submissionPost->id);
+    }
 
+    public function proposalSubmissions()
+    {
+        return $this->hasManyThrough(Proposal_Submission::class, Student::class, 'supervisor_id', 'stu_id')
+            ->where('proposal_submissions.submission_post_id', $submissionPost->id);
+    }
 }

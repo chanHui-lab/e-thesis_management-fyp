@@ -5,235 +5,109 @@
         {{ key }}: {{ value }}
       </li>
     </ul>
-
-    <!-- <template>
-    <div>
-      <v-card v-for="item in dashboardData" :key="item.id">
-        <v-card-title>{{ dashboardData.title }}</v-card-title>
-        <v-card-subtitle>{{ dashboardData.subtitle }}</v-card-subtitle>
-        <v-card-text>{{ dashboardData.description }}</v-card-text>
-      </v-card>
-    </div>
-</template> -->
-
-<!-- <template> -->
-
   <div class="d-flex align-center flex-column">
     <div class="text-subtitle-2"></div>
-    <h2>Theses Repository</h2>
+    <h2 style="margin-bottom: 20px;">Theses Repository</h2>
 
     <v-app style = "background-color: transparent;">
+    <div>
+      <v-card
+        class="mx-auto mb-3"
+        width="600"
+        v-for="submission in data"
+        :key="submission.id"
+      >
+          <!-- src="https://th.bing.com/th/id/OIP.EZeP9vSGOADD1MSdiDctcgHaE7?rs=1&pid=ImgDetMain" -->
 
-    <!-- <v-card
-      v-for="thesis in data" :key="thesis.id"
-      :title="thesis.form_title"
-      :subtitle="thesis.description"
-      width="800"
-    >
-    </v-card> -->
+        <!-- <v-img
+          src="/admindash/img/ML.jpg"
+          height="150px"
+          cover
+          style="position: relative; bottom:0; width: 100%; overflow: hidden;"
 
-    <div style = "padding-bottom: 10px;">
-    <v-card v-for="thesis in data" :key="thesis.id"  width="800" hover>
-      <v-card-item style = "padding-top: 0px;">
+        ></v-img> -->
+        <v-img
+          :src="getImgSource(submission.thesis_type)"
+          height="150px"
+          cover
+          style="position: relative; bottom: 0; width: 100%; overflow: hidden;"
+        ></v-img>
 
-        <v-card-title class = "pa-0">
-          <div class="d-flex justify-space-between align-center">
-          {{ thesis.form_title }}
-          <!-- v-card-actions for placing the print button at the right top -->
-          <v-card-actions>
-            <!-- Use a spacer to push the button to the right -->
-            <!-- <v-spacer></v-spacer> -->
+        <v-card-title class = "pl-4 pt-0 pb-0 pr-0">
+              <div class="d-flex justify-space-between align-center">
+              {{ submission.thesis_title }}
+              <!-- v-card-actions for placing the print button at the right top -->
+              <v-card-actions>
+                <!-- Use a spacer to push the button to the right -->
 
-            <v-btn icon @click="previewFile(thesis.form_files)">
-              <v-icon>mdi-eye</v-icon>
-            </v-btn>
-            <!-- Print button -->
-            <v-btn icon @click="downloadFile(thesis.form_files)">
-              <v-icon>mdi-file-download</v-icon>
-            </v-btn>
-          </v-card-actions>
-          </div>
+                <v-btn icon @click="previewFile(submission.form_files)">
+                  <v-icon>mdi-eye</v-icon>
+                </v-btn>
+                <!-- Print button -->
+                <v-btn icon @click="downloadFile(submission.form_files)">
+                  <v-icon>mdi-file-download</v-icon>
+                </v-btn>
+              </v-card-actions>
+              </div>
 
-        </v-card-title>
+            </v-card-title>
 
-        <v-card-subtitle>
-          {{ thesis.description }}
+            <v-chip
+              v-for="(type, index) in submission.thesis_type.split(',')"
+              :key="index"
+              :class="getChipClass(type)"
+              :color="getChipColor(type)"
+              style="margin-left:10px;margin-bottom: 5px; font-size: 12px; padding: 15px; height: 20px;"
+            >
+              {{ getFormattedType(type) }}
+            </v-chip>
+        <v-card-subtitle class="mt-2 ml-2">
+          Author: {{ submission.student_name }}
         </v-card-subtitle>
-      </v-card-item>
 
-      <v-card-text>
-        This is content
-      </v-card-text>
-    <v-card-item>
-
-      <!-- <v-select
-        v-model="thesis.status"
-        :items="['archivedd', 'unarchived']"
-        label="Status"
-        outlined
-        @change="updateStatus(thesis)"
-        width="800"
-      >
-      </v-select> -->
-    </v-card-item>
-
-    <iframe v-if="previewFileUrl" :src="previewFileUrl"></iframe>
-
-  </v-card>
-
-</div>
-
-<div>
-  <v-card
-    class="mx-auto mb-2"
-    max-width="800"
-    v-for="submission in data"
-    :key="submission.id"
-  >
-
-    <v-img
-      src="https://th.bing.com/th/id/OIP.EZeP9vSGOADD1MSdiDctcgHaE7?rs=1&pid=ImgDetMain"
-      height="150px"
-      cover
-    ></v-img>
-
-    <!-- <v-card-title>
-      {{ submission.form_title }}
-    </v-card-title> -->
-    <v-card-title class = "pa-4 pb-0 pr-0">
-          <div class="d-flex justify-space-between align-center">
-          {{ submission.form_title }}
-          <!-- v-card-actions for placing the print button at the right top -->
-          <v-card-actions>
-            <!-- Use a spacer to push the button to the right -->
-            <!-- <v-spacer></v-spacer> -->
-
-            <v-btn icon @click="previewFile(submission.form_files)">
-              <v-icon>mdi-eye</v-icon>
-            </v-btn>
-            <!-- Print button -->
-            <v-btn icon @click="downloadFile(submission.form_files)">
-              <v-icon>mdi-file-download</v-icon>
-            </v-btn>
-          </v-card-actions>
-          </div>
-
-        </v-card-title>
-    <!-- <v-chip class ="custome-chip" :color="getChipColor(submissionPost.section)"
-      style="margin-bottom: 5px; font-size: 10px; height: 20px;">
-      {{ submissionPost.section }}
-    </v-chip> -->
-    <v-chip class ="custome-chip ml-4" color="yellow"
-      style="margin-bottom: 5px; font-size: 12px; padding: 15px; height: 20px;">
-      Machine Learning
-    </v-chip>
-
-    <v-card-subtitle>
-      Author: {{ submission.student_name }}
-    </v-card-subtitle>
-
-    <v-card-actions>
-      <v-btn
-        color="orange-lighten-2"
-        variant="text"
-      >
-        Explore
-      </v-btn>
-
-      <v-spacer></v-spacer>
-
-      <v-btn
-        :icon="show ? 'mdi-chevron-up' : 'mdi-chevron-down'"
-        @click="show = !show"
-      ></v-btn>
-    </v-card-actions>
-
-    <v-expand-transition>
-      <div v-show="show">
-        <v-divider style="margin: 1px;"></v-divider>
-        <v-card-text style="padding-top: 1px;">
-          {{ submission.description }}
-        </v-card-text>
-      </div>
-    </v-expand-transition>
-  </v-card>
-<br>
-</div>
-
-<!-- </template> -->
-<!-- <script>
-  export default {
-    data: () => ({
-      show: false,
-    }),
-  }
-</script> -->
-  <div class="testcolour">
-      <v-col
-        v-for="(variant, i) in variants"
-        :key="i"
-        cols="auto"
-      >
-        <v-card
-            class="mx-auto"
-            max-width="344"
-            :color="color"
-            :variant="variant"
-            hover
+        <v-card-actions>
+          <v-btn
+            color="orange-lighten-2"
+            variant="text"
+            class="ml-2"
           >
+            Explore
+          </v-btn>
 
-          <v-card-item>
-            <div>
-              <div class="text-overline mb-1">
-                <v-card-title>
-                <div class="text-h6 mb-1">Headline</div>
-                <div class="text-caption">
-                  Greyhound divisely hello coldly fonwderfully
-                </div>
-              </v-card-title>
+          <v-spacer></v-spacer>
 
-              {{ variant }}
-              </div>
-              <div class="text-h6 mb-1">Headline</div>
-              <div class="text-caption">
-                Greyhound divisely hello coldly fonwderfully
-              </div>
-            </div>
-          </v-card-item>
-          <v-card-actions>
-            <v-btn> Button </v-btn>
-          </v-card-actions>
-        </v-card>
-      </v-col>
+          <!-- <v-btn
+            :icon="submission.show ? 'mdi-chevron-up' : 'mdi-chevron-down'"
+            @click="toggleCard(submission)"
+          ></v-btn> -->
+          <v-btn
+            :icon="show ? 'mdi-chevron-up' : 'mdi-chevron-down'"
+            @click="show = !show"
+          ></v-btn>
+        </v-card-actions>
+
+        <v-expand-transition>
+          <div v-show="show">
+            <v-divider style="margin: 1px;"></v-divider>
+            <v-card-text class="pt-1 ml-2">
+              {{ submission.description }}
+            </v-card-text>
+          </div>
+        </v-expand-transition>
+      </v-card>
+      <v-pagination
+        v-model="currentPage"
+        :length="totalPages"
+        @input="goToPage"
+      ></v-pagination>
     </div>
+    <!-- <v-pagination
+    v-model="currentPage"
+    :length="totalPages"
+    @input="goToPage"
+  ></v-pagination> -->
 
-    <div class="mt-4 text-subtitle-2">With markup</div>
-
-    <v-card max-width="400">
-      <v-card-item>
-        <v-card-title>This is a title</v-card-title>
-        <v-card-subtitle>This is a subtitle</v-card-subtitle>
-      </v-card-item>
-
-      <v-card-text>
-        This is content
-      </v-card-text>
-    </v-card>
-
-    <!-- <v-card
-      v-for="thesis in data" :key="thesis.id"
-      width="700"
-    >
-      <template v-slot:title>
-        {{ thesis.form_title }}
-      </template>
-
-      <template v-slot:subtitle>
-        {{ thesis.description }}
-      </template>
-    </v-card> -->
-  </v-app>
-
+    </v-app>
   </div>
 </template>
 
@@ -249,17 +123,6 @@
   const data = ref([]);
   const previewFileUrl = ref(null);  // Add this line
 
-  // const fetchData = () => {
-  // axios.get("/api/testvuedata")
-  //   .then((response) => {
-  //     console.log(response.data);
-  //     data.value = response.data;
-  //   })
-  //   .catch(error => {
-  //     console.error('Error fetching data:', error);
-  //   });
-  // };
-
   const fetchData = async () => {
     try {
       const response = await axios.get('/api/testvuedata');
@@ -272,6 +135,8 @@
 
   const enrichDataWithStudentNames = async (submissions) => {
   let students; // Declare the variable here
+  // Add show property for each submission
+  const show = ref([]);
 
   try {
       const studentsResponse = await axios.get('/api/students'); // Adjust the endpoint
@@ -283,17 +148,23 @@
         const student = students.find(student => student.stu_id === submission.student_id);
         return {
           id: submission.id,
-          form_title: submission.form_title,
-          description: submission.description,
-          form_files: submission.form_files,
+          thesis_title: submission.thesis_title,
+          description: submission.thesis_abstract,
+          form_files: submission.thesis_file,
+          thesis_type:submission.thesis_type,
           student_id: submission.student_id,
           student_name: student ? (student.user ? student.user.name : 'Unknown Student') : 'Unknown Student',
         };
       });
     } catch (error) {
       console.error('Error fetching student data:', error);
-      return submissions; // Return original data in case of an error
+      // return submissions; // Return original data in case of an error
+      return submissions.map(() => ({ show: false }));
+
     }
+  };
+  const toggleCard = (submission) => {
+    submission.show = !submission.show;
   };
 
 const previewFile = (formFile) => {
@@ -329,10 +200,80 @@ const downloadFile = (formFile) => {
   }
 };
 
+const getFormattedType = (type) => {
+  console.log('getFormattedType');
+
+    switch (type) {
+      case 'web_development':
+        return 'Website Development';
+      case 'mobile_development':
+        return 'Mobile App';
+      case 'machine_learning':
+        return 'Machine Learning';
+      case 'data_analytics':
+        return 'Data Analytics';
+      case 'dashboard_analytics':
+        return 'Dashboard Analytics';
+      default:
+        return type;
+    }
+  };
+
+  const getChipColor = (type) => {
+    switch (type) {
+      case 'web_development':
+        return 'green';
+      case 'mobile_development':
+        return 'pink';
+      case 'machine_learning':
+        return 'blue';
+      case 'data_analytics':
+        return 'blue';
+      case 'dashboard_analytics':
+        return 'green';
+      default:
+        return 'yellow'; // Default color
+    }
+  };
+  const getChipClass = (type) => {
+    // You can add additional classes or logic based on type if needed
+    return 'custom-chip ml-3 mr-1';
+  };
 // Fetch data when the component is created
 onMounted(() => {
   fetchData();
 });
+
+const getImgSource = (thesisType) => {
+  const firstType = thesisType.split(',')[0].trim();
+  return imageSources[firstType] || '/img/default-image.jpg';
+};
+
+const imageSources = {
+  web_development: '/admindash/img/ML.jpg',
+  mobile_development: '/img/mobile_development.jpg',
+  machine_learning: '/admindash/img/ML.jpg',
+  data_analytics: '/admindash/img/DA.jpg',
+  dashboard_analytics: '/img/dashboard_analytics.jpg',
+};
+
+// paginations!!!!
+// const pageSize = 5; // Set the number of cards per page
+//   const currentPage = ref(1);
+
+//   const totalPages = computed(() => Math.ceil(data.value.length / pageSize));
+
+  // const paginatedData = computed(() => {
+  //   const startIndex = (currentPage.value - 1) * pageSize;
+  //   const endIndex = startIndex + pageSize;
+  //   return data.value.slice(startIndex, endIndex);
+  // });
+
+  // const goToPage = (page) => {
+  //   if (page >= 1 && page <= totalPages.value) {
+  //     currentPage.value = page;
+  //   }
+  // };
 
 </script>
 

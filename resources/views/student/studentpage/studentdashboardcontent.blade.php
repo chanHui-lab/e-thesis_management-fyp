@@ -11,8 +11,8 @@
           <h4>Hello, Welcome back {{ auth()->user()->name }}</h4>
           <p>User Role: Student</p>
 
-          <button>Discover thesis resources</button>
-        {{-- </div> --}}
+          <a href="{{ route('thesis.index') }}" class="btn btn-primary btn-common" style="background-color: black">Discover thesis resources</a>
+          {{-- </div> --}}
       </div>
     </div>
   </div>

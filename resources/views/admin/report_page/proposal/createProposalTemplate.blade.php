@@ -3,9 +3,9 @@
 @section('master_content')
 
 <main>
-<h1 style = "padding-top: 20px; padding-bottom:10px">Create Form Template</h1>
+<h1 style = "padding-top: 20px; padding-bottom:10px">Create Proposal Template</h1>
 
-<a href="{{ route('template.index') }}" class="btn btn-primary" style = "margin-bottom:20px">Back</a>
+<a href="{{ route('proptemplate.index') }}" class="btn btn-primary" style = "margin-bottom:20px">Back</a>
 
  {{--handle error  --}}
 @if ($errors->any())
@@ -33,6 +33,8 @@
 
         @csrf
         <div class="card-body">
+        <input type="hidden" name="section" value="proposal">
+
         <div class="form-group">
             <label for="file_name"  class = "labelling">Template Name:</label>
             <input type="text" id="file_name" name="file_name" class = "form-control" placeholder=" Name" ><br>
@@ -69,7 +71,7 @@
             </div>
         </div>
         <br>
-        <div class="col-sm-6">
+        <div class="col-sm-6 pl-0">
             <label for="status">Status:</label>
             <select class="custom-select"  style= "display: block;
             width: 100%;

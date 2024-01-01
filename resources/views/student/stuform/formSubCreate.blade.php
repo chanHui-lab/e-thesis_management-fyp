@@ -46,7 +46,7 @@
                 <textarea id="description" class = "form-control" style="height: 150px" name="description" rows="4" cols="50" placeholder="Details" ></textarea><br>
             </div>
 
-             <label for="files" class = "labelling">Upload Document Files: (not necessary) </label><br>
+             <label for="files" class = "labelling">Upload Document Files: </label><br>
                 <div class="wrapper">
 
                     <div class="container">

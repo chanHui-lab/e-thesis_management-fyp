@@ -74,6 +74,9 @@ li {
 .btn-common{
 	border: transparent; border-radius:10px; padding:10px;
 }
+.btn-common1{
+	border: transparent; border-radius:20px; padding:5px;
+}
 
 p.plogo{
 	align-items: center;
@@ -184,7 +187,8 @@ p{
 
 	/* border: 1 solid rgb(135, 33, 35); */
     border-radius: 20px !important;
-	z-index: 1500;
+	z-index: 1000;
+	/* z-index: -1; */
   }
 
 .cardie-body {
@@ -204,13 +208,29 @@ p{
 	/* Adjust the value accordingly */
 }
 
+.modal {
+    display: none;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    padding: 20px;
+    width: 100%;
+    height: 100%;
+    background-color: hsla(0, 0%, 82%, 0.729);
+    z-index: 1005; /* Ensure it's above the overlay */
+}
+
 .modal-dialog {
- margin-top: 20%;
+ /* margin-top: 20%; WILL MOVE DOWN THE MODAL DIALOG*/
+ margin-left: 40%;
+
 }
 .modal-content{
 	background-color: #fff5d5;
 	box-shadow: 0 5px 4px rgba(0, 0, 0, 0.1); /* Adjust the values for the desired shadow effect */
 	border-color: wheat;
+	z-index: 9999;
 }
 
 .modal-body{
@@ -255,12 +275,88 @@ textarea.form-control:placeholder-shown {
 	margin-right: 5px;
 }
 
+/* Custom style for the file input button */
+.myfrm::file-selector-button {
+	background-color: #FACD3F;
+	border-radius: 10px;
+	padding: 5px 7px;
+	border: transparent;
+	margin-right: 10px;
+	box-shadow: 2px 2px 2px rgba(0, 0, 0, 0.2); /* Add a drop shadow */
+	cursor: pointer; /* Ensure the cursor changes on hover */
+	color: black; /* You may need to set the text color as well */
+	transition: background-color 0.3s; /* Add a smooth transition */
+}
+/* Dimming effect on hover */
+.myfrm::file-selector-button:hover {
+	background-color: #e0c853; /* Adjust the color as needed */
+}
+button.btn.btn-success.add-file{
+	box-shadow: 2px 2px 2px rgba(0, 0, 0, 0.2); /* Add a drop shadow */
+}
+
+/* Custom styling for checkboxes */
+.custom-checkbox-group {
+	display: flex;
+	flex-direction: column;
+}
+
+.custom-control {
+	display: flex;
+	align-items: center;
+	margin-bottom: 10px;
+}
+
+.custom-control-input:checked ~ .custom-control-label::before {
+	background-color: #FACD3F; /* Change this to your desired color */
+	border-color: #FACD3F; /* Change this to your desired color */
+}
+
+/* Add these styles to your CSS file */
+.v-chip-column {
+    display: inline-block;
+    /* padding: 4px 8px; */
+    border-radius: 20px; /* Adjust the border-radius to control the roundness */
+    /* font-size: 14px; */
+    padding: 7px;
+}
+.badge-pink {
+	background-color: rgb(255, 53, 86);
+	color: white; /* Adjust text color if needed */
+	padding: 2px;
+	font-size: 8px;
+}
+.btn-disabled {
+	background-color: grey; /* You can customize the background color */
+	cursor: not-allowed; /* Change the cursor style to indicate it's not clickable */
+}
+
+.pendingApproval {
+    background-color: #ffffff;
+    color: black;
+}
+
+.approved {
+    background-color: rgb(185, 255, 185);
+    color: black;
+}
+
+.rejected {
+    background-color: rgb(253, 201, 201);
+    color: black;
+}
+
+.black-btn{
+	background-color: rgb(14, 13, 13);
+	border-color: #060714;
+}
+
 /* SIDEBAR */
 #sidebar {
 	position: fixed;
 	top: 0;
 	left: 0;
-	width: 280px;
+	width: 260px;
 	height: 100%;
 	background: var(--light);
 	z-index: 1000;
@@ -301,11 +397,6 @@ textarea.form-control:placeholder-shown {
     z-index: 100;
 	padding-bottom: 20px;
 	box-sizing: content-box; */
-}
-#sidebar .brand .bx {
-	/* min-width: 60px;
-	display: flex;
-	justify-content: center; */
 }
 
 /* all the nav links */
@@ -1338,4 +1429,84 @@ textarea.form-control:placeholder-shown {
 	/* border-radius: 10px; */
 	box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
 	/* padding: 20px; */
+}
+
+/* ------------------------------------------------------------------ */
+.black-btn {
+	background-color: #060714;
+	color: white; /* Set text color to contrast with the background */
+	border: transparent;
+}
+
+.black-btn:hover {
+	background-color: #FACD3F; /* Change to the desired hover color */
+}
+.student-comment {
+    /* background-color: grey; Adjust the background color for student comments */
+    border-radius: .3rem;
+    background-color: #d2d6de;
+    border: 1px solid #d2d6de;
+    color: #444;
+    margin: 5px 0 0 50px;
+    padding: 5px 10px;
+    position: relative;
+
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    /* padding: 10px;
+    border: 1px solid #ccc;
+    margin-bottom: 10px; */
+}
+.lecturer-comment {
+    background-color: #F8D700; /* Adjust the background color for lecturer comments */
+    border-radius: .3rem;
+    border: 0px solid #d2d6de;
+    color: #444;
+    margin: 5px 0 0 50px;
+    padding: 5px 10px;
+    position: relative;
+}
+
+
+    .direct-chat-text::before {
+        border-width: 6px;
+        margin-top: -6px;
+    }
+
+    .direct-chat-text::after, .direct-chat-text::before {
+        border: solid transparent;
+        border-right-color: #d2d6de;
+        content: " ";
+        height: 0;
+        pointer-events: none;
+        position: absolute;
+        right: 100%;
+        top: 15px;
+        width: 0;
+    }
+
+    .direct-chat-text::after {
+        border-width: 5px;
+        margin-top: -5px;
+    }
+
+    .direct-chat-text::after, .direct-chat-text::before {
+        border: solid transparent;
+        border-right-color: #d2d6de;
+        content: " ";
+        height: 0;
+        pointer-events: none;
+        position: absolute;
+        right: 100%;
+        top: 15px;
+        width: 0;
+    }
+
+	/*
+	 */
+
+.col-title{
+	margin-top: 30px;
+	margin-bottom:20px ;
 }

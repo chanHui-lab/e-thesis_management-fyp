@@ -16,46 +16,6 @@ use Illuminate\Support\Facades\DB;
 
 class PresentationScheduleController extends Controller
 {
-    // public function index(Request $request)
-    // {
-    //     // if ($request->ajax()) {
-    //     //     $events = Presentation_schedule::all(); // Assuming you have a Presentation model
-    //     //     dd($events);
-    //     //     return response()->json($events);
-    //     // }
-
-    //     // return view('admin.presentationSchedule');
-    //     if ($request->ajax()) {
-    //     $events = Presentation_schedule::all(); // Assuming you have a Presentation model
-    //         // dd($events);
-    //     return response()->json($events);}
-    //     return view('admin.presentationSchedule');
-
-    // }
-
-// public function getEventds(Request $request)
-// {
-//     if ($request->ajax()) {
-//         // Fetch events from the database
-//         $events = Presentation_schedule::all(); // Modify this to fetch events as needed
-//         dd($events);
-
-//         // Format events as needed for FullCalendar
-//         $formattedEvents = [];
-//         foreach ($events as $event) {
-//             $formattedEvents[] = [
-//                 'title' => $event->title,
-//                 'start' => $event->start->format('Y-m-d\TH:i:s'),
-//                 'end' => $event->end->format('Y-m-d\TH:i:s'),
-//                 // Add other event properties as needed
-//             ];
-//         }
-
-//         return response()->json($formattedEvents);
-//     }
-//     return view('admin.presentationSchedule');
-
-// }
 
 public function getEvents(Request $request)
 {
@@ -73,17 +33,20 @@ public function getEvents(Request $request)
     // Fetch events from Thesis table
     $thesisEvents = SubmissionPost::all();
 
-    $presentationEvents = $presentationEvents->map(function ($event) {
-        return [
-            'type' => 'presentation',
-            'id' => $event->id, // Include the 'id' field
-            'title' => $event->title,
-            'description' => $event->description,
-            'start' => $event->start,
-            'end' => $event->end,
-            'location' => $event->location,
-        ];
-    });
+    // Map and format Presentation events if there are any
+    if (!$presentationEvents->isEmpty()) {
+        $presentationEvents = $presentationEvents->map(function ($event) {
+            return [
+                'type' => 'presentation',
+                'id' => $event->id,
+                'title' => $event->title,
+                'description' => $event->description,
+                'start' => $event->start,
+                'end' => $event->end,
+                'location' => $event->location,
+            ];
+        });
+    }
 
     $thesisEvents = $thesisEvents->map(function ($event) {
         return [
@@ -96,14 +59,14 @@ public function getEvents(Request $request)
     });
 
     // Combine both sets of events
-    $combinedEvents = $presentationEvents->merge($thesisEvents);
+    $combinedEvents = collect($presentationEvents)->merge($thesisEvents);
 
     // $eventsByDay = $combinedEvents->groupBy(function ($event) {
     //     $carbonDate = Carbon::parse($event->start);
     //     return $carbonDate->format('Y-m-d');
     // });
 
-    if(Auth::user()-> role_as == 0){
+    if (Auth::user()->role_as == 0 || Auth::user()->role_as == 1) {
         return view('admin.presentationSchedule', compact('combinedEvents','calen'));
     }
     // elseif(Auth::user()-> role_as == 2){
@@ -116,6 +79,19 @@ public function getEvents(Request $request)
 //     return view('edit_event', compact('presentations'));
 // }
 
+// public function updateDragEvent(Request $request)
+// {
+//     // Validate the request data as needed
+
+//     // Update the event in the database
+//     Presentation_schedule::where('id', $request->input('id'))
+//         ->update([
+//             'start' => $request->input('start'),
+//             'end' => $request->input('end'),
+//         ]);
+
+//     return response()->json(['message' => 'Event updated successfully']);
+// }
 
 public function getEventDetails($eventId)
 {
@@ -146,6 +122,7 @@ public function getEventDetails($eventId)
 //     return redirect()->route('admin.presentationSchedule')->with('success', 'Event updated successfully');
 // }
 
+// AFTER EDIT EVENT, UPDATE>
 public function updateEvent(Request $request, $eventId)
 {
     // Validate the request data as needed
@@ -188,48 +165,49 @@ public function fetchUpdatedEventSource() {
     return $updatedEvents;
 }
 
-    public function store(Request $request)
-    {
-        // $start = $request->input('start');
-        // $end = $request->input('end');
-        $validatedData = $request->validate([
-            'title' => 'required|string',
-            'description' => 'string',
-            'start' => 'required|date',
-            // 'end' => 'date|nullable',
-            'end' => 'required|date|after:start',
-            'location' => 'required|string',
-        ], [
-            'end.after' => 'Error: End date must be after the start date.',
-        ]);
+// add new event
+public function store(Request $request)
+{
+    // $start = $request->input('start');
+    // $end = $request->input('end');
+    $validatedData = $request->validate([
+        'title' => 'required|string',
+        'description' => 'string',
+        'start' => 'required|date',
+        // 'end' => 'date|nullable',
+        'end' => 'required|date|after:start',
+        'location' => 'required|string',
+    ], [
+        'end.after' => 'Error: End date must be after the start date.',
+    ]);
 
-        // Check if the end date is greater than or equal to the start date
-        // if (strtotime($end) < strtotime($start)) {
-        //     return response()->json(['errorhere' => 'End date must be equal to or after the start date'], 400);
-        // }
+    // Check if the end date is greater than or equal to the start date
+    // if (strtotime($end) < strtotime($start)) {
+    //     return response()->json(['errorhere' => 'End date must be equal to or after the start date'], 400);
+    // }
 
-        // $event = new Presentation_schedule;
-        // $event->title = $request->input('title');
-        // $event->description = $request->input('description');
-        // $event->start = $request->input('start');
-        // $event->end = $request->input('end');
-        // $event->location = $request->input('location');
+    // $event = new Presentation_schedule;
+    // $event->title = $request->input('title');
+    // $event->description = $request->input('description');
+    // $event->start = $request->input('start');
+    // $event->end = $request->input('end');
+    // $event->location = $request->input('location');
 
-        // $event->save();
+    // $event->save();
 
-        $event = new Presentation_schedule;
+    $event = new Presentation_schedule;
 
-        if ($event) {
-            $event->title = $validatedData['title'];
-            $event->description = $validatedData['description'];
-            $event->start = $validatedData['start'];
-            $event->end = $validatedData['end'];
-            $event->location = $validatedData['location'];
+    if ($event) {
+        $event->title = $validatedData['title'];
+        $event->description = $validatedData['description'];
+        $event->start = $validatedData['start'];
+        $event->end = $validatedData['end'];
+        $event->location = $validatedData['location'];
 
-            // Save the changes
-            $event->save();
-        }
+        // Save the changes
+        $event->save();
     }
+}
 
     public function storeDrag(Request $request)
     {
@@ -241,8 +219,6 @@ public function fetchUpdatedEventSource() {
                 'start' => 'required|string',
             ]);
         // Convert the date to Malaysia timezone and format it
-        // $start = \Carbon\Carbon::parse($data['start'])->setTimezone('Asia/Kuala_Lumpur')->format('Y-m-d H:i:s');
-        // $end = \Carbon\Carbon::parse($data['end'])->setTimezone('Asia/Kuala_Lumpur')->format('Y-m-d H:i:s');
         $start = \Carbon\Carbon::parse($data['start'])->setTimezone('Asia/Kuala_Lumpur');
 
         $end = $start->copy()->addHour()->format('Y-m-d H:i:s');
@@ -399,6 +375,9 @@ public function fetchUpdatedEventSource() {
 
     // Find the event in the database by ID
     $event = Presentation_schedule::find($id);
+
+    // $event->start = Carbon::parse($request->$validatedData['start'])->setTimezone('Asia/Kuala_Lumpur');
+    // $event->end = Carbon::parse($request->input('end'))->setTimezone('Asia/Kuala_Lumpur');
 
     if ($event) {
         // Update the event properties with the validated data

@@ -249,6 +249,16 @@
   color: #000;
 }
 
+.FYP-Proj-event {
+  background-color: #72c2ff;  /* Set the desired background color */
+  color: #000;
+}
+
+.FYP-Prop-event {
+  background-color: rgb(255, 255, 143);  /* Set the desired background color */
+  color: #000;
+}
+
 .fc-v-event.form-event .fc-event-main{
 color: black;
 }
@@ -302,4 +312,16 @@ color: black;
   font-size: 12px;
   font-weight: 100;
   color: gray;
+}
+
+
+.fc-prev-button.btn.btn-primary, .fc-next-button.btn.btn-primary, .fc-today-button.btn.btn-primary, .fc-dayGridMonth-button.btn.btn-primary , .fc-timeGridWeek-button.btn.btn-primary , .fc-timeGridDay-button.btn.btn-primary{
+	background-color: #FACD3F;
+	border: transparent;
+}
+
+.btn-primary:not(:disabled):not(.disabled).active, .btn-primary:not(:disabled):not(.disabled):active, .show>.btn-primary.dropdown-toggle{
+  color: #fff;
+  background-color: #15181b;
+  border-color: #191c20;
 }

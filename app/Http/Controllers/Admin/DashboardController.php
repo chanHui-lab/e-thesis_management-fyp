@@ -17,7 +17,7 @@ use App\Models\Student;
 class DashboardController extends Controller
 {
     public function index(){
-        if(Auth::user()-> role_as == 0){
+        if(Auth::user()-> role_as == 0 || Auth::user()-> role_as == 1){
             // Fetch events from Presentation_schedule table
             // return view('layouts.studentdash');
             $deadlines = DB::table('submission_posts')
@@ -60,7 +60,12 @@ class DashboardController extends Controller
             // Combine both sets of events
             $combinedEvents = $presentationEvents->merge($deadlineEvents);
 
-            return view('admin.admindashboardcontent',['deadlines' => $deadlines], compact('combinedEvents'));
+            if(Auth::user()-> role_as == 1){
+                return view('lecturer.admindashboardcontent',['deadlines' => $deadlines], compact('combinedEvents'));
+            }
+            else{
+                return view('admin.admindashboardcontent',['deadlines' => $deadlines], compact('combinedEvents'));
+            }
         }
         if(Auth::user()-> role_as == 2){
             // return view('layouts.studentdash');
@@ -120,6 +125,54 @@ class DashboardController extends Controller
         }
     }
 
+    public function indexLect(){
+        if(Auth::user()-> role_as == 1){
+            // Fetch events from Presentation_schedule table
+            // return view('layouts.studentdash');
+            $deadlines = DB::table('submission_posts')
+            ->whereNotNull('submission_deadline')
+            ->whereBetween('submission_deadline', [Carbon::now(), Carbon::now()->addWeeks(3)])
+            ->where('submission_deadline', '>=', Carbon::now())
+            ->get();
+
+            // Fetch events from Presentation_schedule table
+            $presentationEvents = Presentation_schedule::all(); // Assuming you have a Presentation model
+            // $calen = Template::getCalendarTemplate();
+            // dd( $calen );
+            $deadlineEvents = SubmissionPost::all(); // Assuming you have a Presentation model
+
+            $supervisor = auth()->user(); // Assuming you have a user() function to get the logged-in user
+
+            $presentationEvents = $presentationEvents->map(function ($event) {
+            return [
+                'type' => 'presentation',
+                'id' => $event->id, // Include the 'id' field
+                'title' => $event->title,
+                'description' => $event->description,
+                'start' => $event->start,
+                'end' => $event->end,
+                'location' => $event->location,
+                ];
+            });
+            // dd( $presentationEvents );
+
+            $deadlineEvents = $deadlineEvents->map(function ($event) {
+                return [
+                'type' => 'deadline',
+                'id' => $event->id, // Include the 'id' field
+                'title' => $event->title,
+                'description' => $event->description,
+                'start' => $event->submission_deadline, // Assuming submission_deadline is the field
+                ];
+            });
+
+            // Combine both sets of events
+            $combinedEvents = $presentationEvents->merge($deadlineEvents);
+            // dd($combinedEvents);
+            return view('lecturer.admindashboardcontent',['deadlines' => $deadlines], compact('combinedEvents'));
+
+        }
+    }
     public function indexStu()
     {
         // $students = Student::select('stu_id', 'matric_number')->get();

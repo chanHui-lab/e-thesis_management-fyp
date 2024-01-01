@@ -3,7 +3,10 @@
 
 @section('master_content')
 <main>
-    <h1 style="margin-top: 20px">{{ $submissionPost->title }}</h1>
+    <a class="btn btn-primary back-button" href="{{ route('stutemplate.index') }}">
+        <i class="fas fa-arrow-left mr-2"></i> Back to Form Section
+    </a>
+    <h1 >{{ $submissionPost->title }}</h1>
     <p>{{ $submissionPost->description }} </p>
 
     <div class="card">
@@ -16,9 +19,9 @@
             <div class="arrow-box">
 
                 @if (is_array($files) && count($files) > 0)
+                @foreach ($files as $filee)
                 &#x2514;
 
-                @foreach ($files as $filee)
                 <a href="{{ asset('storage/' . $filee['path']) }}" target="_blank" download class="downloadfile-link">
                     @if (Str::endsWith($filee['path'], '.pdf'))
                     <i class="fa fa-file-pdf file-icon" style = "color:  rgb(255, 86, 86)"></i>
@@ -32,15 +35,17 @@
                     {{ substr($filee['path'], strpos($filee['path'], '_') + 1) }}
 
                 </a >
+
                 {{-- <span style="font-size: 80%; margin-left: 5px;">
                     {{ \Carbon\Carbon::parse($filee['uploaded_at'])->format('Y-m-d h:i A') }}
                 </span> --}}
-                        @endforeach
+                <br>@endforeach
+
                 @endif
             </div>
         </div>
     </div>
-    <h3>Form Submission Column</h3>
+    <h3 class="col-title">Form Submission Column</h3>
     @php
         $submissionDeadline = \Carbon\Carbon::parse($submissionPost->submission_deadline);
         $deadlineTimeDiff = $submissionDeadline->diff(now());
@@ -48,9 +53,8 @@
     @endphp
     @if ($formSubmission)
 
-        {{-- <a href="{{ route('stuFormSubmission.create') }}" class="btn btn-primary">Add Submission</a> --}}
         <div class = "row row-buttonform" style="margin-left: 5px">
-            <a href="{{ route('formSubmission.edit', ['formSubmissionId' => $formSubmission->id,'submissionPostId' => $submissionPost->id]) }}" class="btn btn-warning">
+            <a href="{{ route('formSubmission.edit', ['formSubmissionId' => $formSubmission->id,'submissionPostId' => $submissionPost->id]) }}" class="btn btn-warning btn-common">
             {{-- <a href="{{ route('formSubmission.edit', ['formSubmissionId' => $formSubmission->id]) }}" class="btn btn-warning"> --}}
 
             {{-- <a class="btn btn-info btn-sm" href="{{ route('formpost.edit',$postform->id) }}"> --}}
@@ -62,7 +66,7 @@
             {{-- delete parteu --}}
             <form action="{{ route('formSubmission.delete',$formSubmission->id) }}" method="POST">
 
-            <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#deleteModal{{ $formSubmission->id }}">
+            <button type="button" class="btn btn-danger btn-common" data-toggle="modal" data-target="#deleteModal{{ $formSubmission->id }}">
                 <i class="fas fa-trash"></i>
                 Delete Submission
             </button>
@@ -95,11 +99,24 @@
             </div>
     @else
         {{-- @foreach($formSubmissions as $formSubmission) --}}
-        <a href="{{ route('stuFormSubmission.create',['submission_post_id' =>  $submissionPost->id]) }}" class="btn btn-primary">Add Submission</a>
+        <a href="{{ route('stuFormSubmission.create',['submission_post_id' =>  $submissionPost->id]) }}" class="btn btn-primary btn-common">
+            <i class="fas fa-plus" style="margin-right: 5px"></i> Add Submission
+        </a>
 
 
     @endif
 
+    @if (session('successUpdate'))
+        <div class="alert alert-success mt-4" >
+            {{ session('successUpdate') }}
+        </div>
+    @endif
+
+    @if (session('errorUpdate'))
+        <div class="alert alert-danger mt-4">
+            {{ session('errorUpdate') }}
+        </div>
+    @endif
     <div class = "card" style="margin-top: 16px">
     <table id="view1" class="custom-table generaltable table-bordered table table-striped" style="margin-left: 20px; margin-right: 20px; width:95%">
 
@@ -123,7 +140,16 @@
         <tbody>
             <tr>
                 <th style="width:25%;"><strong>Submission Status</strong></th>
-                <td class="submission-status badge badge-success {{ $submissionStatus == 'Submitted' ? 'submitted' : 'pending' }}">{{ $submissionStatus }}</td>
+                {{-- <td style="margin:5px 10px; border-radius: 20px;" class="submission-status badge badge-success {{ $submissionStatus == 'Submitted' ? 'submitted' : 'pending' }}">{{ $submissionStatus }} --}}
+                <td  class="submission-status">
+
+                @if ($submissionStatus == 'Submitted')
+                    <span class="status-visible">Submitted</span>
+                @else
+                    <span class="status-hidden">Pending</span>
+                @endif
+
+            </td>
             </tr>
             <tr>
                 <th><strong>Form Title</strong></th>
@@ -189,7 +215,8 @@
                             </a>
                             <span style="font-size: 80%; margin-left: 5px;">
                                 {{ \Carbon\Carbon::parse($file['uploaded_at'])->format('Y-m-d h:i A') }}
-                            </span><br>
+                            </span>
+                            <br>
                         @endforeach
                     @else
                         -
@@ -311,7 +338,7 @@
                             <div class="input-group">
                             <input type="text" name="comment_text" placeholder="Type Message ..." class="form-control">
                             <span class="input-group-append">
-                                <button type="submit" class="btn btn-primary">Send</button>
+                                <button type="submit" class="btn btn-primary black-btn">Send</button>
                             </span>
                             </div>
                         </form>
@@ -338,9 +365,12 @@
                 {{-- <td>Pending</td> --}}
                <td>
                 @if ($submissionDeadline->isFuture())
-                    <span class="v-chip-column chip--label bg-light-green text-black">Pending</span>
+                    {{-- <span class="v-chip-column chip--label bg-light-green text-black">Pending</span> --}}
+                    <span class="status-hidden">Pending</span>
+
                 @else
-                    <span class=" v-chip-column chip--label bg-light-red text-white">Overdue</span>
+                    <span class="status-hidden">Overdue</span>
+                    {{-- <span class=" v-chip-column chip--label bg-light-red text-white">Overdue</span> --}}
                 @endif
                </td>
             </tr>
@@ -358,6 +388,21 @@
             </tr>
             <tr>
                 <th><strong>Time Remaining</strong></th>
+                {{-- <td class="
+                    @if ($submissionDeadline->isFuture())
+                        bg-light-green text-black
+                    @else
+                        bg-light-red text-white
+                    @endif
+                ">
+
+                    @if ($submissionDeadline->isFuture())
+                        <p class="text-white bg-light-red">Assignment is overdue by {{ $deadlineTimeDiff->format('%a days, %h hours, %i minutes') }}</p>
+                    @elseif($deadlineTimeDiff)
+                        <p>{{ $deadlineTimeDiff->format('%a days, %h hours, %i minutes') }} left</p>
+                    @endif
+                </td> --}}
+
                 <td class="
                     @if ($submissionDeadline->isFuture())
                         bg-light-green text-black
@@ -365,19 +410,20 @@
                         bg-light-red text-white
                     @endif
                 ">
-                    @if ($deadlineTimeDiff)
-                        <p class="text-white">Assignment is overdue by {{ $deadlineTimeDiff->format('%a days, %h hours, %i minutes') }}</p>
-                    @elseif($submissionDeadline->isFuture())
+                    @if ($submissionDeadline->isFuture())
                         <p>{{ $deadlineTimeDiff->format('%a days, %h hours, %i minutes') }} left</p>
+                    @else
+                        <p class="text-white bg-light-red">Assignment is overdue by {{ $deadlineTimeDiff->format('%a days, %h hours, %i minutes') }}</p>
                     @endif
                 </td>
+
             </tr>
             <tr>
                 <th><strong>File Submission</strong></th>
                 <td>-</td>
             </tr>
             <tr>
-                <th><strong>Submission Comment</strong></th>
+                <th><strong>Submission Comments</strong></th>
                 <td>-</td>
             </tr>
         </tbody>
@@ -386,77 +432,5 @@
 @endif
 
 </main>
-
-<style>
-.student-comment {
-    /* background-color: grey; Adjust the background color for student comments */
-    border-radius: .3rem;
-    background-color: #d2d6de;
-    border: 1px solid #d2d6de;
-    color: #444;
-    margin: 5px 0 0 50px;
-    padding: 5px 10px;
-    position: relative;
-
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    /* padding: 10px;
-    border: 1px solid #ccc;
-    margin-bottom: 10px; */
-}
-.lecturer-comment {
-    background-color: #F8D700; /* Adjust the background color for lecturer comments */
-    border-radius: .3rem;
-    border: 0px solid #d2d6de;
-    color: #444;
-    margin: 5px 0 0 50px;
-    padding: 5px 10px;
-    position: relative;
-}
-    .direct-chat-text {
-        /* border-radius: .3rem;
-        background-color: #d2d6de;
-        border: 1px solid #d2d6de;
-        color: #444;
-        margin: 5px 0 0 50px;
-        padding: 5px 10px;
-        position: relative; */
-    }
-
-    .direct-chat-text::before {
-        border-width: 6px;
-        margin-top: -6px;
-    }
-
-    .direct-chat-text::after, .direct-chat-text::before {
-        border: solid transparent;
-        border-right-color: #d2d6de;
-        content: " ";
-        height: 0;
-        pointer-events: none;
-        position: absolute;
-        right: 100%;
-        top: 15px;
-        width: 0;
-    }
-
-    .direct-chat-text::after {
-        border-width: 5px;
-        margin-top: -5px;
-    }
-
-    .direct-chat-text::after, .direct-chat-text::before {
-        border: solid transparent;
-        border-right-color: #d2d6de;
-        content: " ";
-        height: 0;
-        pointer-events: none;
-        position: absolute;
-        right: 100%;
-        top: 15px;
-        width: 0;
-    }
-</style>
 
 @endsection

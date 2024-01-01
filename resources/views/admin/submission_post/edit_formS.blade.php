@@ -255,13 +255,16 @@
     });
 
     function addFileInput(element) {
-        console.log('addFileInput file loaded');
-
         var clone = $(element).closest('.increment').clone();
         clone.find('input').val('');
         clone.insertAfter($(element).closest('.increment'));
         clone.find('.btn-success').html('<i class="fldemo glyphicon glyphicon-remove"></i> Remove').removeClass('btn-success').addClass('btn-danger').attr('onclick', 'removeFileInput(this)');
         clone.css('margin-top', '10px'); // Add margin to the new row
+    }
+    function removeFileInput(button) {
+        // const parent = button.closest('.increment');
+        // parent.remove();
+        $(button).closest('.increment').remove();
     }
 
 </script>

@@ -2,17 +2,17 @@
 
 @section('master_content')
 <main>
-    <div class="row" style="margin-left: 0%">
-        <div class=" titleforform">
-            <h1>Form Section</h1>
-        </div>
+    <div class="form-section" style="display: flex; align-items: center; ">
+        <i class="fas fa-file-alt" style="font-size: 30px; margin-right:15px"></i>
+        <h1 style="padding-top: 1%">Form Section</h1>
     </div>
+
 
     <div class="row" style="margin-left: 0%">
         <div class="col-md-12">
-            <div class="card"  style="margin-top:20px; margin-left: -15px; margin-bottom:10px;">
+            <div class="card"  style="z-index:10;margin-top:20px; margin-left: -15px; margin-bottom:30px;">
                 <div class="card-header d-flex justify-content-between align-items-center">
-                    <h3>Form Template</h3>
+                   </i><h3>Form Template</h3>
                 </div>
                 {{-- end card header --}}
 
@@ -80,13 +80,13 @@
 
                 <div class="card-body">
                     @foreach ($submissionDetails as $postform)
-                    <div class="file-container">
+                    <div class="file-container eachSubRow">
                         <h2 class="file-link"><i class="fa fa-solid fa-file-import"  style="margin-right: 10px; color: rgb(64, 31, 1);"></i>
                             <a class="brown-link" style="font-size: 14px" href="{{ route('stuFormSubmission.details', ['submissionPostId' => $postform['submissionPost']->id]) }}">
 
                             {{ $postform['submissionPost']->title }}
                             </a>
-                            <span class="v-chip chip--label {{ $postform['chipClass'] }}">{{ $postform['status'] }}</span>
+                            <span class="v-chip {{ $postform['chipClass'] }}">{{ $postform['status'] }}</span>
                         </h2>
                     </div>
                     {{-- <p class = "templateDetails">{{$postform['submissionPost']->description}}</p> --}}

@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 
 use App\Models\Student;
 use App\Models\Supervisor;
+use Illuminate\Support\Facades\Auth;
 
 class SupervisorStudentAssignmentController extends Controller
 {
@@ -15,7 +16,21 @@ class SupervisorStudentAssignmentController extends Controller
      */
     public function index()
     {
-        //
+        $loggedInUserId = Auth::user()->id;
+
+        $students = Student::with('user')->get();
+        $advisors = Supervisor::with(['user', 'student'])->get();
+
+        $assignedStudents = Student::with('supervisor.user')->get();
+
+        $mystudent = Student::whereHas('supervisor', function ($query) use ($loggedInUserId) {
+            $query->where('lecturer_id', $loggedInUserId);
+        })
+        ->with('supervisor.user')
+        ->get();
+        // dd( $mystudent);
+
+        return view('lecturer.supervisedstudent', compact('students', 'advisors','assignedStudents','mystudent' ));
     }
 
     /**
@@ -24,7 +39,7 @@ class SupervisorStudentAssignmentController extends Controller
     public function create()
     {
         $students = Student::with('user')->get();
-        $advisors = Supervisor::with('user')->get();
+        $advisors = Supervisor::with(['user', 'student'])->get();
 
         $assignedStudents = Student::with('supervisor.user')->get();
 

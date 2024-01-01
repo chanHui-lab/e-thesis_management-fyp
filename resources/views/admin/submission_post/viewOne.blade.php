@@ -68,12 +68,19 @@
         $filesExist = !empty($formfiles);
 
     @endphp
+<div class = "card" style="margin-top: 16px">
 
-        <table id="view1" class="custom-table generaltable table-bordered table table-striped">
-            <tbody>
+    <table id="view1" class="custom-table generaltable table-bordered table table-striped" style="margin-left: 20px; margin-right: 20px; width:95%">
+        <tbody>
                 <tr>
                     <th style="width:25%;"><strong>Submission Status</strong></th>
-                    <td class="submission-status {{ $submissionStatus == 'Submitted' ? 'submitted' : 'pending' }}"> {{ $submissionStatus }}</td>
+                    {{-- <td class="submission-status badge badge-success {{ $submissionStatus == 'Submitted' ? 'submitted' : 'pending' }}">
+                        {{ $submissionStatus }} --}}
+                    <td style="margin:5px 10px; " class="submission-status badge badge-success {{ $submissionStatus == 'Submitted' ? 'submitted' : 'pending' }}">{{ $submissionStatus }}</td>
+
+                    {{-- </td> --}}
+
+                    {{-- <td class="submission-status {{ $submissionStatus == 'Submitted' ? 'submitted' : 'pending' }}"> {{ $submissionStatus }}</td> --}}
                 </tr>
                 <tr>
                     <th ><strong>Form Title</strong></th>
@@ -201,7 +208,134 @@
                     @endif
                     <tr>
                         <th><strong>Submission Comment</strong></th>
-                        <td> {{ $formSubmission->form_title }}</td>
+                        {{-- <td> {{ $formSubmission->form_title }}</td> --}}
+                        <td>
+                            <div class="row">
+                                <div class="col-md-12">
+                                  @if ($errors->any())
+                                  <div class="alert alert-danger">
+                                      <ul>
+                                          @foreach ($errors->all() as $error)
+                                              <li>{{ $error }}</li>
+                                          @endforeach
+                                      </ul>
+                                  </div>
+                                  @endif
+
+                                  @if (session('success'))
+                                      <div class="alert alert-success">
+                                          {{ session('success') }}
+                                      </div>
+                                  @endif
+
+                                @if (session('error'))
+                                    <div class="alert alert-danger">
+                                        {{ session('error') }}
+                                    </div>
+                                @endif
+                              </div>
+                            </div>
+
+                            <ul id="comments-container">
+
+                            <!-- DIRECT CHAT -->
+                            <div class="card direct-chat direct-chat-primary">
+                                <div class="card-tools" class="align-right" style="color:red; text-align: right;margin-right:10px;margin-top:10px;margin-bottom:10px;">
+                                    <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                                    <i class="fas fa-minus"></i>
+                                    </button>
+                                    {{-- <button type="button" class="btn btn-tool" data-card-widget="remove">
+                                    <i class="fas fa-times"></i>
+                                    </button> --}}
+                                </div>
+                                <!-- /.card-header -->
+                                <div class="card-body">
+                                <!-- Conversations are loaded here -->
+                                @foreach ($comments as $comment)
+
+                                <div class="direct-chat-messages">
+                                    <!-- Message. Default to the left -->
+
+                                    <div class="direct-chat-msg ">
+                                        {{-- <li class="@if ($comment->student_id == Auth::id()) student-comment @else lecturer-comment @endif"> --}}
+                                            <div class="direct-chat-infos clearfix">
+                                            {{-- <span class="direct-chat-name float-left"><strong>{{ $comment->student->user->name }}</strong></span> --}}
+                                                @if ($comment->lecturer_id == Auth::id())
+                                                <!-- Comment made by the student -->
+                                                <strong>You (Lect):</strong>
+                                                @else
+                                                    <!-- Comment made by the lecturer -->
+                                                    <strong>{{ $comment->student->user->name }} (Student):</strong>
+                                                @endif
+
+                                            {{-- {{ $comment->comment_text }} --}}
+                                            <span class="direct-chat-timestamp float-right" style="color: gray">{{ $comment->created_at->format('j M Y g:i a') }}</span>
+                                        </div>
+
+                                        <img class="direct-chat-img" style="border-radius: 50%;
+                                        float: left;
+                                        height: 40px;
+                                        width: 40px; vertical-align: middle;
+                                        border-style: none;"
+                                        src='{{ asset('./dist/img/user1-128x128.jpg') }}' alt="message user image">
+
+                                        <div class="direct-chat-text @if ($comment->lecturer_id == Auth::id()) student-comment @else lecturer-comment  @endif">
+                                            {{ $comment->comment_text }}
+                                            <!-- Add delete icon and link for the lecturer's comment -->
+                                            @if ($comment->lecturer_id == Auth::id())
+                                                <a href="{{ route('lectFormSubmission.deletecomment', ['commentId' => $comment->id]) }}" onclick="return confirm('Are you sure you want to delete this comment?')">
+                                                    <i class="fas fa-trash-alt" style="color:#444"></i>
+                                                </a>
+                                            @endif
+                                        </div>
+                                        {{-- </li> --}}
+                                        <br>
+                                    </div>
+
+                                    <!-- /.direct-chat-msg -->
+
+                                    {{-- <!-- Message to the right -->
+                                    <div class="direct-chat-msg right">
+                                    <div class="direct-chat-infos clearfix">
+                                        <span class="direct-chat-name float-right">Sarah Bullock</span>
+                                        <span class="direct-chat-timestamp float-left">23 Jan 6:10 pm</span>
+                                    </div>
+                                    <!-- /.direct-chat-infos -->
+                                    <img class="direct-chat-img" src="dist/img/user3-128x128.jpg" alt="message user image">
+                                    <!-- /.direct-chat-img -->
+                                    <div class="direct-chat-text">
+                                        I would love to.
+                                    </div>
+                                    <!-- /.direct-chat-text -->
+                                    </div>
+                                    <!-- /.direct-chat-msg --> --}}
+
+                                </div>
+                                <!--/.direct-chat-messages-->
+                                    @endforeach
+
+                                {{-- </div> --}}
+                                <!-- /.card-body -->
+                                <div class="card-footer">
+                                <form method="POST" action="{{ route('formpostShow.addComment', ['formSubmissionId' => $formSubmission->id]) }}">
+                                    @csrf
+                                    <div class="input-group">
+                                    <input type="text" name="comment_text" placeholder="Type Message ..." class="form-control">
+                                    <span class="input-group-append">
+                                        <button type="submit" class="btn btn-primary black-btn">Send</button>
+                                    </span>
+                                    </div>
+                                </form>
+                                </div>
+                                <!-- /.card-footer-->
+                            </div>
+                            <!--/.direct-chat -->
+                            {{--<form method="POST" action="{{ route('stuFormSubmission.addComment', ['formSubmissionId' => $formSubmission->id]) }}">
+                                @csrf
+                                <textarea name="comment_text" rows="4"></textarea>
+                                <button type="submit">Add Comment</button>
+                            </form> --}}
+                        </td>
                     </tr>
 
             </tbody>
@@ -209,6 +343,7 @@
             @endif --}}
 
         </table>
+</div>
 
     {{-- <h3 style = "margin-top: 20px">Submission Details</h3>
 <p>Form Title: {{ $formSubmission->form_title }}</p>
