@@ -29,7 +29,7 @@
     <!-- form start -->
 
     {{-- <form method="post" action="{{ url ('admin/adminpage/admintemplateupload')}}" enctype="multipart/form-data"> --}}
-    <form method="post" action="{{ route('template.updatew', ['id' => $getRecord->id]) }}" enctype="multipart/form-data">
+    <form method="post" action="{{ route('lecttemplate.updatew', ['id' => $getRecord->id]) }}" enctype="multipart/form-data">
 
         @csrf
         @method('PUT')

@@ -23,7 +23,7 @@
           <!-- Add icons to the links using the .nav-icon class
                with font-awesome or any other icon font library -->
           <li class="nav-item">
-            <a href="#" class="nav-link {{ request()->is('admin/formpage/*') ? 'active' : '' }}" >
+            <a href="#" class="nav-link {{ request()->is('lecturer/formpage/*') ? 'active' : '' }}" >
               {{-- <i class="nav-icon fas fa-tachometer-alt"></i> --}}
               <i class="nav-icon bx bxs-file-doc"></i>
               <p>
@@ -42,7 +42,7 @@
               </li>
               <li class="nav-item">
                 {{-- <a href="{{ url('admin/formsubmissionpage/allpost') }}" class="nav-link {{ request()->is('admin/template_page/admintemplateupload*') ? 'active' : '' }}"> --}}
-                <a href="{{ url('admin/formsubmissionpage/allpost') }}" class="nav-link">
+                <a href="{{ url('lecturer/formsubmissionpage/allpost') }}" class="nav-link">
                     <i class="bx bx-circle  nav-icons"></i>
                   <p>Form Submission Post</p>
                 </a>
@@ -58,7 +58,7 @@
 
           {{-- thesis section --}}
           <li class="nav-item">
-            <a href="#" class="nav-link {{ request()->is('admin/thesissubmissionpage/*') ? 'active' : '' }}" >
+            <a href="#" class="nav-link {{ request()->is('lecturer/thesissubmissionpage/*') ? 'active' : '' }}" >
               {{-- <i class="nav-icon fas fa-tachometer-alt"></i> --}}
               <i class="nav-icon bx bxs-file"></i>
               <p>
@@ -70,25 +70,26 @@
 
             <ul class="nav nav-treeview" style="background-color: #fafaeb">
               <li class="nav-item">
-                <a href="{{ url('admin/thesispage/thesistemplateupload') }}" class="nav-link {{ request()->is('admin/thesispage/thesistemplateupload*') ? 'active' : '' }}" >
+                <a href="{{ url('lecturer/proposalsubmissionpage/admintemplatelist') }}" class="nav-link {{ request()->is('lecturer/proposalsubmissionpage/admintemplatelist*') ? 'active' : '' }}" >
                   <i class="bx bx-circle nav-icons"></i>
                   <p>Proposal Template</p>
                 </a>
               </li>
               <li class="nav-item">
-                <a href="./index2.html" class="nav-link">
+                <a href="{{ url('lecturer/proposalsubmissionpage/allpost') }}" class="nav-link {{ request()->is('lecturer/proposalsubmissionpage/allpost*') ? 'active' : '' }}" >
+                {{-- <a href="lecturer/proposalsubmissionpage/allpost" class="nav-link"> --}}
                   <i class="bx bx-circle  nav-icons"></i>
                   <p>Proposal Submission Post</p>
                 </a>
               </li>
               <li class="nav-item">
-                <a href="{{ url('admin/thesispage/admintemplatelist') }}" class="nav-link">
+                <a href="{{ url('lecturer/thesissubmissionpage/admintemplatelist') }}" class="nav-link {{ request()->is('lecturer/thesispage/admintemplatelist*') ? 'active' : '' }}" >
                   <i class="bx bx-circle  nav-icons"></i>
                   <p>Thesis Template</p>
                 </a>
               </li>
               <li class="nav-item">
-                <a href="{{ url('admin/thesissubmissionpage/allpost') }}" class="nav-link">
+                  <a href="{{ url('lecturer/thesissubmissionpage/allpost') }}" class="nav-link {{ request()->is('lecturer/thesissubmissionpage/allpost*') ? 'active' : '' }}" >
                   <i class="bx bx-circle  nav-icons"></i>
                   <p>Thesis Submission Post</p>
                 </a>
@@ -98,7 +99,7 @@
 
         {{-- slides section --}}
         <li class="nav-item">
-          <a href="#" class="nav-link">
+          <a href="{{ url('lecturer/slidesubmissionpage') }}" class="nav-link {{ request()->is('lecturer/slidesubmissionpage*') ? 'active' : '' }}" >
             {{-- <i class="nav-icon fas fa-tachometer-alt"></i> --}}
             <i class="nav-icon bx bxs-slideshow"></i>
             <p>
@@ -110,13 +111,13 @@
 
           <ul class="nav nav-treeview" style="background-color: #fafaeb">
             <li class="nav-item">
-              <a href="{{ url('admin/thesispage/thesistemplateupload') }}" class="nav-link {{ request()->is('admin/thesispage/thesistemplateupload*') ? 'active' : '' }}" >
+              <a href="{{ url('lecturer/slidessubmissionpage/admintemplatelist') }}" class="nav-link {{ request()->is('lecturer/slidessubmissionpage/admintemplatelist*') ? 'active' : '' }}" >
                 <i class="bx bx-circle nav-icons"></i>
                 <p>Slides Template</p>
               </a>
             </li>
             <li class="nav-item">
-              <a href="./index2.html" class="nav-link">
+              <a href="{{ url('lecturer/slidessubmissionpage/allpost') }}" class="nav-link {{ request()->is('lecturer/slidessubmissionpage/allpost*') ? 'active' : '' }}" >
                 <i class="bx bx-circle  nav-icons"></i>
                 <p>Slides Submission Post</p>
               </a>
@@ -126,7 +127,7 @@
         </li>
 
         <li class="nav-item">
-            <a href="{{ url('lecturer/calendar') }}" class="nav-link {{ request()->is('admin/calendar*') ? 'active' : '' }}">
+            <a href="{{ url('lecturer/calendar') }}" class="nav-link {{ request()->is('lecturer/calendar*') ? 'active' : '' }}">
               <i class="nav-icon bx bxs-calendar"></i>
             <p>
               Presentation Schedule
@@ -135,7 +136,7 @@
       </li>
 
       <li class="nav-item">
-        <a href="{{ url('admin/thesis') }}" class="nav-link {{ request()->is('admin/thesis*') ? 'active' : '' }}">
+        <a href="{{ url('lecturer/thesis') }}" class="nav-link {{ request()->is('lecturer/thesis*') ? 'active' : '' }}">
           <i class="nav-icon bx bx-library"></i>
           <p>
             Thesis Repository

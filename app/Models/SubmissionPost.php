@@ -41,6 +41,21 @@ class SubmissionPost extends Model
         ->paginate(5);
     }
 
+    public static function getLecturerFormSP()
+    {
+        $loggedInUser = Auth::user(); // Assuming you are using Laravel's default authentication
+
+        return self::where('section', 'form')
+            ->where(function ($query) use ($loggedInUser) {
+                $query->where('lecturer_id', $loggedInUser->id) // Templates uploaded by the lecturer
+                    ->orWhereHas('lecturer', function ($query) use ($loggedInUser) {
+                        $query->where('role_as', 0); // Admin role
+                    });
+            })
+            ->select('submission_posts.*')
+            ->paginate(5);
+    }
+
     static public function getAdminThesisSP(){
         return self::where('section', 'thesis')
         ->whereHas('lecturer', function ($query) {
@@ -62,6 +77,22 @@ class SubmissionPost extends Model
         // ->get();
         ->paginate(5);
     }
+    static public function getLecturerProposalSP(){
+
+        $loggedInUser = Auth::user();
+        // Assuming you are using Laravel's default authentication
+
+        return self::where('section', 'proposal')
+         ->where(function ($query) use ($loggedInUser) {
+            $query->where('lecturer_id', $loggedInUser->id) // Templates uploaded by the lecturer
+                ->orWhereHas('lecturer', function ($query) use ($loggedInUser) {
+                    $query->where('role_as', 0); // Admin role
+                });
+        })
+        ->select('submission_posts.*')
+        ->paginate(5);
+
+    }
 
     static public function getAdminSlidesSP(){
         return self::where('section', 'slide')
@@ -72,6 +103,23 @@ class SubmissionPost extends Model
         ->select('submission_posts.*')
         // ->get();
         ->paginate(5);
+    }
+
+    static public function getLecturerSLideSP(){
+
+        $loggedInUser = Auth::user();
+        // Assuming you are using Laravel's default authentication
+
+        return self::where('section', 'slide')
+         ->where(function ($query) use ($loggedInUser) {
+            $query->where('lecturer_id', $loggedInUser->id) // Templates uploaded by the lecturer
+                ->orWhereHas('lecturer', function ($query) use ($loggedInUser) {
+                    $query->where('role_as', 0); // Admin role
+                });
+        })
+        ->select('submission_posts.*')
+        ->paginate(5);
+
     }
 
     static public function getStuFormSP(){

@@ -247,7 +247,6 @@ $(document).ready(function () {
         //   var eventId = event.id;
         //   console.log("hereeee after clicked" + eventId);
 
-        //   var viewAllUrl = '{{ route("formpost.showAll", ["submissionPostId" => ":eventId"]) }}';
         //   viewAllUrl = viewAllUrl.replace(':eventId', eventId);
 
         //   window.location.href = viewAllUrl;

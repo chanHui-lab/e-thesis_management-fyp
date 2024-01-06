@@ -306,18 +306,6 @@ $(document).ready(function () {
       var eventId = event.id;
       console.log("hereeee" + eventId);
 
-      // CAN ADD A VIEW SUBMISSION COLUMN PAGE
-        // var viewTheColumn = $('<button class="btn btn-success" id="viewOneSubmissionButton">View Submission Column</button>');
-        // viewTheColumn.on('click', function () {
-        //   var eventId = event.id;
-        //   console.log("hereeee after clicked" + eventId);
-
-        //   var viewAllUrl = '{{ route("formpost.showAll", ["submissionPostId" => ":eventId"]) }}';
-        //   viewAllUrl = viewAllUrl.replace(':eventId', eventId);
-
-        //   window.location.href = viewAllUrl;
-        // });
-      // detailsModalFooter.append(viewTheColumn);
     }
 
     // Show the modal

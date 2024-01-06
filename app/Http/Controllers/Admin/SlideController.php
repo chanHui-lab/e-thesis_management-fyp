@@ -107,12 +107,17 @@ class SlideController extends Controller
             ->get();
             // dd( $slideSubmissions);
 
+            $submissionPostID = $submissionPost->id;
             $students = DB::table('students')
             ->select('students.stu_id', 'users.name AS student_name', 'students.matric_number', 'slide_submissions.*')
             ->leftJoin('users', 'students.stu_id', '=', 'users.id')
-            ->leftJoin('slide_submissions', 'students.stu_id', '=', 'slide_submissions.student_id')
+            ->leftJoin('slide_submissions', function ($join) use ($submissionPostID) {
+                $join->on('students.stu_id', '=', 'slide_submissions.student_id')
+                    ->where('slide_submissions.submission_post_id', $submissionPostID);
+            })
             ->get();
             // dd( $students);
+
             return view('admin.slide_page.viewAllSlides', compact('slideSubmissions','students','submissionPost'));
 
         }
@@ -163,6 +168,8 @@ class SlideController extends Controller
                 ->orWhere('student_id', $slideSubmission->student_id);
         })
         ->get();
+        // dd($comments);
+
         $allcomments = $slideSubmission->comments;
 
         return view('admin.slide_page.viewOneSlide', compact('slideSubmission','submissionPostId', 'comments'));

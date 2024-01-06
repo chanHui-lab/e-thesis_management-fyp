@@ -26,7 +26,14 @@ class ProposalController extends Controller
 
     public function index()
     {
-        $template = Template::getProposalTemplate();
+        $loggedInUser = Auth::user();
+
+        if ($loggedInUser->role_as == 0) {
+            $template = Template::getAdminProposalTemplate();
+
+        } else {
+            $template = Template::getLecturerProposalTemplate();
+        }
 
         return view('admin.report_page.proposal.allProposalTemplate',compact('template'));
     }
@@ -50,17 +57,33 @@ class ProposalController extends Controller
 
     // store and update use same method.
     // ============================================================================
+
     public function indexPost()
     {
 
-        $post = SubmissionPost::getAdminProposalSP();
-        // dd( $post);
-        // Calculate remaining time for each submission
-        foreach ($post as $postform) {
-            $postform->remainingTime = $this->calculateRemainingTime($postform->submission_deadline);
-        }
+        $loggedInUser = Auth::user();
 
-        return view('admin.report_page.proposal.allproposalpost',compact('post'));
+        if ($loggedInUser->role_as == 0) {
+            $post = SubmissionPost::getAdminProposalSP();
+
+            // Calculate remaining time for each submission
+            foreach ($post as $postform) {
+                $postform->remainingTime = $this->calculateRemainingTime($postform->submission_deadline);
+            }
+
+            return view('admin.report_page.proposal.allproposalpost',compact('post'));
+
+        } else {
+            $post = SubmissionPost::getLecturerProposalSP();
+
+            // Calculate remaining time for each submission
+            foreach ($post as $postform) {
+                $postform->remainingTime = $this->calculateRemainingTime($postform->submission_deadline);
+            }
+
+            return view('admin.report_page.proposal.allproposalpost',compact('post'));
+        }
+        return view('admin.report_page.proposal.allformpost',compact('post'));
 
     }
 
@@ -150,66 +173,50 @@ class ProposalController extends Controller
     // update,store and delete POST same as Form controller
 
     public function getProposalSubmissionForLecturer($submissionPostId){
-        $lecturer = auth()->user(); // Get the currently logged-in lecturer
-        // $submissionPost = SubmissionPost::find($submissionPostId);
+        // $lecturer = auth()->user(); // Get the currently logged-in lecturer
+        // $submissionPost = SubmissionPost::with('lecturer')->find($submissionPostId);
+        // dd(auth()->user());
+        $user = auth()->user();
         $submissionPost = SubmissionPost::with('lecturer')->find($submissionPostId);
 
         // added accesible for admin role
-        if (auth()->user()->role_as == 0) {
-
-            // dd($submissionPost);
+        if ($user->role_as == 0) {
 
             $proposalSubmissions = Proposal_submission::where('submission_post_id', $submissionPost->id)
             ->get();
             // dd( $proposalSubmissions);
 
+            $submissionPostID = $submissionPost->id;
             $students = DB::table('students')
             ->select('students.stu_id', 'users.name AS student_name', 'students.matric_number', 'proposal_submissions.*')
             ->leftJoin('users', 'students.stu_id', '=', 'users.id')
-            ->leftJoin('proposal_submissions', 'students.stu_id', '=', 'proposal_submissions.student_id')
+            ->leftJoin('proposal_submissions', function ($join) use ($submissionPostID) {
+                $join->on('students.stu_id', '=', 'proposal_submissions.student_id')
+                    ->where('proposal_submissions.submission_post_id', $submissionPostID);
+            })
             ->get();
-            // dd( $students);
+
             return view('admin.report_page.proposal.viewAll', compact('proposalSubmissions','students','submissionPost'));
 
         }
         elseif(auth()->user()->role_as == 1){
-            if (($submissionPost && $submissionPost->lecturer && $submissionPost->lecturer->id === $lecturer->id)) {
-
-            // NEED TO ADD ONE PART, if lecture role is admin, access all student instead of joinging.
-            // if its lecturer, asses the one she created and access all the admin.
-            $proposalSubmissions = $lecturer->formSubmissions()
-            ->where('submission_post_id', $submissionPost->id)
-            ->get();
 
             $proposalSubmissions = Proposal_submission::where('submission_post_id', $submissionPost->id)
+            ->whereHas('student', function ($query) use ($user) {
+                $query->where('supervisor_id', $user->id);
+            })
             ->get();
 
-            // ADMIN
-            // $students = DB::table('students')
-            // ->select('students.stu_id', 'users.name AS student_name', 'students.matric_number', 'form_submissions.*')
-            // ->leftJoin('users', 'students.stu_id', '=', 'users.id')
-            // ->leftJoin('form_submissions', 'students.stu_id', '=', 'form_submissions.student_id')
-            // ->get();
-            // dd($students);
-
-            // THIS IS FOR LECTURER INTERFACE!! ONLY SUPERVISED STUDENTS
+            // Fetch all students supervised by the current lecturer
             $students = DB::table('students')
-            ->select('students.stu_id', 'users.name AS student_name', 'students.matric_number')
-            ->leftJoin('users', 'students.stu_id', '=', 'users.id')
-            ->leftJoin('proposal_submissions', function ($join) use ($lecturer, $submissionPost) {
-                $join->on('students.stu_id', '=', 'proposal_submissions.student_id')
-                    ->where('proposal_submissions.submission_post_id', $submissionPost->id);
-            })
-            ->where(function ($query) use ($lecturer) {
-                $query->where('students.supervisor_id', $lecturer->id)
-                    ->orWhereNull('proposal_submissions.student_id');
-            })
-            ->get();
+                ->select('students.stu_id', 'users.name AS student_name', 'students.matric_number')
+                ->leftJoin('users', 'students.stu_id', '=', 'users.id')
+                ->where('students.supervisor_id', $user->id)
+                ->get();
 
             return view('admin.report_page.proposal.viewAllProposal', compact('proposalSubmissions','students','submissionPost'));
         }
 
-        }
     }
 
     public function showProposalSubmissions($proposalSubmissionId)

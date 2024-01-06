@@ -28,7 +28,10 @@
     </div>
     <!-- /.card-header -->
     <!-- form start -->
-    {{-- <form method="post" action="{{ url ('admin/adminpage/admintemplateupload')}}" enctype="multipart/form-data"> --}}
+    @php
+        $storerouteName = (auth()->user()->role_as == 0) ? 'template.store' : 'lecttemplate.store';
+    @endphp
+
     <form method="post" action="{{ route('template.store')}}" enctype="multipart/form-data">
 
         @csrf

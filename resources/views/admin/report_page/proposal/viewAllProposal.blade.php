@@ -17,11 +17,11 @@
                 @endphp
 
                 @if (!$deadlineExceeded)
-                <span class="badge badge-success" style="font-size: 100%; margin: 15px;">
+                <span class="badge badge-success ml-0 mt-2 mb-2" style="font-size: 100%;">
                     Deadline not Exceeded
                 </span>
                 @else
-                <span class="badge badge-danger" style="font-size: 100%; margin-bottom: 15px;">Deadline Exceeded</span>
+                <span class="badge badge-danger ml-0 mt-2 mb-2" style="font-size: 100%;">Deadline Exceeded</span>
                 @endif
 
                 <h6>(Total: {{ $proposalSubmissions -> count() }})</h6>

@@ -78,19 +78,10 @@
                         <td>{{ $submission->student_name }}
                         ({{ $submission->matric_number }})</td>
                         @php
-                            // $thesisSubmissions = $thesisSubmissions->where('student_id', $submission->stu_id)->first();
-                            // if ($thesisSubmissions) {
-                            //     $thesisSubmission = $thesisSubmissions->where('student_id', $submission->stu_id)->first();
-                            // }
-                            // $formfiles = $thesisSubmissions ? json_decode($thesisSubmission->thesis_file, true) : null;
-                            // $submissionStatus = ($formfiles && count($formfiles) > 0) ? "Submitted" : "Pending";
-
-                            // // Check if files exist
-                            // $filesExist = !empty($formfiles);
-                            // $deadlineExceeded = $submissionPost->submission_deadline <= now();
 
                             if ($thesisSubmissions) {
                                 $thesisSubmission = $thesisSubmissions->where('student_id', $submission->stu_id)->first();
+                                // dd($thesisSubmission);
 
                                 if ($thesisSubmission) {
                                     $formfiles = json_decode($thesisSubmission->thesis_file, true);
@@ -171,26 +162,33 @@
                         </td> --}}
 
                         <td>
-                            @if(auth()->user()->role_as === 0) <!-- Check if the user is an admin -->
-                                <form action="{{ route('updateThesisStatus', $submission->id) }}" method="post">
+                            {{-- @if(auth()->user()->role_as === 0) <!-- Check if the user is an admin --> --}}
+                                {{-- <form action="{{ route('updateThesisStatus', $submission->id) }}" method="post"> --}}
+                                {{-- <form action="{{ route('updateThesisStatus', ['thesisSubmission' => $thesisSubmission]) }}" method="post">
                                     @csrf
                                     @method('patch')
-                                    {{-- <div class="input-group">
-                                        <select name="thesis_status" class="form-control custom-select" onchange="console.log(this.value); this.form.submit()">
-                                            <option value="pending" {{ $submissionPost->thesis_status === 'pending' ? 'selected' : '' }}>Pending</option>
-                                            <option value="approved" {{ $submissionPost->thesis_status === 'approved' ? 'selected' : '' }}>Approved</option>
-                                            <option value="rejected" {{ $submissionPost->thesis_status === 'rejected' ? 'selected' : '' }}>Rejected</option>
-                                        </select>
-                                    </div> --}}
+
                                     <select name="thesis_status" onchange="this.form.submit()">
-                                        <option value="pending" class="pendingApproval" {{ $submission->thesis_status === 'pending' ? 'selected' : '' }}>Pending</option>
-                                        <option value="approved" class="approved" {{ $submission->thesis_status === 'approved' ? 'selected' : '' }}>Approved</option>
-                                        <option value="rejected" class="rejected" {{ $submission->thesis_status === 'rejected' ? 'selected' : '' }}>Rejected</option>
+                                        <option value="pending" class="pendingApproval" {{ $thesisSubmission->thesis_status === 'pending' ? 'selected' : '' }}>Pending</option>
+                                        <option value="approved" class="approved" {{ $thesisSubmission->thesis_status === 'approved' ? 'selected' : '' }}>Approved</option>
+                                        <option value="rejected" class="rejected" {{ $thesisSubmission->thesis_status === 'rejected' ? 'selected' : '' }}>Rejected</option>
                                     </select>
-                                </form>
-                            @else
+                                </form> --}}
+                            {{-- @else
                                 {{ $submission->thesis_status }}
-                            @endif
+                            @endif --}}
+
+                            <form action="{{ route('updateThesisStatus', $submission->stu_id) }}" method="POST">
+                                @csrf
+                                @method('PUT')
+                                <select name="status" onchange="this.form.submit()">
+                                    @foreach ($statuses as $key => $status)
+                                        <option value="{{ $key }}" {{ $submission->thesis_status == $key ? 'selected' : '' }}>{{ $status }}</option>
+                                    @endforeach
+                                </select>
+                                {{-- <button type="submit" class="btn btn-primary btn-sm mt-1">Update</button> --}}
+                            </form>
+
                         </td>
 
                         {{-- <td>

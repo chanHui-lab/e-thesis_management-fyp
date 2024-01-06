@@ -4,17 +4,17 @@
 
 <div class="submission-tab">
     {{-- <div class="tab-button"> --}}
-        <a class="btn btn-primary back-button" href="{{ route('formpost.showAll', ['submissionPostId' => $submissionPostId]) }}">Back</a>
+        <a class="btn btn-primary back-button" href="{{ route('formpost.showAllAdmin', ['submissionPostId' => $submissionPostId]) }}">Back</a>
         {{-- <div class="pull-right">
             <a class="btn btn-primary" href="{{ route('formpost.index') }}"> Back</a>
           </div> --}}
     {{-- </div> --}}
     <div class="tab-content">
-        <p> Submitted by:  <strong>{{ $formSubmission->student->matric_number }} {{ $formSubmission->student->user->name }}</strong></p>
+        <p class="mb-2 mt-2 ml-2"> Submitted by:  <strong>{{ $formSubmission->student->matric_number }} {{ $formSubmission->student->user->name }}</strong></p>
     </div>
 </div>
 
-    <h1 style="margin-top: 20px">{{ $formSubmission->submissionPost->title }}</h1>
+    <h1>{{ $formSubmission->submissionPost->title }}</h1>
     <p>{{ $formSubmission->submissionPost->description }} </p>
 
     <div class="card">
@@ -283,7 +283,7 @@
                                             {{ $comment->comment_text }}
                                             <!-- Add delete icon and link for the lecturer's comment -->
                                             @if ($comment->lecturer_id == Auth::id())
-                                                <a href="{{ route('lectFormSubmission.deletecomment', ['commentId' => $comment->id]) }}" onclick="return confirm('Are you sure you want to delete this comment?')">
+                                                <a href="{{ route('adminFormSubmission.deletecomment', ['commentId' => $comment->id]) }}" onclick="return confirm('Are you sure you want to delete this comment?')">
                                                     <i class="fas fa-trash-alt" style="color:#444"></i>
                                                 </a>
                                             @endif

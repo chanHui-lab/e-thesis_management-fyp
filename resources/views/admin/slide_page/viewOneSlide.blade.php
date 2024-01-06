@@ -4,14 +4,14 @@
 
 <div class="submission-tab">
     {{-- <div class="tab-button"> --}}
-        <a class="btn btn-primary back-button" href="{{ route('thesispost.showAll', ['submissionPostId' => $submissionPostId]) }}">Back</a>
+        <a class="btn btn-primary back-button" href="{{ route('slidespost.showAll', ['submissionPostId' => $submissionPostId]) }}">Back</a>
 
     <div class="tab-content">
-        <p> Submitted by:  <strong>{{ $proposalSubmission->student->matric_number }} {{ $proposalSubmission->student->user->name }}</strong></p>
+        <p class="mb-2 mt-2 ml-2"> Submitted by:  <strong>{{ $slideSubmission->student->matric_number }} {{ $slideSubmission->student->user->name }}</strong></p>
     </div>
 </div>
 
-    <h1 style="margin-top: 20px">{{ $slideSubmission->submissionPost->title }}</h1>
+    <h1>{{ $slideSubmission->submissionPost->title }}</h1>
 
     <p>{{ $slideSubmission->submissionPost->description }} </p>
 
@@ -54,7 +54,7 @@
     </div>
 
     @php
-        $formfiles = json_decode($slideSubmission->thesis_file, true);
+        $formfiles = json_decode($slideSubmission->slide_file, true);
         $submissionStatus = (count($formfiles) > 0) ? "Submitted" : "Pending";
 
         $submissionDeadline = \Carbon\Carbon::parse($slideSubmission->submissionPost->submission_deadline);
@@ -68,7 +68,7 @@
 
     @endphp
 
-    <h2 style="margin-top: 20px">Thesis Submission</h2>
+    <h2 style="margin-top: 20px">Presentation Slide Submission</h2>
 
 
     <div class = "card" style="margin-top: 16px">
@@ -86,15 +86,15 @@
                     {{-- <td class="submission-status {{ $submissionStatus == 'Submitted' ? 'submitted' : 'pending' }}"> {{ $submissionStatus }}</td> --}}
                 </tr>
                 <tr>
-                    <th ><strong>Thesis Title</strong></th>
-                    <td> {{ $slideSubmission->thesis_title }}
+                    <th ><strong>Slide Title</strong></th>
+                    <td> {{ $slideSubmission->slide_title }}
 
 
                 </td>
                 </tr>
                 <tr>
-                    <th>Abstract:</th>
-                    <td>{{ $slideSubmission->thesis_abstract }}</td>
+                    <th>Description</th>
+                    <td>{{ $slideSubmission->slide_description }}</td>
                 </tr>
                 <tr>
                     <!-- Calculate time remaining -->
@@ -289,7 +289,7 @@
                                             {{ $comment->comment_text }}
                                             <!-- Add delete icon and link for the lecturer's comment -->
                                             @if ($comment->lecturer_id == Auth::id())
-                                                <a href="{{ route('lectFormSubmission.deletecomment', ['commentId' => $comment->id]) }}" onclick="return confirm('Are you sure you want to delete this comment?')">
+                                                <a href="{{ route('adminFormSubmission.deletecomment', ['commentId' => $comment->id]) }}" onclick="return confirm('Are you sure you want to delete this comment?')">
                                                     <i class="fas fa-trash-alt" style="color:#444"></i>
                                                 </a>
                                             @endif
@@ -323,7 +323,7 @@
                                 {{-- </div> --}}
                                 <!-- /.card-body -->
                                 <div class="card-footer">
-                                <form method="POST" action="{{ route('formpostShow.addComment', ['formSubmissionId' => $thesisSubmission->id]) }}">
+                                <form method="POST" action="{{ route('slidespostShow.addComment', ['slideSubmissionId' => $slideSubmission->id]) }}">
                                     @csrf
                                     <div class="input-group">
                                     <input type="text" name="comment_text" placeholder="Type Message ..." class="form-control">

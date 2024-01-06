@@ -88,7 +88,7 @@
                         </td>
 
                         <td>
-                            <form action="{{ route('template.destroy',$templateform->id) }}" method="POST">
+                            <form action="{{ route('lecttemplate.destroy',$templateform->id) }}" method="POST">
 
                              <a class="btn btn-info btn-sm rounded-btn" href="{{ route('thesistemplate.edit',$templateform->id) }}">
                                     <i class="fas fa-pencil-alt">

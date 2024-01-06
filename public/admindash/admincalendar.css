@@ -246,6 +246,7 @@
 /* Define styles for thesis events */
 .thesis-event {
   background-color: rgb(210, 255, 210);  /* Set the desired background color */
+  border-color: transparent;
   color: #000;
 }
 
@@ -255,7 +256,15 @@
 }
 
 .FYP-Prop-event {
-  background-color: rgb(255, 255, 143);  /* Set the desired background color */
+  background-color: #FACD;  /* Set the desired background color */
+  color: #000;
+}
+.FYP-Seminar-event {
+  background-color: rgb(188, 255, 134);  /* Set the desired background color */
+  color: #000;
+}
+.FYP-Workshop-event {
+  background-color: rgb(255, 249, 78);  /* Set the desired background color */
   color: #000;
 }
 

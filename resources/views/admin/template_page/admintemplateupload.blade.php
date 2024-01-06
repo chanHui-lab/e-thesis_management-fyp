@@ -9,6 +9,12 @@
                 <h5>(Total: {{ $template -> total() }})</h5>
             </div>
             <div class="float-right">
+                @php
+                    $createrouteName = (auth()->user()->role_as == 0) ? 'template.create' : 'lecttemplate.create';
+                    $editrouteName = (auth()->user()->role_as == 0) ? 'template.edit' : 'lecttemplate.edit';
+                    $deleterouteName = (auth()->user()->role_as == 0) ? 'formpost.showAllAdmin' : 'formpost.showAllLecturer';
+                    $viewAllrouteName = (auth()->user()->role_as == 0) ? 'formpost.showAllAdmin' : 'formpost.showAllLecturer';
+                @endphp
                 <a style="margin-bottom: 10px;" class="btn btn-success btn-common" href="{{ route('template.create') }}">
                     <i class="fa fa-upload iconie"></i>
                     Upload New Form Template

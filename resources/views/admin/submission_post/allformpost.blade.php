@@ -7,7 +7,7 @@
             <div class=" titleforform">
                 {{-- <h1><i style="font-size: 30px;margin-right:20px" class="fas fa-clipboard"></i>Form Templates</h1> --}}
 
-                <h1 style = "padding-top: 20px;">
+                <h1>
                     <i style="font-size: 30px;margin-right:20px" class="fas fa-upload"></i>
                     Form Submission Post</h1>
                 <h6>(Total: {{ $post -> total() }})</h6>
@@ -82,7 +82,7 @@
                                 </a> --}}
 
                                 {{-- <a href="{{ route('submission-post.view-submissions', ['submissionPostId' => $submissionPost->id]) }}" class="btn btn-primary">View All Submissions</a> --}}
-                                <a class="btn btn-primary btn-sm rounded-btn" href="{{ route('formpost.showAll', ['submissionPostId' => $postform->id]) }}">
+                                <a class="btn btn-primary btn-sm rounded-btn" href="{{ route('formpost.showAllAdmin', ['submissionPostId' => $postform->id]) }}">
                                 {{-- <a class="btn btn-primary btn-sm" href="{{ route('formpost.showAll',$postform->id) }}"> --}}
                                     <i class="fas fa-folder">
                                     </i>

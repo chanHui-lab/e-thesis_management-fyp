@@ -5,6 +5,9 @@
 <main>
 <h1 style = "padding-top: 20px; padding-bottom:20px">Edit Form Template</h1>
 <div class="pull-right">
+    {{-- @php
+        $backrouteName = (auth()->user()->role_as == 0) ? 'template.index' : 'lecttemplate.index';
+    @endphp --}}
   <a class="btn btn-primary" href="{{ route('formtemplate.index') }}" style = "margin-bottom:20px"> Back</a>
 </div>
  {{--handle error  --}}
@@ -27,9 +30,11 @@
     </div>
     <!-- /.card-header -->
     <!-- form start -->
-
+    @php
+        $storerouteName = (auth()->user()->role_as == 0) ? 'template.updatew' : 'lecttemplate.updatew';
+    @endphp
     {{-- <form method="post" action="{{ url ('admin/adminpage/admintemplateupload')}}" enctype="multipart/form-data"> --}}
-    <form method="post" action="{{ route('template.updatew', ['id' => $getRecord->id]) }}" enctype="multipart/form-data">
+    <form method="post" action="{{ route($storerouteName, ['id' => $getRecord->id]) }}" enctype="multipart/form-data">
 
         @csrf
         @method('PUT')

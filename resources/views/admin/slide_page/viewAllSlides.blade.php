@@ -191,7 +191,7 @@
 
                         <td>
 
-                        <a href="{{ $slideSubmission ? route('slidespost.show', ['submissionPostId' => $submissionPost->id, 'slideSubmissionId' => $slideSubmission->id]) : '#' }}" class="btn btn-primary {{ !$slideSubmission ? 'btn-disabled' : '' }}" @if (!$slideSubmission) disabled @endif>
+                        <a href="{{ $slideSubmission ? route('slidespost.show', ['submissionPostId' => $submissionPost->id, 'slideSubmissionId' => $slideSubmission->id]) : '#' }}" class="btn btn-primary {{ !$slideSubmission ? 'btn-disabled grey-button' : '' }}" @if (!$slideSubmission) disabled @endif>
                             <i class="fas fa-folder"></i> Show
                         </a>
                 </td>
@@ -217,7 +217,7 @@
         background-color: lightgreen !important;
     }
     /* for the SHOW button in viewAll balde */
-    .grey-btn {
+    .grey-button {
         background-color: grey; /* You can customize the background color */
         cursor: not-allowed; /* Change the cursor style to indicate it's not clickable */
     }

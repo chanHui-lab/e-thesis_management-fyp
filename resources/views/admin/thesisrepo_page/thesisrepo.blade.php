@@ -4,6 +4,7 @@
 
 <main>
 
+
     <div id="app">
 
         {{-- <router-view :server-data="{{ json_encode($data) }}"></router-view> --}}

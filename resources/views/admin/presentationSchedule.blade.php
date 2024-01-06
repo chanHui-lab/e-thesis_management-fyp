@@ -655,6 +655,12 @@
           } else if (arg.event.title.includes('Proposal Presentation')) {
             return ['FYP-Prop-event'];
         }
+        else if (arg.event.title.includes('Seminar')) {
+            return ['FYP-Seminar-event'];
+        }
+        else if (arg.event.title.includes('Workshop')) {
+            return ['FYP-Workshop-event'];
+        }
         return [];
       },
       // eventRender: function (info) {
@@ -758,17 +764,6 @@
     var detailsModalFooter = $('#eventModalFooter');
     detailsModalFooter.empty(); // Clear existing buttons
 
-
-    // if (eventType === 'forms') {
-    //   // var eventId = '{{ $event['id'] }}';
-
-    //   // var viewAllButton = $('<button class="btn btn-success" id="viewAllSubmissionButton">View All Submissions</button>');
-    //   //   viewAllButton.on('click', function () {
-    //   //     window.location.href = '{{ route("formpost.showAll", ["submissionPostId" => "event.id"]) }}';
-    //   //   });
-
-    //     // detailsModalFooter.append(viewAllButton);
-    // }
 
 
     // WORKS BUT DIFF TIMEZONE
@@ -966,7 +961,7 @@
             var eventId = event.id;
             console.log("hereeee after clicked" + eventId);
 
-            var viewAllUrl = '{{ route("formpost.showAll", ["submissionPostId" => ":eventId"]) }}';
+            var viewAllUrl = '{{ route("formpost.showAllAdmin", ["submissionPostId" => ":eventId"]) }}';
             viewAllUrl = viewAllUrl.replace(':eventId', eventId);
 
             window.location.href = viewAllUrl;

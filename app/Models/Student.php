@@ -32,4 +32,8 @@ class Student extends Model
     {
         return $this->hasMany(Form_submission::class, 'student_id');
     }
+    public function thesisSubmission()
+    {
+        return $this->hasMany(Thesis_submission::class, 'student_id');
+    }
 }

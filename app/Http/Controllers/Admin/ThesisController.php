@@ -26,10 +26,18 @@ class ThesisController extends Controller
 
     public function index()
     {
-        $template = Template::getAdminThesisTemplate();
+        $loggedInUser = Auth::user();
+
+        if ($loggedInUser->role_as == 0) {
+            $template = Template::getAdminThesisTemplate();
+
+        } else {
+            $template = Template::getLecturerThesisTemplate();
+        }
 
         return view('admin.report_page.allThesisTemplate',compact('template'));
     }
+
     public function create()
     {
         return view('admin.report_page.createThesisTemplate');
@@ -249,14 +257,20 @@ class ThesisController extends Controller
 
             $thesisSubmissions = Thesis_submission::where('submission_post_id', $submissionPost->id)
             ->get();
-
+            $submissionPostID = $submissionPost->id;
             $students = DB::table('students')
             ->select('students.stu_id', 'users.name AS student_name', 'students.matric_number', 'thesis_submissions.*')
             ->leftJoin('users', 'students.stu_id', '=', 'users.id')
-            ->leftJoin('thesis_submissions', 'students.stu_id', '=', 'thesis_submissions.student_id')
+            ->leftJoin('thesis_submissions', function ($join) use ($submissionPostID) {
+                $join->on('students.stu_id', '=', 'thesis_submissions.student_id')
+                    ->where('thesis_submissions.submission_post_id', $submissionPostID);
+            })
             ->get();
+
             // dd( $students);
-            return view('admin.report_page.viewAllThesis', compact('thesisSubmissions','students','submissionPost'));
+            $statuses = ['approved' => 'Approved', 'rejected' => 'Rejected', 'pending' => 'Pending'];
+
+            return view('admin.report_page.viewAllThesis', compact('thesisSubmissions','students','submissionPost', 'statuses'));
 
         }
         elseif(auth()->user()->role_as == 1){
@@ -292,8 +306,9 @@ class ThesisController extends Controller
                     ->orWhereNull('thesis_submissions.student_id');
             })
             ->get();
+            $statuses = ['approved' => 'Approved', 'rejected' => 'Rejected', 'pending' => 'Pending'];
 
-            return view('admin.report_page.viewAllThesis', compact('thesisSubmissions','students','submissionPost'));
+            return view('admin.report_page.viewAllThesis', compact('thesisSubmissions','students','submissionPost','statuses'));
         }
 
         }
@@ -304,8 +319,11 @@ class ThesisController extends Controller
     {
         // $submissionPost = SubmissionPost::findOrFail($submissionPostId);
         $thesisSubmission = Thesis_submission::findOrFail($thesisSubmissionId);
+        // dd($thesisSubmission);
         // $student = Student::findOrFail($studentId);
         $submissionPostId = $thesisSubmission->submissionPost->id;
+        // dd($submissionPostId);
+
         $comments = Comment::where('commentable_id', $thesisSubmissionId)
         ->where(function ($query) use ($thesisSubmission) {
             // Include comments made by the student
@@ -314,27 +332,58 @@ class ThesisController extends Controller
                 ->orWhere('student_id', $thesisSubmission->student_id);
         })
         ->get();
+        // dd($comments);
+
         $allcomments = $thesisSubmission->comments;
+        // dd($allcomments);
 
         return view('admin.report_page.viewOne', compact( 'thesisSubmission','submissionPostId', 'comments'));
     }
 
     // $submissionPostId
-    public function updateStatus(Request $request, Thesis_submission $submission)
+    // public function updateStatus(Request $request, Thesis_submission $submission)
     // public function updateStatus(Request $request, $submissionPostId)
-    {
+
+    // public function updateStatus(Request $request, ThesisSubmission $thesisSubmission)
+    // {
+    //     dd($thesisSubmission);
+
+    //     $request->validate([
+    //         'thesis_status' => 'required|in:pending,approved,rejected',
+    //     ]);
+
+    //     $submission->update([
+    //         'thesis_status' => $request->input('thesis_status'),
+    //     ]);
+
+    //     // $studentName = $submission->student->user->name;
+    //     $studentName = $submission->user->name;
+
+    //     $thesis_status = $submission->thesis_status;
+
+    //     return redirect()->back()->with('success', "Thesis status for $studentName updated successfully as '$thesis_status'.");
+    // }
+
+    public function updateStatus($studentId, Request $request) {
+        // Validate request if needed
         $request->validate([
-            'thesis_status' => 'required|in:pending,approved,rejected',
+            'status' => 'required|in:approved,rejected,pending',
         ]);
 
-        $submission->update([
-            'thesis_status' => $request->input('thesis_status'),
-        ]);
+        // Update the thesis status in the database
+        $student = Student::find($studentId);
+        $thesisSubmission = $student->thesisSubmission;
+        // dd($thesisSubmission);
 
-        $studentName = $submission->student->user->name;
-        $thesis_status = $submission->thesis_status;
+        // $thesisSubmission->thesis_status = $request->input('status');
+        // $thesisSubmission->save();
 
-        return redirect()->back()->with('success', "Thesis status for $studentName updated successfully as '$thesis_status'.");
+        // Loop through each student and update thesis status
+        foreach ($thesisSubmission as $thesis) {
+            $thesis->update(['thesis_status' => $request->input('status')]);
+        }
+        // Redirect back to the view
+        return redirect()->back()->with('success', 'Thesis status updated successfully.');
     }
 
     public function editPost($id)
@@ -346,6 +395,36 @@ class ThesisController extends Controller
         }
         else{
             return redirect()->route('thesispost.index')->with('error', 'Submission post not found');
+        }
+    }
+    public function removeFile(Request $request, $submissionPostId)
+    {
+        // Validate the request
+        $request->validate([
+            'path' => 'required|string', // Assuming 'path' is the key sent in the AJAX request
+        ]);
+        // Find the form submission record
+        $submission_post = SubmissionPost::findOrFail($submissionPostId);
+
+        // Decode the form_files JSON
+        $formFiles = json_decode($submission_post->files, true);
+
+        // Find the index of the file to be removed
+        $indexToRemove = array_search($request->input('path'), array_column($formFiles, 'path'));
+
+        if ($indexToRemove !== false) {
+            // Remove the file from the array
+            array_splice($formFiles, $indexToRemove, 1);
+
+            // Encode the updated form_files array back to JSON
+            $submission_post->files = json_encode($formFiles);
+
+            // Save the updated form submission record
+            $submission_post->save();
+
+            return response()->json(['message' => 'File removed successfully']);
+        } else {
+            return response()->json(['error' => 'File not found'], 404);
         }
     }
 }

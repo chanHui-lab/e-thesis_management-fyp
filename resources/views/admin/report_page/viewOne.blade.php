@@ -7,11 +7,11 @@
         <a class="btn btn-primary back-button" href="{{ route('thesispost.showAll', ['submissionPostId' => $submissionPostId]) }}">Back</a>
 
     <div class="tab-content">
-        <p> Submitted by:  <strong>{{ $thesisSubmission->student->matric_number }} {{ $thesisSubmission->student->user->name }}</strong></p>
+        <p class="mb-2 mt-2 ml-2"> Submitted by:  <strong>{{ $thesisSubmission->student->matric_number }} {{ $thesisSubmission->student->user->name }}</strong></p>
     </div>
 </div>
 
-    <h1 style="margin-top: 20px">{{ $thesisSubmission->submissionPost->title }}</h1>
+    <h1>{{ $thesisSubmission->submissionPost->title }}</h1>
 
     <p>{{ $thesisSubmission->submissionPost->description }} </p>
 
@@ -65,6 +65,7 @@
         $fileTimeDiff = $fileSubmissionTime->diff($submissionDeadline);
         // Check if files exist
         $filesExist = !empty($formfiles);
+        $thesisTypes = explode(',', $thesisSubmission->thesis_type);
 
     @endphp
 
@@ -219,6 +220,54 @@
                     </tr>
                     @endif
                     <tr>
+                        <th>
+                            Thesis Type
+                        </th>
+                        <td>
+                            @foreach($thesisTypes as $type)
+                                @php
+                                    $displayName = '';
+                                    $backgroundColor = '';
+                                    $borderColor = '';
+
+                                    switch ($type) {
+                                        case 'data_analytics':
+                                            $displayName = 'Data Analytics';
+                                            $backgroundColor = 'rgba(0, 0, 255, 0.2)'; // Blue with transparency
+                                            $borderColor = 'blue';
+                                            break;
+                                        case 'web_development':
+                                            $displayName = 'Web Development';
+                                            $backgroundColor = 'rgba(0, 255, 0, 0.2)'; // Green with transparency
+                                            $borderColor = 'green';
+                                            break;
+                                        case 'mobile_development':
+                                            $displayName = 'Mobile Development';
+                                            $backgroundColor = 'rgba(255, 0, 0, 0.2)'; // Red with transparency
+                                            $borderColor = 'transparent';
+                                            break;
+                                        case 'machine_learning':
+                                            $displayName = 'Machine Learning';
+                                            $backgroundColor = '#FACD'; // Red with transparency
+                                            $borderColor = '#FACD';
+                                            break;
+                                        // Add more cases for other types if needed
+                                        default:
+                                            $displayName = 'Unknown Type';
+                                            $backgroundColor = 'rgba(128, 128, 128, 0.2)'; // Default color for unknown types with transparency
+                                            $borderColor = 'gray';
+                                            break;
+                                    }
+                                @endphp
+
+                                <span class="chip" style="border: 2px solid {{ $borderColor }}; background-color: {{ $backgroundColor }}; padding: 5px 10px; margin: 5px; border-radius: 20px;">
+                                    {{ $displayName }}
+                                </span>
+                            @endforeach
+                        </td>
+                    </tr>
+
+                    <tr>
                         <th><strong>Submission Comment</strong></th>
                         {{-- <td> {{ $formSubmission->form_title }}</td> --}}
                         <td>
@@ -274,7 +323,8 @@
                                             {{-- <span class="direct-chat-name float-left"><strong>{{ $comment->student->user->name }}</strong></span> --}}
                                                 @if ($comment->lecturer_id == Auth::id())
                                                 <!-- Comment made by the student -->
-                                                <strong>You (Lect):</strong>
+                                                {{-- <strong>You (Lect):</strong> --}}
+                                                <strong>You ({{ $thesisSubmission->student->supervisor->user->name }})</strong>
                                                 @else
                                                     <!-- Comment made by the lecturer -->
                                                     <strong>{{ $comment->student->user->name }} (Student):</strong>
@@ -295,7 +345,7 @@
                                             {{ $comment->comment_text }}
                                             <!-- Add delete icon and link for the lecturer's comment -->
                                             @if ($comment->lecturer_id == Auth::id())
-                                                <a href="{{ route('lectFormSubmission.deletecomment', ['commentId' => $comment->id]) }}" onclick="return confirm('Are you sure you want to delete this comment?')">
+                                                <a href="{{ route('adminFormSubmission.deletecomment', ['commentId' => $comment->id]) }}" onclick="return confirm('Are you sure you want to delete this comment?')">
                                                     <i class="fas fa-trash-alt" style="color:#444"></i>
                                                 </a>
                                             @endif
@@ -329,7 +379,7 @@
                                 {{-- </div> --}}
                                 <!-- /.card-body -->
                                 <div class="card-footer">
-                                <form method="POST" action="{{ route('formpostShow.addComment', ['formSubmissionId' => $thesisSubmission->id]) }}">
+                                <form method="POST" action="{{ route('thesispostShow.addComment', ['thesisSubmissionId' => $thesisSubmission->id]) }}">
                                     @csrf
                                     <div class="input-group">
                                     <input type="text" name="comment_text" placeholder="Type Message ..." class="form-control">

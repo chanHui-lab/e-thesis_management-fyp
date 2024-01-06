@@ -41,7 +41,7 @@ class Template extends Model
             ->paginate(5);
     }
 
-    static public function getLectFormTemplate(){
+    static public function getAdminFormTemplate(){
         return self::where('section', 'form')
         ->whereHas('lecturer', function ($query) {
             $query->where('role_as', 0) // Admin role
@@ -63,6 +63,19 @@ class Template extends Model
         ->paginate(5);
     }
 
+    static public function getLecturerThesisTemplate(){
+        $loggedInUser = Auth::user();
+
+        return self::where('section', 'thesis')
+            ->where(function ($query) use ($loggedInUser) {
+                $query->where('lecturer_id', $loggedInUser->id) // Templates uploaded by the lecturer
+                    ->orWhereHas('lecturer', function ($query) use ($loggedInUser) {
+                        $query->where('role_as', 0); // Admin role
+                    });
+            })
+            ->select('templates.*')
+            ->paginate(5);
+    }
     // static public function getStuFormTemplate(){
     //     $lecturer = Auth::user()->supervisor;
     //     return self::where('section', 'form')
@@ -104,7 +117,7 @@ class Template extends Model
         ->get();
     }
 
-    static public function getProposalTemplate(){
+    static public function getAdminProposalTemplate(){
         return self::where('section', 'proposal')
         ->whereHas('lecturer', function ($query) {
             $query->where('role_as', 0) // Admin role
@@ -112,6 +125,19 @@ class Template extends Model
         })
         ->select('templates.*')
         ->paginate(5);
+    }
+    static public function getLecturerProposalTemplate(){
+        $loggedInUser = Auth::user(); // Assuming you are using Laravel's default authentication
+
+        return self::where('section', 'proposal')
+            ->where(function ($query) use ($loggedInUser) {
+                $query->where('lecturer_id', $loggedInUser->id) // Templates uploaded by the lecturer
+                    ->orWhereHas('lecturer', function ($query) use ($loggedInUser) {
+                        $query->where('role_as', 0); // Admin role
+                    });
+            })
+            ->select('templates.*')
+            ->paginate(5);
     }
 
     static public function getSlideTemplate(){

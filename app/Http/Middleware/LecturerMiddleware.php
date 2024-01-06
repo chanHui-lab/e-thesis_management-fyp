@@ -24,7 +24,7 @@ class LecturerMiddleware
                 return $next($request);
             } else {
                 // Redirect or handle unauthorized access for non-admin users
-                dd(session('status'));
+                // dd(session('status'));
                 return redirect('/')->with('status', 'Not Lecturer. Please log in to access this page.');
             }
         }

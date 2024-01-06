@@ -142,6 +142,8 @@ class FormController extends Controller
             'section' => $section
         ]);
 
+        $redirectRoute = (auth()->user()->role_as == 0) ? 'template.store' : 'lecttemplate.store';
+
         // Determine the route and success message based on the "section" input
         switch ($section) {
             case 'thesis':
@@ -376,6 +378,7 @@ class FormController extends Controller
         if (!$template) {
             return redirect()->route('formtemplate.index')->with('error', 'Template not found');
         }
+
         $section = $template->section;
         $template->delete();
 
@@ -451,15 +454,29 @@ class FormController extends Controller
     public function indexPost()
     {
 
-        // define nem of varibale then use back
-        // $template = Template::latest()->paginate(3);
-        $post = SubmissionPost::getAdminFormSP();
+        $loggedInUser = Auth::user();
 
-        // Calculate remaining time for each submission
-        foreach ($post as $postform) {
-            $postform->remainingTime = $this->calculateRemainingTime($postform->submission_deadline);
+        if ($loggedInUser->role_as == 0) {
+            $post = SubmissionPost::getAdminFormSP();
+
+            // Calculate remaining time for each submission
+            foreach ($post as $postform) {
+                $postform->remainingTime = $this->calculateRemainingTime($postform->submission_deadline);
+            }
+
+            return view('admin.submission_post.allformpost',compact('post'));
+
+        } else {
+            $post = SubmissionPost::getLecturerFormSP();
+
+            // Calculate remaining time for each submission
+            foreach ($post as $postform) {
+                $postform->remainingTime = $this->calculateRemainingTime($postform->submission_deadline);
+            }
+            // dd($post);
+
+            return view('admin.submission_post.allformpost',compact('post'));
         }
-
         return view('admin.submission_post.allformpost',compact('post'));
 
     }
@@ -1030,43 +1047,159 @@ class FormController extends Controller
         return view('admin.submission_post.viewAll', compact('formSubmissions','submissionPost'));
     }
 
-    public function getFormSubmissionForLecturer($submissionPostId){
-        $lecturer = auth()->user(); // Get the currently logged-in lecturer
-        // $submissionPost = SubmissionPost::find($submissionPostId);
+    // public function getFormSubmissionForLecturer($submissionPostId){
+    //     $lecturer = auth()->user(); // Get the currently logged-in lecturer
+    //     // $submissionPost = SubmissionPost::find($submissionPostId);
+    //     $submissionPost = SubmissionPost::with('lecturer')->find($submissionPostId);
+    //     // dd($lecturer->role_as);
+
+    //     // added accesible for admin role
+    //     if (auth()->user()->role_as == 0) {
+
+    //         // dd($submissionPost);
+
+    //         $formSubmissions = Form_submission::where('submission_post_id', $submissionPost->id)
+    //         ->get();
+    //         // dd($formSubmissions);
+
+    //         $students = DB::table('students')
+    //         ->select('students.stu_id', 'users.name AS student_name', 'students.matric_number', 'form_submissions.*')
+    //         ->leftJoin('users', 'students.stu_id', '=', 'users.id')
+    //         ->leftJoin('form_submissions', 'students.stu_id', '=', 'form_submissions.student_id')
+    //         ->get();
+    //         // dd( $students);
+    //         return view('admin.submission_post.viewAll', compact('formSubmissions','students','submissionPost'));
+
+    //     }
+    //     elseif(auth()->user()->role_as == 1){
+    //         // dd($submissionPost->lecturer->id);
+    //         dd($lecturer->formSubmissions());
+
+    //         // if (($submissionPost && $submissionPost->lecturer && $submissionPost->lecturer->id === $lecturer->id)) {
+
+    //         // NEED TO ADD ONE PART, if lecture role is admin, access all student instead of joinging.
+    //         $formSubmissions = $lecturer->formSubmissions()
+    //         ->where('submission_post_id', $submissionPost->id)
+    //         ->get();
+
+    //         // THIS IS FOR LECTURER INTERFACE!! ONLY SUPERVISED STUDENTS
+    //         $students = DB::table('students')
+    //         ->select('students.stu_id', 'users.name AS student_name', 'students.matric_number')
+    //         ->leftJoin('users', 'students.stu_id', '=', 'users.id')
+    //         ->leftJoin('form_submissions', function ($join) use ($lecturer, $submissionPost) {
+    //             $join->on('students.stu_id', '=', 'form_submissions.student_id')
+    //                 ->where('form_submissions.submission_post_id', $submissionPost->id);
+    //         })
+    //         ->where(function ($query) use ($lecturer) {
+    //             $query->where('students.supervisor_id', $lecturer->id)
+    //                 ->orWhereNull('form_submissions.student_id');
+    //         })
+    //         ->get();
+
+    //         return view('admin.submission_post.viewAll', compact('formSubmissions','students','submissionPost'));
+
+    //     // dd($formSubmissions);
+    //     }
+    // }
+
+    public function getFormSubmissionForLecturer($submissionPostId)
+    {
+        // if (!auth()->check()) {
+        //     // Redirect to login if the user is not authenticated
+        //     return redirect()->route('formpost.index');
+        // }
+        $loggedInUser = Auth::user();
+        // dd($loggedInUser);
+
+        $user = auth()->user();
         $submissionPost = SubmissionPost::with('lecturer')->find($submissionPostId);
-        // dd($submissionPost);
 
-        // added accesible for admin role
-        if (auth()->user()->role_as == 0) {
+        if ($user->role_as == 0) {
+            // Admin role
+            $formSubmissions = Form_submission::where('submission_post_id', $submissionPost->id)->get();
 
-            // dd($submissionPost);
+            // $students = DB::table('students')
+            //     ->select('students.stu_id', 'users.name AS student_name', 'students.matric_number', 'form_submissions.*')
+            //     ->leftJoin('users', 'students.stu_id', '=', 'users.id')
+            //     ->leftJoin('form_submissions', 'students.stu_id', '=', 'form_submissions.student_id')
+            //     ->get();
 
-            $formSubmissions = Form_submission::where('submission_post_id', $submissionPost->id)
-            ->get();
-            // dd($formSubmissions);
-
+            $submissionPostID = $submissionPost->id;
             $students = DB::table('students')
             ->select('students.stu_id', 'users.name AS student_name', 'students.matric_number', 'form_submissions.*')
             ->leftJoin('users', 'students.stu_id', '=', 'users.id')
-            ->leftJoin('form_submissions', 'students.stu_id', '=', 'form_submissions.student_id')
+            ->leftJoin('form_submissions', function ($join) use ($submissionPostID) {
+                $join->on('students.stu_id', '=', 'form_submissions.student_id')
+                    ->where('form_submissions.submission_post_id', $submissionPostID);
+            })
             ->get();
-            // dd( $students);
-            return view('admin.submission_post.viewAll', compact('formSubmissions','students','submissionPost'));
 
-        }
-        elseif(auth()->user()->role_as == 1){
-            if (($submissionPost && $submissionPost->lecturer && $submissionPost->lecturer->id === $lecturer->id)) {
+            return view('admin.submission_post.viewAll', compact('formSubmissions', 'students', 'submissionPost'));
 
-            // Fetch form submissions for the given submission post
+        } elseif ($user->role_as == 1) {
+            // dd($submissionPost->lecturer->formSubmissions());
+
+            // Lecturer role
+            // $formSubmissions = $submissionPost->lecturer->formSubmissions()
+            //     ->where('submission_post_id', $submissionPost->id)
+            //     ->get();
+
             // $formSubmissions = Form_submission::where('submission_post_id', $submissionPost->id)
-            // ->where('supervisor_id', $lecturer->id)
+            // ->get();
+            // dd($formSubmissions);
+            // $students = DB::table('students')
+            // ->select('students.stu_id', 'users.name AS student_name', 'students.matric_number', 'students.supervisor_id')
+            // ->leftJoin('users', 'students.stu_id', '=', 'users.id')
+            // ->get();
+            // dd($students);
+
+
+            // $students = DB::table('students')
+            // ->select('students.stu_id', 'users.name AS student_name', 'students.matric_number', 'students.supervisor_id','form_submissions.*')
+            // ->leftJoin('users', 'students.stu_id', '=', 'users.id')
+            // ->leftJoin('form_submissions', function ($join) use ($user,$submissionPost) {
+            //     $join->on('students.stu_id', '=', 'form_submissions.student_id')
+            //         ->where('form_submissions.submission_post_id', $submissionPost->id);
+            // })
+            // // ->where('students.supervisor_id', $submissionPost->lecturer->id)
+            // // ->orWhereNull('students.supervisor_id') // Include students without a supervisor
+            // ->where(function ($query) use ($user) {
+            //     $query->where('students.supervisor_id', $user->id)
+            //         ->orWhereNull('form_submissions.student_id');
+            // })
             // ->get();
 
-            // NEED TO ADD ONE PART, if lecture role is admin, access all student instead of joinging.
-            $formSubmissions = $lecturer->formSubmissions()
-            ->where('submission_post_id', $submissionPost->id)
+            // $students = DB::table('students')
+            //     ->select('students.stu_id', 'users.name AS student_name', 'students.matric_number')
+            //     ->leftJoin('users', 'students.stu_id', '=', 'users.id')
+            //     ->where(function ($query) use ($lecturerId) {
+            //         $query->where('students.supervisor_id', $lecturerId);
+            //     })
+            //     ->get();
+
+        // Fetch form submissions for the specific submission post and the lecturer's students
+        $formSubmissions = Form_submission::where('submission_post_id', $submissionPost->id)
+            ->whereHas('student', function ($query) use ($user) {
+                $query->where('supervisor_id', $user->id);
+            })
             ->get();
-            // dd($formSubmissions);
+
+        // Fetch all students supervised by the current lecturer
+        $students = DB::table('students')
+            ->select('students.stu_id', 'users.name AS student_name', 'students.matric_number')
+            ->leftJoin('users', 'students.stu_id', '=', 'users.id')
+            ->where('students.supervisor_id', $user->id)
+            ->get();
+
+            // dd($students);
+
+            return view('admin.submission_post.viewAll', compact('formSubmissions', 'students', 'submissionPost'));
+        }
+
+        // Handle other roles or return an appropriate response
+        // ...
+    }
+
 
             // THIS IS FOR ADMIN INTERFACES!!
             // Fetch students supervised by the lecturer along with their submission statuses
@@ -1088,24 +1221,6 @@ class FormController extends Controller
             // ->get();
             // dd($students);
 
-            // THIS IS FOR LECTURER INTERFACE!! ONLY SUPERVISED STUDENTS
-            $students = DB::table('students')
-            ->select('students.stu_id', 'users.name AS student_name', 'students.matric_number')
-            ->leftJoin('users', 'students.stu_id', '=', 'users.id')
-            ->leftJoin('form_submissions', function ($join) use ($lecturer, $submissionPost) {
-                $join->on('students.stu_id', '=', 'form_submissions.student_id')
-                    ->where('form_submissions.submission_post_id', $submissionPost->id);
-            })
-            ->where(function ($query) use ($lecturer) {
-                $query->where('students.supervisor_id', $lecturer->id)
-                    ->orWhereNull('form_submissions.student_id');
-            })
-            ->get();
-
-            return view('admin.submission_post.viewAll', compact('formSubmissions','students','submissionPost'));
-
-        // dd($formSubmissions);
-        }
         // if (auth()->user()->role_as == 1){
         //     if (($submissionPost && $submissionPost->lecturer && $submissionPost->lecturer->id === $lecturer->id)) {
 
@@ -1174,9 +1289,6 @@ class FormController extends Controller
         //     ->get();
         // }
 
-        }
-    }
-
     // public function testshowFormSubmissions($formSubmissionId,$studentId)
 
     // {
@@ -1234,6 +1346,21 @@ class FormController extends Controller
 
         return view('admin.thesisrepo_page.thesisrepo');
 
+    }
+    public function indexVueLect()
+    {
+        // $dashboardData = Form_submission::select('id', 'form_title', 'description') // Include only the needed columns
+        // ->get();
+
+        // return view('tesetvue', ['dashboardData' => $dashboardData]);
+        // return response()->json($dashboardData);
+
+        // $data = Thesis_submission::select('id', 'thesis_title', 'thesis_abstract') // Include only the needed columns
+        // ->get();
+        // return view('tesetvue', compact('data'));
+        // return response()->json($data);
+
+        return view('lecturer.thesisrepo_page.thesisrepo');
     }
 
     public function fetchdata()

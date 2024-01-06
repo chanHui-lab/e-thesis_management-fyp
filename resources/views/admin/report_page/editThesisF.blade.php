@@ -224,7 +224,7 @@
             console.log(filePath);
 
             $.ajax({
-                url: '{{ route("formpost.remove-file", $getRecord->id) }}',
+                url: '{{ route("thesispost.remove-file", $getRecord->id) }}',
                 type: 'DELETE',
                 headers: {
                     'X-CSRF-TOKEN': '{{ csrf_token() }}'

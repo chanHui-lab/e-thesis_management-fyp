@@ -1,13 +1,13 @@
 <template >
 
-    <ul>
+    <!-- <ul>
       <li v-for="(value, key) in data" :key="key">
         {{ key }}: {{ value }}
       </li>
-    </ul>
+    </ul> -->
   <div class="d-flex align-center flex-column">
     <div class="text-subtitle-2"></div>
-    <h2 style="margin-bottom: 20px;">Theses Repository</h2>
+    <h2 style="margin-top: 50px;margin-bottom: 30px;">Theses Repository</h2>
 
     <v-app style = "background-color: transparent;">
     <div>

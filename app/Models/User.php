@@ -64,12 +64,16 @@ class User extends Authenticatable
 
     public function thesisSubmissions()
     {
-        return $this->hasManyThrough(Form_submission::class, Student::class, 'supervisor_id', 'student_id');    }
+        return $this->hasManyThrough(Thesis_submission::class, Student::class, 'supervisor_id', 'student_id');    }
 
     // public function advisor()
     // {
     //     return $this->hasOne(Advisor::class);
     // }
+    public function proposalSubmissions()
+    {
+        return $this->hasMany(Proposal_submission::class, 'submission_post_id');
+    }
 
     public function notifications()
     {
